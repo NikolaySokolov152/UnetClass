@@ -12,7 +12,7 @@ import cv2
 any                 = [192, 192, 192]   #wtite-gray
 borders             = [0,0,255]         #blue
 mitochondria        = [0,255,0]         #green
-mitochondria_borders= [0,128,255]
+mitochondria_borders= [255,0,255]       #violet
 PSD                 = [192,192,64]      #yellow
 vesicles            = [255,0,0]         #read
 
@@ -105,8 +105,12 @@ def testGenerator(test_path,num_image = 30,target_size = (256,256),flag_multi_cl
         img = np.reshape(img,(1,)+img.shape)
         yield img
 
+
 def testGenerator2(test_path, name_list = [], num_image = 30,target_size = (256,256),flag_multi_class = False,as_gray = True):
-    for img_name in sorted(os.listdir(test_path),key = len)[0:num_image]:
+    img_type = ('.png', '.jpg', '.jpeg')
+    name_dir_list = [img_name for img_name in sorted(os.listdir(test_path), key=len) if img_name.endswith(img_type)]
+
+    for img_name in name_dir_list[0:num_image]:
         name_list.append(img_name)
         img = io.imread(os.path.join(test_path, img_name),as_gray = as_gray)
         img = img / 255

@@ -14,23 +14,23 @@ data_gen_args = dict(rotation_range=0.2,
                     zoom_range=0.05,
                     horizontal_flip=True,
                     fill_mode='nearest')
-myGene = trainGenerator(5,'data/myltidata/train4','image','mask',data_gen_args, flag_multi_class = True, num_class = num_class, save_to_dir = None)#'data/myltidata/train3/temp')
+myGene = trainGenerator(1,'data/myltidata/train4','image','mask',data_gen_args, flag_multi_class = True, num_class = num_class, save_to_dir = None)#'data/myltidata/train3/temp')
 
 #model = unet(num_class = num_class)
 model = unet("unet_myltidata_v3.hdf5", num_class = num_class)
 
 model_checkpoint = ModelCheckpoint('unet_myltidata_v3.hdf5', mode='auto', monitor='loss',verbose=1, save_best_only=True)
 
-model.fit_generator(myGene, steps_per_epoch=100, epochs=50,callbacks=[model_checkpoint], verbose=1)
+model.fit_generator(myGene, steps_per_epoch=100, epochs=10,callbacks=[model_checkpoint], verbose=1)
 
 
 #saveResult("data/membrane/test",results)
 
 name_list = []
 #testGene = testGenerator("data/myltidata/test/img", size_test_train, flag_multi_class = True)
-testGene = testGenerator2("data/myltidata/test/splitted",  name_list, 10, flag_multi_class = True)
+testGene = testGenerator2("data/myltidata/test/splitted",  name_list, 12, flag_multi_class = True)
 
-results = model.predict_generator(testGene, 10, verbose=1)
+results = model.predict_generator(testGene, 12, verbose=1)
 
 #saveResult("data/myltidata/result3", results, trust_percentage = 0.85, flag_multi_class = True, num_class = num_class)
 saveResult2("data/myltidata/splitted", results, name_list, trust_percentage = 0.95, flag_multi_class = True, num_class = num_class)

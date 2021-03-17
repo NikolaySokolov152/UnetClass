@@ -2,10 +2,12 @@ from model import *
 from data import *
 
 #rgb
+#смена цвета тут не на что не влияет, просто тут удобнее смотреть цвет
+#для смены цвета менять в data
 any                 = [192, 192, 192]   #wtite-gray
 borders             = [0,0,255]         #blue
 mitochondria        = [0,255,0]         #green
-mitochondria_borders= [0,128,255]
+mitochondria_borders= [255,0,255]       #violet
 PSD                 = [192,192,64]      #yellow
 vesicles            = [255,0,0]         #read
 
