@@ -1,12 +1,5 @@
-import numpy as np 
-import os
-import skimage.io as io
-import skimage.transform as trans
-import numpy as np
 from keras.models import *
 from keras.layers import *
-from keras.optimizers import *
-from keras.callbacks import ModelCheckpoint, LearningRateScheduler
 
 
 def unet(pretrained_weights = None,input_size = (256,256,1), num_class = 2):
@@ -77,18 +70,51 @@ def unet(pretrained_weights = None,input_size = (256,256,1), num_class = 2):
     normal9 = (BatchNormalization())(conv9)
 
     dense10 = Dense(num_class)(normal9)
-    conv10 = Activation('softmax')(dense10)
+    conv10 = Activation('sigmoid')(dense10)
 
     model = Model(inputs=inputs, outputs=conv10)
 
     #model.compile(optimizer = Adam(lr = 1e-4), loss = 'binary_crossentropy', metrics = ['categorical_accuracy'])
 
-    model.compile(optimizer="rmsprop",
-                  loss= ['categorical_crossentropy'],
-                  metrics=["accuracy"])
+    if num_class == 1:
+        model.compile(optimizer='adam',
+                      loss=[dice_coef_loss],
+                      metrics=[dice_coef])
+    else:
+        model.compile(optimizer='adam',
+                      loss=[dice_coef_loss_multilabel2],
+                      # loss=['binary_crossentropy'],
+                      # loss=['categorical_crossentropy'],
+                      metrics=[dice_coef_multilabel2])
     # model.summary()
 
     if(pretrained_weights):
-    	model.load_weights(pretrained_weights)
+        model.load_weights(pretrained_weights)
 
     return model
+
+from keras import backend as K
+
+def dice_coef(y_true, y_pred):
+    smooth = 0.0001
+    y_true_f = K.flatten(y_true)
+    y_pred_f = K.flatten(y_pred)
+    intersection = K.sum(y_true_f * y_pred_f)
+    return (2. * intersection + smooth) / (K.sum(y_true_f) + K.sum(y_pred_f) + smooth)
+
+
+def dice_coef_loss(y_true, y_pred):
+    return 1-dice_coef(y_true, y_pred)
+
+
+#numLabels = 5 or 6
+
+def dice_coef_multilabel2(y_true, y_pred, numLabels = 2):
+    dice=0
+    for index in range(numLabels):
+        dice += dice_coef(y_true[:,:,:,index], y_pred[:,:,:,index])
+    return dice/numLabels # taking average
+
+
+def dice_coef_loss_multilabel2(y_true, y_pred, numLabels = 2):
+    return 1-dice_coef_multilabel2(y_true, y_pred, numLabels)
