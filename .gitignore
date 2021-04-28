@@ -6,9 +6,10 @@ __pycache__/
 # C extensions
 *.so
 
-
+my_unet_multidata.hdf5
 v1
 v2
+data
 
 delete data experiment
 unet_myltidata*

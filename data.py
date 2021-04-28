@@ -220,7 +220,7 @@ def testGenerator(test_path, name_list = [], save_dir = None, num_image = 30,tar
         img = np.reshape(img,img.shape+(1,)) if (not flag_multi_class) else img
         img = np.reshape(img,(1,)+img.shape)
         if save_dir is not None:
-            io.imsave(os.path.join(save_dir, img_name), img)
+            io.imsave(os.path.join(save_dir, img_name), img[0])
         yield img
 
 def labelVisualize(num_class, trust_percentage, color_dict,img):
@@ -241,3 +241,13 @@ def saveResult(save_path,npyfile, namelist, trust_percentage = 0.9 ,flag_multi_c
     for i,item in enumerate(npyfile):
         img = labelVisualize(num_class, trust_percentage, COLOR_DICT,item) if flag_multi_class else item[:,:,0]
         io.imsave(os.path.join(save_path,"predict_"+namelist[i]),img)
+
+
+mask_name_label_list = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"]
+
+def viewResult(save_path,npyfile, namelist, trust_percentage = 0.9 ,flag_multi_class = False,num_class = 2):
+    for i, item in enumerate(npyfile):
+        for n_class in range(num_class):
+            cv2.imshow(mask_name_label_list[n_class]+ "_"+ namelist[i], item[:,:,n_class])
+        cv2.waitKey()
+        cv2.destroyAllWindows()

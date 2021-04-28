@@ -18,24 +18,33 @@ os.environ['TF_XLA_FLAGS'] = '--tf_xla_enable_xla_devices'
 #config.gpu_options.allow_growth = True
 #session = InteractiveSession(config=config)
 
+#GPU desable
+try:
+    # Disable all GPUS
+   tf.config.set_visible_devices([], 'GPU')
+   visible_devices = tf.config.get_visible_devices()
+   for device in visible_devices:
+       assert device.device_type != 'GPU'
+except:
+    # Invalid device or cannot modify virtual devices once initialized.
+    pass
 
-
-num_class = 5 #6
+num_class = 5
 
 data_gen_args = dict(rotation_range= 5,
-                    width_shift_range=0.1,
-                    height_shift_range=0.1,
-                    shear_range=0.1,
-                    zoom_range=0.1,
+                    width_shift_range=0.025,
+                    height_shift_range=0.025,
+                    shear_range=0.025,
+                    zoom_range=0.025,
                     horizontal_flip=True,
                     fill_mode='nearest')
 
-mask_name_label_list = ["mitochondria", "PSD", "vesicles", "axon", "boarders", "mitochondria borders"]
+mask_name_label_list = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"]
 
-myGene = get_train_generator_data(dir_img_name = 'data/train/origin',
+myGene = get_train_generator_data(dir_img_name = 'data/train/original',
                                   dir_mask_name = 'data/train/',
                                   aug_dict = data_gen_args,
-                                  batch_size = 2,
+                                  batch_size = 5,
                                   list_name_label_mask = mask_name_label_list,
                                   delete_mask_name = None,
                                   target_size = (256,256),
@@ -51,16 +60,16 @@ myGene = get_train_generator_data(dir_img_name = 'data/train/origin',
                                   seed = 1
                                   )
 
-model = unet(num_class = num_class)
-#model = unet('my_unet_data.hdf5', num_class = num_class)
+#model = unet(num_class = num_class)
+model = unet('my_unet_multidata.hdf5', num_class = num_class)
 
 model_checkpoint = ModelCheckpoint('my_unet_multidata.hdf5', mode='auto', monitor='loss',verbose=1, save_best_only=True)
 
-model.fit_generator(myGene, steps_per_epoch=100, epochs=100,callbacks=[model_checkpoint], verbose=1 , validation_data=myGene, validation_steps=5)
+model.fit(myGene, steps_per_epoch=50, epochs=100, callbacks=[model_checkpoint], verbose=1) #, validation_data=myGene, validation_steps=5)
 
 name_list = []
 testGene = testGenerator(test_path = "data/test", name_list = name_list, save_dir= "data/result", num_image = 12, flag_multi_class = True)
 
-results = model.predict_generator(testGene, 12, verbose=1)
+results = model.predict(testGene, 12, verbose=1)
 
 saveResult("data/result", results, name_list, trust_percentage = 0.8, flag_multi_class = True, num_class = num_class)

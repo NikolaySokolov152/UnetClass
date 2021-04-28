@@ -1,6 +1,7 @@
 from keras.models import *
 from keras.layers import *
-
+from keras.callbacks import ModelCheckpoint, LearningRateScheduler
+import keras
 
 def unet(pretrained_weights = None,input_size = (256,256,1), num_class = 2):
     inputs = Input(input_size)
@@ -81,11 +82,13 @@ def unet(pretrained_weights = None,input_size = (256,256,1), num_class = 2):
                       loss=[dice_coef_loss],
                       metrics=[dice_coef])
     else:
-        model.compile(optimizer='adam',
-                      loss=[dice_coef_loss_multilabel2],
+        model.compile(optimizer='rmsprop',
+                      loss=[dice_coef_loss_multilabel5],
                       # loss=['binary_crossentropy'],
                       # loss=['categorical_crossentropy'],
-                      metrics=[dice_coef_multilabel2])
+                      metrics=[dice_coef_multilabel5]
+                      #,loss_weights = [0.1,0.1,0.1,1.0,0.1]
+                      )
     # model.summary()
 
     if(pretrained_weights):
@@ -118,3 +121,14 @@ def dice_coef_multilabel2(y_true, y_pred, numLabels = 2):
 
 def dice_coef_loss_multilabel2(y_true, y_pred, numLabels = 2):
     return 1-dice_coef_multilabel2(y_true, y_pred, numLabels)
+
+
+def dice_coef_multilabel5(y_true, y_pred, numLabels = 5):
+    dice=0
+    for index in range(numLabels):
+        dice += dice_coef(y_true[:,:,:,index], y_pred[:,:,:,index])
+    return dice/numLabels # taking average
+
+
+def dice_coef_loss_multilabel5(y_true, y_pred, numLabels = 5):
+    return 1-dice_coef_multilabel5(y_true, y_pred, numLabels)

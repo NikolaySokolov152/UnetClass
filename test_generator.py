@@ -3,20 +3,20 @@ from data import *
 
 #os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
-num_class = 1
+num_class = 5
 
-data_gen_args = dict(rotation_range=0.2,
-                    width_shift_range=0.05,
-                    height_shift_range=0.05,
-                    shear_range=0.05,
-                    zoom_range=0.05,
+data_gen_args = dict(rotation_range=5,
+                    width_shift_range=0.025,
+                    height_shift_range=0.025,
+                    shear_range=0.025,
+                    zoom_range=0.025,
                     horizontal_flip=True,
                     fill_mode='nearest')
 
-mask_name_label_list = ["mitochondria", "PSD", "vesicles", "axon", "boarders", "mitochondria borders"]
+mask_name_label_list = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"]
 
-myGene = get_train_generator_data(dir_img_name = 'data//train/origin',
-                                  dir_mask_name = 'data//train/',
+myGene = get_train_generator_data(dir_img_name = 'data/train/original',
+                                  dir_mask_name = 'data/train/',
                                   aug_dict = data_gen_args,
                                   batch_size = 1,
                                   list_name_label_mask = mask_name_label_list,

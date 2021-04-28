@@ -1,3 +1,10 @@
+import keras
+import numpy as np
+from numpy import np_resize
+import cv2
+from numpy import albumentations as albu
+from numpy import build_masks
+
 class DataGenerator(keras.utils.Sequence):
 'Generates data for Keras'
 def __init__(self, list_IDs, df, target_df=None, mode='fit',
@@ -17,7 +24,6 @@ def __init__(self, list_IDs, df, target_df=None, mode='fit',
     self.n_classes = n_classes
     self.shuffle = shuffle
     self.random_state = random_state
-
     self.on_epoch_end()
     np.random.seed(self.random_state)
 
@@ -115,11 +121,19 @@ def __load_rgb(self, img_path):
 
 def __random_transform(self, img, masks):
     composition = albu.Compose([
-        albu.HorizontalFlip(),
-        albu.VerticalFlip(),
-        albu.ShiftScaleRotate(rotate_limit=30, shift_limit=0.1)
+        albu.HorizontalFlip(p = 0.25),
+        albu.VerticalFlip(p = 0.25),
+        albu.ShiftScaleRotate(p = 0.25, rotate_limit=10, shift_limit=0.1),
         #albu.ShiftScaleRotate(rotate_limit=90, shift_limit=0.2)
+        albu.fillmode('nearest'),
+#https://albumentations.readthedocs.io/en/latest/examples.html
     ])
+    #rotation_range = 10,
+    #width_shift_range = 0.1,
+    #height_shift_range = 0.1,
+    #shear_range = 0.1,
+    #zoom_range = 0.1,
+    #fill_mode = 'nearest')
 
     composed = composition(image=img, mask=masks)
     aug_img = composed['image']
