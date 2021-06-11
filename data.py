@@ -14,8 +14,8 @@ any                 = [192, 192, 192]   #wtite-gray
 borders             = [0,0,255]         #blue
 mitochondria        = [0,255,0]         #green
 mitochondria_borders= [255,0,255]       #violet
-PSD                 = [192,192,64]      #yellow
-axon                = [192,128,64]      #yellow
+PSD                 = [192,255,64]      #yellow
+axon                = [255,128,64]      #yellow
 vesicles            = [255,0,0]         #read
 
 COLOR_DICT = np.array([mitochondria, PSD, vesicles,  axon, borders, mitochondria_borders])

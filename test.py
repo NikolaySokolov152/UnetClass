@@ -27,7 +27,7 @@ def test_modul_v5():
 
     model = unet('my_unet_multidata.hdf5', num_class = num_class)
 
-    size_test_train = 4#60
+    size_test_train = 60
 
     name_list = []
     testGene = testGenerator(test_path="data/test", name_list=name_list,\
@@ -36,7 +36,7 @@ def test_modul_v5():
 
     results = model.predict(testGene, size_test_train, verbose=1)
 
-    viewResult("data/result", results, name_list, trust_percentage=0.95, flag_multi_class=True, num_class=num_class)
+    #viewResult("data/result", results, name_list, trust_percentage=0.95, flag_multi_class=True, num_class=num_class)
     saveResult("data/result", results, name_list, trust_percentage = 0.95, flag_multi_class = True, num_class = num_class)
 
 def test_modul_v6():

@@ -3,6 +3,10 @@ from keras.layers import *
 from keras.callbacks import ModelCheckpoint, LearningRateScheduler
 import keras
 
+from keras.utils.vis_utils import plot_model
+import os
+os.environ["PATH"] += os.pathsep + 'C:/Program Files (x86)/Graphviz2.38/bin/'
+
 def unet(pretrained_weights = None,input_size = (256,256,1), num_class = 2):
     inputs = Input(input_size)
     conv1 = Conv2D(64, 3, activation='relu', padding='same', kernel_initializer='he_normal')(inputs)
@@ -67,8 +71,6 @@ def unet(pretrained_weights = None,input_size = (256,256,1), num_class = 2):
     normal9 = (BatchNormalization())(conv9)
     conv9 = Conv2D(64, 3, activation='relu', padding='same', kernel_initializer='he_normal')(normal9)
     normal9 = (BatchNormalization())(conv9)
-    conv9 = Conv2D(2, 3, activation='relu', padding='same', kernel_initializer='he_normal')(normal9)
-    normal9 = (BatchNormalization())(conv9)
 
     dense10 = Dense(num_class)(normal9)
     conv10 = Activation('sigmoid')(dense10)
@@ -89,7 +91,20 @@ def unet(pretrained_weights = None,input_size = (256,256,1), num_class = 2):
                       metrics=[dice_coef_multilabel5]
                       #,loss_weights = [0.1,0.1,0.1,1.0,0.1]
                       )
-    # model.summary()
+    #print(model.summary())
+    #plot_model(model, show_shapes=True, show_layer_names=True, expand_nested=True, to_file="model1.png")
+
+    #plot_model(model, show_shapes=True, show_layer_names=True, expand_nested=False, to_file="model2.png")
+    #plot_model(model, show_shapes=True, show_layer_names=False, expand_nested=True, to_file="model3.png")
+    #plot_model(model, show_shapes=False, show_layer_names=True, expand_nested=True, to_file="model4.png")
+
+    #plot_model(model, show_shapes=False, show_layer_names=False, expand_nested=False, to_file="model5.png")
+
+    #plot_model(model, show_shapes=False, show_layer_names=False, expand_nested=True, to_file="model6.png")
+    #plot_model(model, show_shapes=False, show_layer_names=True, expand_nested=False, to_file="model7.png")
+    #plot_model(model, show_shapes=True, show_layer_names=False, expand_nested=False, to_file="model8.png")
+
+
 
     if(pretrained_weights):
         model.load_weights(pretrained_weights)

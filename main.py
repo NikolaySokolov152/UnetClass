@@ -31,12 +31,13 @@ except:
 
 num_class = 5
 
-data_gen_args = dict(rotation_range= 5,
+data_gen_args = dict(rotation_range= 10,
                     width_shift_range=0.025,
                     height_shift_range=0.025,
                     shear_range=0.025,
                     zoom_range=0.025,
                     horizontal_flip=True,
+                    vertical_flip=True,
                     fill_mode='nearest')
 
 mask_name_label_list = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"]
@@ -44,7 +45,7 @@ mask_name_label_list = ["mitochondria", "PSD", "vesicles", "axon", "boundaries",
 myGene = get_train_generator_data(dir_img_name = 'data/train/original',
                                   dir_mask_name = 'data/train/',
                                   aug_dict = data_gen_args,
-                                  batch_size = 5,
+                                  batch_size = 4,
                                   list_name_label_mask = mask_name_label_list,
                                   delete_mask_name = None,
                                   target_size = (256,256),
