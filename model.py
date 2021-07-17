@@ -83,12 +83,20 @@ def unet(pretrained_weights = None,input_size = (256,256,1), num_class = 2):
         model.compile(optimizer='adam',
                       loss=[dice_coef_loss],
                       metrics=[dice_coef])
-    else:
+    elif num_class == 5:
         model.compile(optimizer='rmsprop',
                       loss=[dice_coef_loss_multilabel5],
                       # loss=['binary_crossentropy'],
                       # loss=['categorical_crossentropy'],
                       metrics=[dice_coef_multilabel5]
+                      #,loss_weights = [0.1,0.1,0.1,1.0,0.1]
+                      )
+    elif num_class == 6:
+        model.compile(optimizer='rmsprop',
+                      loss=[dice_coef_loss_multilabel6],
+                      # loss=['binary_crossentropy'],
+                      # loss=['categorical_crossentropy'],
+                      metrics=[dice_coef_multilabel6]
                       #,loss_weights = [0.1,0.1,0.1,1.0,0.1]
                       )
     #print(model.summary())
@@ -147,3 +155,14 @@ def dice_coef_multilabel5(y_true, y_pred, numLabels = 5):
 
 def dice_coef_loss_multilabel5(y_true, y_pred, numLabels = 5):
     return 1-dice_coef_multilabel5(y_true, y_pred, numLabels)
+
+
+def dice_coef_multilabel6(y_true, y_pred, numLabels = 6):
+    dice=0
+    for index in range(numLabels):
+        dice += dice_coef(y_true[:,:,:,index], y_pred[:,:,:,index])
+    return dice/numLabels # taking average
+
+
+def dice_coef_loss_multilabel6(y_true, y_pred, numLabels = 6):
+    return 1-dice_coef_multilabel6(y_true, y_pred, numLabels)

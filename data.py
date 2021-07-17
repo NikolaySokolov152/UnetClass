@@ -251,3 +251,14 @@ def viewResult(save_path,npyfile, namelist, trust_percentage = 0.9 ,flag_multi_c
             cv2.imshow(mask_name_label_list[n_class]+ "_"+ namelist[i], item[:,:,n_class])
         cv2.waitKey()
         cv2.destroyAllWindows()
+
+
+def saveResultMask(save_path,npyfile, namelist,num_class = 2):
+    for i,item in enumerate(npyfile):
+        for class_index in range(num_class):
+            out_dir = os.path.join(save_path, mask_name_label_list[class_index])
+            if not os.path.isdir(out_dir):
+                print("создаю out_dir:" + out_dir)
+                os.makedirs(out_dir)
+
+            io.imsave(os.path.join(out_dir, "predict_" + namelist[i]), item[:,:,class_index])

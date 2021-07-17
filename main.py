@@ -1,6 +1,6 @@
 from model import *
 from data import *
-
+import matplotlib.pyplot as plt
 #os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 #print(tf.test.is_built_with_cuda())
@@ -29,23 +29,24 @@ except:
     # Invalid device or cannot modify virtual devices once initialized.
     pass
 
-num_class = 5
+num_class = 1
 
-data_gen_args = dict(rotation_range= 10,
-                    width_shift_range=0.025,
-                    height_shift_range=0.025,
-                    shear_range=0.025,
-                    zoom_range=0.025,
+data_gen_args = dict(rotation_range= 5,
+                    width_shift_range=0.05,
+                    height_shift_range=0.05,
+                    shear_range=0.05,
+                    zoom_range=0.05,
                     horizontal_flip=True,
                     vertical_flip=True,
                     fill_mode='nearest')
 
+#берутся первые классы из списка
 mask_name_label_list = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"]
 
 myGene = get_train_generator_data(dir_img_name = 'data/train/original',
                                   dir_mask_name = 'data/train/',
                                   aug_dict = data_gen_args,
-                                  batch_size = 4,
+                                  batch_size = 7,
                                   list_name_label_mask = mask_name_label_list,
                                   delete_mask_name = None,
                                   target_size = (256,256),
@@ -57,20 +58,37 @@ myGene = get_train_generator_data(dir_img_name = 'data/train/original',
                                   normalase_mask_mode = "to_0_1", #"to_-1_1"
                                   save_prefix_image="image_",
                                   save_prefix_mask="mask_",
-                                  save_to_dir = None, #"data/myltidata/train4/temp",
+                                  save_to_dir = None, #"/content/drive/MyDrive/Calab/data/myltidata/train4/temp",
                                   seed = 1
                                   )
 
-#model = unet(num_class = num_class)
-model = unet('my_unet_multidata.hdf5', num_class = num_class)
+model = unet(num_class = num_class)
+#model = unet('my_unet_multidata_pe38_bs7_1class.hdf5', num_class = num_class)
 
-model_checkpoint = ModelCheckpoint('my_unet_multidata.hdf5', mode='auto', monitor='loss',verbose=1, save_best_only=True)
+model_checkpoint = ModelCheckpoint('my_unet_multidata_pe76_bs7_1class.hdf5', mode='auto', monitor='loss',verbose=1, save_best_only=True)
 
-model.fit(myGene, steps_per_epoch=50, epochs=100, callbacks=[model_checkpoint], verbose=1) #, validation_data=myGene, validation_steps=5)
+history = model.fit(myGene, steps_per_epoch=76, epochs=100, callbacks=[model_checkpoint], verbose=1, validation_data=myGene, validation_steps=10)
 
-name_list = []
-testGene = testGenerator(test_path = "data/test", name_list = name_list, save_dir= "data/result", num_image = 12, flag_multi_class = True)
+#save history
+import json
+with open('training_history_pe76_bs7_1class.json', 'w') as file:
+    json.dump(history.history, file, indent=4)
+# Обучение и проверка точности значений
 
-results = model.predict(testGene, 12, verbose=1)
+plt.plot(history.history["dice_coef"])
+plt.plot(history.history["val_dice_coef"])
+plt.title("Model Dice")
+plt.ylabel("Dice")
+plt.xlabel("Epoch")
+plt.legend(["Train", "Validation"], loc="upper left")
+plt.show()
 
-saveResult("data/result", results, name_list, trust_percentage = 0.8, flag_multi_class = True, num_class = num_class)
+# Обучение и проверка величины потерь
+
+plt.plot(history.history["loss"])
+plt.plot(history.history["val_loss"])
+plt.title("Model loss")
+plt.ylabel("Loss")
+plt.xlabel("Epoch")
+plt.legend(["Train", "Validation"], loc="upper left")
+plt.show()

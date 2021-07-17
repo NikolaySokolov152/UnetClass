@@ -18,7 +18,7 @@ mask_name_label_list = ["mitochondria", "PSD", "vesicles", "axon", "boundaries",
 myGene = get_train_generator_data(dir_img_name = 'data/train/original',
                                   dir_mask_name = 'data/train/',
                                   aug_dict = data_gen_args,
-                                  batch_size = 1,
+                                  batch_size = 4,
                                   list_name_label_mask = mask_name_label_list,
                                   delete_mask_name = None,
                                   target_size = (256,256),
@@ -40,12 +40,12 @@ for elem in myGene:
     print(x.shape, " ", y.shape)
 
     for i in range(x.shape[0]):
-        print(str("x")+":",  x[i].max(), " ",x[i].min())
-        print(str("y")+":",  y[i].max(), " ",y[i].min())
+        #print(str("x")+":",  x[i].max(), " ",x[i].min())
+        #print(str("y")+":",  y[i].max(), " ",y[i].min())
 
-        cv2.imshow("test X",  x[i])
-        for j in range(y.shape[-1]):
-            cv2.imshow("test Y_" + mask_name_label_list[j],  y[i][:,:,j])
-        cv2.waitKey()
+        cv2.imshow("test X"+str(i),  x[i])
+        #for j in range(y.shape[-1]):
+        #    cv2.imshow("test Y_" + mask_name_label_list[j],  y[i][:,:,j])
+    cv2.waitKey()
     count+=1
 
