@@ -200,7 +200,7 @@ def CrowdsourcingMetrics(y_true, y_pred):
 
 mask_name_label_list = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"]
 
-name_img = "training0003.png"
+name_img = "testing.png"
 
 list_CNN_num_class = [6, 5, 1]
 

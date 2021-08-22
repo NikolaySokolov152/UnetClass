@@ -261,4 +261,6 @@ def saveResultMask(save_path,npyfile, namelist,num_class = 2):
                 print("создаю out_dir:" + out_dir)
                 os.makedirs(out_dir)
 
+            if (os.path.isfile(os.path.join(out_dir, "predict_" + namelist[i]))):
+                os.remove(os.path.join(out_dir, "predict_" + namelist[i]))
             io.imsave(os.path.join(out_dir, "predict_" + namelist[i]), item[:,:,class_index])

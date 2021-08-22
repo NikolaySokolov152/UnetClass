@@ -46,7 +46,7 @@ mask_name_label_list = ["mitochondria", "PSD", "vesicles", "axon", "boundaries",
 myGene = get_train_generator_data(dir_img_name = 'data/train/original',
                                   dir_mask_name = 'data/train/',
                                   aug_dict = data_gen_args,
-                                  batch_size = 7,
+                                  batch_size = 9,
                                   list_name_label_mask = mask_name_label_list,
                                   delete_mask_name = None,
                                   target_size = (256,256),
@@ -65,9 +65,9 @@ myGene = get_train_generator_data(dir_img_name = 'data/train/original',
 model = unet(num_class = num_class)
 #model = unet('my_unet_multidata_pe38_bs7_1class.hdf5', num_class = num_class)
 
-model_checkpoint = ModelCheckpoint('my_unet_multidata_pe76_bs7_1class.hdf5', mode='auto', monitor='loss',verbose=1, save_best_only=True)
+model_checkpoint = ModelCheckpoint('my_unet_multidata_pe69_bs9_1class.hdf5', mode='auto', monitor='loss',verbose=1, save_best_only=True)
 
-history = model.fit(myGene, steps_per_epoch=76, epochs=100, callbacks=[model_checkpoint], verbose=1, validation_data=myGene, validation_steps=10)
+history = model.fit(myGene, steps_per_epoch=69, epochs=100, callbacks=[model_checkpoint], verbose=1, validation_data=myGene, validation_steps=17)
 
 #save history
 import json
