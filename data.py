@@ -201,6 +201,7 @@ def get_train_generator_data(dir_img_name,
 
     genX1 = datagen.flow(X, Y, batch_size=batch_size, seed=seed, save_prefix = save_prefix_image, save_to_dir = save_to_dir)
     genX2 = datagen.flow(Y, X, batch_size=batch_size, seed=seed, save_prefix = save_prefix_mask, save_to_dir = save_to_dir)
+
     while True:
         X1i = genX1.next()
         X2i = genX2.next()

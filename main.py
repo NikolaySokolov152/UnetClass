@@ -73,6 +73,7 @@ history = model.fit(myGene, steps_per_epoch=69, epochs=100, callbacks=[model_che
 import json
 with open('training_history_pe69_bs9_1class.json', 'w') as file:
     json.dump(history.history, file, indent=4)
+
 # Обучение и проверка точности значений
 
 plt.plot(history.history["dice_coef"])
