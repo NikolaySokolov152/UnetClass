@@ -63,7 +63,7 @@ myGene = get_train_generator_data(dir_img_name = 'data/train/original',
                                   )
 
 model = unet(num_class = num_class)
-#model = unet('my_unet_multidata_pe38_bs7_1class.hdf5', num_class = num_class)
+#model = unet('my_unet_multidata_pe69_bs9_1class.hdf5', num_class = num_class)
 
 model_checkpoint = ModelCheckpoint('my_unet_multidata_pe69_bs9_1class.hdf5', mode='auto', monitor='loss',verbose=1, save_best_only=True)
 
@@ -71,7 +71,7 @@ history = model.fit(myGene, steps_per_epoch=69, epochs=100, callbacks=[model_che
 
 #save history
 import json
-with open('training_history_pe76_bs7_1class.json', 'w') as file:
+with open('training_history_pe69_bs9_1class.json', 'w') as file:
     json.dump(history.history, file, indent=4)
 # Обучение и проверка точности значений
 
