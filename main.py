@@ -29,7 +29,7 @@ except:
     # Invalid device or cannot modify virtual devices once initialized.
     pass
 
-num_class = 1
+num_class = 6
 
 data_gen_args = dict(rotation_range= 5,
                     width_shift_range=0.05,
@@ -46,7 +46,7 @@ mask_name_label_list = ["mitochondria", "PSD", "vesicles", "axon", "boundaries",
 myGene = get_train_generator_data(dir_img_name = 'data/train/original',
                                   dir_mask_name = 'data/train/',
                                   aug_dict = data_gen_args,
-                                  batch_size = 9,
+                                  batch_size = 6,
                                   list_name_label_mask = mask_name_label_list,
                                   delete_mask_name = None,
                                   target_size = (256,256),
@@ -62,16 +62,16 @@ myGene = get_train_generator_data(dir_img_name = 'data/train/original',
                                   seed = 1
                                   )
 
-model = unet(num_class = num_class)
-#model = unet('my_unet_multidata_pe69_bs9_1class.hdf5', num_class = num_class)
+#model = unet(num_class = num_class)
+model = unet('my_unet_multidata_pe76_bs9_6class_no_test.hdf5', num_class = num_class)
 
-model_checkpoint = ModelCheckpoint('my_unet_multidata_pe69_bs9_1class.hdf5', mode='auto', monitor='loss',verbose=1, save_best_only=True)
+model_checkpoint = ModelCheckpoint('my_unet_multidata_pe76_bs9_6class_no_test_retraine.hdf5', mode='auto', monitor='loss',verbose=1, save_best_only=True)
 
-history = model.fit(myGene, steps_per_epoch=69, epochs=100, callbacks=[model_checkpoint], verbose=1, validation_data=myGene, validation_steps=17)
+history = model.fit(myGene, steps_per_epoch=105, epochs=30, callbacks=[model_checkpoint], verbose=1, validation_data=myGene, validation_steps=26)
 
 #save history
 import json
-with open('training_history_pe69_bs9_1class.json', 'w') as file:
+with open('my_unet_multidata_pe76_bs9_6class_no_test_retraine.json', 'w') as file:
     json.dump(history.history, file, indent=4)
 
 # Обучение и проверка точности значений

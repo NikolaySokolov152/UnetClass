@@ -200,17 +200,22 @@ def CrowdsourcingMetrics(y_true, y_pred):
 
 mask_name_label_list = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"]
 
-name_img = "testing.png"
+name_img = "testing0000.png"
 
-list_CNN_num_class = [6, 5, 1]
+list_CNN_num_class = [6, 6]
 
-result_CNN_dir = ["data/result/CNN_6_class",
-				  "data/result/CNN_5_class",
-				  "data/result/CNN_1_class"]
+result_CNN_dir = ["data/result/my_unet_multidata_pe70_bs10_6class_no_test_v9_last_64",
+				  "data/result/my_unet_multidata_pe70_bs10_6class_no_test_v9_last_image_one",
+				  "data/result/my_unet_multidata_pe69_bs9_6class_no_test_v8_100ep_image_one",
+				  "data/result/CNN_5_class_with_test_128"
+				  ]
 
-result_CNN_json_name = ["CNN_6_class",
-				 		"CNN_5_class",
-						"CNN_1_class"]
+result_CNN_json_name = ["CNN_6_class_64",
+				 		"CNN_6_class_image_one",
+						"CNN_6_class_image_one",
+						"CNN_5_class_with_test_128"
+						]
+
 
 for i in range(len(list_CNN_num_class)):
 	num_class = list_CNN_num_class[i]
@@ -219,7 +224,7 @@ for i in range(len(list_CNN_num_class)):
 	print("class\metrics", "jaccard", "dice", "RI", "Accuracy", "AdaptedRandError", "Fscore")
 	json_list = [["class\metrics", "jaccard", "dice", "RI", "Accuracy", "AdaptedRandError", "Fscore", "Vrand_split", "Vrand_merge", "Rand_Fscore", "Vinfo_split", "Vinfo_merge", "InformationTheoreticFscore"]]
 	for index_label_name in range(num_class):
-		original_name = os.path.join("data/original data/", mask_name_label_list[index_label_name], name_img)
+		original_name = os.path.join("data/original data/testing/", mask_name_label_list[index_label_name], name_img)
 		etal = io.imread(original_name, as_gray=True)
 		etal = to_0_255_format_img(etal)
 		if (etal.size == 0):

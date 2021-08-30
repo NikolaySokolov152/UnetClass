@@ -107,26 +107,33 @@ def test_tiled(model_name, num_class, save_mask_dir,  filenames, filepath = "dat
 
 
 def test_models():
-    list_CNN_name = ["my_unet_multidata_pe38_bs7_6class.hdf5",
-                     "my_unet_multidata_pe38_bs7_5class.hdf5",
-                     "my_unet_multidata_pe38_bs7_1class.hdf5"]
-    list_CNN_num_class = [6,5,1]
-    result_CNN_dir = ["data/result/CNN_6_class",
-                      "data/result/CNN_5_class",
-                      "data/result/CNN_1_class"]
+    list_CNN_name = ["my_unet_multidata_pe69_bs9_6class_no_test_v8_100ep.hdf5",
+                     "my_unet_multidata_pe70_bs10_6class_no_test_v9_last.hdf5",
+                     "my_unet_multidata_pe69_bs9_6class_no_test_v8_100ep.hdf5",
+                     "my_unet_multidata_pe76_bs9_6class_no_test_v2.hdf5"]
+    list_CNN_num_class = [6,6]
+
+    result_CNN_dir = ["data/result/my_unet_multidata_pe69_bs9_6class_no_test_v8_100ep",
+                      "data/result/my_unet_multidata_pe70_bs10_6class_no_test_v9_last",
+                      "data/result/my_unet_multidata_pe69_bs9_6class_no_test_v8_100ep"]
+
+    overlap_list = [64]
 
     for i in range(len(list_CNN_num_class)):
-        print("predict ",list_CNN_name[i], " model")
-        print("     predict tiled ")
-        test_tiled(model_name = list_CNN_name[i],
-                   num_class = list_CNN_num_class[i],
-                   save_mask_dir = result_CNN_dir[i],
-                   filenames = ["testing.png"])
+        print("predict ", list_CNN_name[i], " model")
+        for overlap in overlap_list:
+            print("     predict tiled with overlap: ", overlap)
+            test_tiled(model_name = list_CNN_name[i],
+                       num_class = list_CNN_num_class[i],
+                       save_mask_dir = result_CNN_dir[i] + "_" + str(overlap),
+                       overlap = overlap,
+                       filenames = ["testing0000.png"])
+
         print("     predict one img")
         test_one_img(model_name= list_CNN_name[i],
-                     save_dir= result_CNN_dir[i]+"_image_one",
-                     img_name= "testing.png",
-                     num_class = list_CNN_num_class[i])
+                save_dir= result_CNN_dir[i]+"_image_one",
+                img_name= "testing0000.png",
+                num_class = list_CNN_num_class[i])
 
 if __name__ == "__main__":
     test_models()
