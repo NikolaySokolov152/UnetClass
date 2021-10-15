@@ -193,102 +193,233 @@ def CrowdsourcingMetrics(y_true, y_pred):
 
 	InformationTheoreticFscore = 2.0 * I / (s_logs + t_logt)
 
-	print("Vrand_split", "Vrand_merge", "Rand_Fscore", "Vinfo_split", "Vinfo_merge", "InformationTheoreticFscore")
-	print(Vrand_split, Vrand_merge, Rand_Fscore, Vinfo_split, Vinfo_merge, InformationTheoreticFscore)
 	return [Vrand_split, Vrand_merge, Rand_Fscore, Vinfo_split, Vinfo_merge, InformationTheoreticFscore]
 
+def TestsMetric():
+	mask_name_label_list = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"]
 
-mask_name_label_list = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"]
+	name_img = "testing0000.png"
 
-name_img = "testing0000.png"
+	list_CNN_num_class = [6]
 
-list_CNN_num_class = [6, 6]
+	result_CNN_dir = ["data/result/my_unet_multidata_pe70_bs10_6class_no_test_v9_last_v2_64",
+					  "data/result/my_unet_multidata_pe70_bs10_6class_no_test_v9_last_image_one",
+					  "data/result/my_unet_multidata_pe69_bs9_6class_no_test_v8_100ep_image_one",
+					  "data/result/CNN_5_class_with_test_128"
+					  ]
 
-result_CNN_dir = ["data/result/my_unet_multidata_pe70_bs10_6class_no_test_v9_last_64",
-				  "data/result/my_unet_multidata_pe70_bs10_6class_no_test_v9_last_image_one",
-				  "data/result/my_unet_multidata_pe69_bs9_6class_no_test_v8_100ep_image_one",
-				  "data/result/CNN_5_class_with_test_128"
-				  ]
+	result_CNN_json_name = ["CNN_6_class_64",
+							"CNN_6_class_image_one",
+							"CNN_6_class_image_one",
+							"CNN_5_class_with_test_128"
+							]
 
-result_CNN_json_name = ["CNN_6_class_64",
-				 		"CNN_6_class_image_one",
-						"CNN_6_class_image_one",
-						"CNN_5_class_with_test_128"
-						]
+	for i in range(len(list_CNN_num_class)):
+		num_class = list_CNN_num_class[i]
+		print(result_CNN_json_name[i])
+
+		print("class\metrics", "jaccard", "dice", "RI", "Accuracy", "AdaptedRandError", "Fscore")
+		json_list = [["class\metrics", "jaccard", "dice", "RI", "Accuracy", "AdaptedRandError", "Fscore", "Vrand_split",
+					  "Vrand_merge", "Rand_Fscore", "Vinfo_split", "Vinfo_merge", "InformationTheoreticFscore"]]
+		for index_label_name in range(num_class):
+			original_name = os.path.join("data/original data/testing/", mask_name_label_list[index_label_name],
+										 name_img)
+			etal = io.imread(original_name, as_gray=True)
+			etal = to_0_255_format_img(etal)
+			if (etal.size == 0):
+				print("error etal")
+
+			test_img_name = "predict_" + name_img
+
+			test_img_dir = os.path.join(result_CNN_dir[i], mask_name_label_list[index_label_name], test_img_name)
+			img = io.imread(test_img_dir, as_gray=True)
+
+			img = to_0_255_format_img(img)
+
+			if (img.size == 0):
+				print("error img")
+
+			ret, bin_true = cv2.threshold(etal, 128, 255, 0)
+			ret, bin_img_true = cv2.threshold(img, 128, 255, 0)
+
+			# print(img)
+			# print(etal)
+			# viewImage(bin_true,"etal")
+			# viewImage(bin_img_true,"img")
+
+			y_true = bin_true.ravel()
+			y_pred = bin_img_true.ravel()
+
+			# blac
+			ret, bin_pred1 = cv2.threshold(etal, 0, 0, 0)
+			y_pred1 = bin_pred1.ravel()
+			# Brez = jaccard_similarity_score(y_true, y_pred1)
+
+			# white
+			ret, bin_pred2 = cv2.threshold(etal, 255, 255, 1)
+			y_pred2 = bin_pred2.ravel()
+			# Wrez = jaccard_similarity_score(y_true, y_pred2)
+
+			test = jaccard(y_true, y_true)
+			Brez2 = jaccard(y_true, y_pred1)
+			Wrez2 = jaccard(y_true, y_pred2)
+
+			# viewImage(y_pred1,"bitB")
+			# viewImage(y_pred2,"bitW")
+
+			#
+			# print(Brez,Wrez)
+			# print(Brez2,Wrez2, test)
+			# cv2.waitKey(0)
+
+			rez = jaccard(y_true, y_pred)
+			rez2 = dice(y_true, y_pred)
+			res3 = RI(y_true, y_pred)
+			res4 = Accuracy(y_true, y_pred)
+			res5 = Fscore(y_true, y_pred)  # Adapted Rand Error
+
+			Vrand_split, Vrand_merge, Rand_Fscore, Vinfo_split, Vinfo_merge, InformationTheoreticFscore = CrowdsourcingMetrics(
+				y_true, y_pred)
+			print(mask_name_label_list[index_label_name], rez, rez2, res3, res4, 1 - res5, res5)
+			print("Vrand_split", "Vrand_merge", "Rand_Fscore", "Vinfo_split", "Vinfo_merge", "InformationTheoreticFscore")
+			print(Vrand_split, Vrand_merge, Rand_Fscore, Vinfo_split, Vinfo_merge, InformationTheoreticFscore)
+
+			json_list.append(
+				[mask_name_label_list[index_label_name], rez, rez2, res3, res4, 1 - res5, res5, Vrand_split,
+				 Vrand_merge, Rand_Fscore, Vinfo_split, Vinfo_merge, InformationTheoreticFscore])
+
+			cv2.waitKey(0)
+			cv2.destroyAllWindows()
+
+		with open(result_CNN_dir[i] + "/result_" + result_CNN_json_name[i] + ".json", 'w') as file:
+			json.dump(json_list, file)
 
 
-for i in range(len(list_CNN_num_class)):
-	num_class = list_CNN_num_class[i]
-	print(result_CNN_json_name[i])
-
-	print("class\metrics", "jaccard", "dice", "RI", "Accuracy", "AdaptedRandError", "Fscore")
-	json_list = [["class\metrics", "jaccard", "dice", "RI", "Accuracy", "AdaptedRandError", "Fscore", "Vrand_split", "Vrand_merge", "Rand_Fscore", "Vinfo_split", "Vinfo_merge", "InformationTheoreticFscore"]]
-	for index_label_name in range(num_class):
-		original_name = os.path.join("data/original data/testing/", mask_name_label_list[index_label_name], name_img)
-		etal = io.imread(original_name, as_gray=True)
-		etal = to_0_255_format_img(etal)
-		if (etal.size == 0):
-			print("error etal")
-
-		test_img_name = "predict_"+name_img
-
-		test_img_dir = os.path.join(result_CNN_dir[i], mask_name_label_list[index_label_name], test_img_name)
-		img = io.imread(test_img_dir, as_gray=True)
-
-		img = to_0_255_format_img(img)
-
-		if (img.size ==0):
-			print("error img")
-
-		ret,bin_true = cv2.threshold(etal, 128, 255, 0)
-		ret,bin_img_true = cv2.threshold(img, 128, 255, 0)
+def deleteZero_and_predict_mask(name):
+	rename = name.replace('predict_mask','')
+	while rename[0] == '0' and len(rename) > 5:
+		rename = rename[1:]
+	return rename
 
 
-		#print(img)
-		#print(etal)
-		#viewImage(bin_true,"etal")
-		#viewImage(bin_img_true,"img")
+def TestsMetricDir():
+	mask_name_label_list = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"]
 
-		y_true = bin_true.ravel()
-		y_pred = bin_img_true.ravel()
+	list_CNN_num_class = [5, 5]
+
+	result_CNN_dir = ["data/result/Testing_my_unet_multidata_pe69_bs9_5class_no_test_v3_64",
+					  "data/result/Testing_my_unet_multidata_pe76_bs7_5class_v2_with_testing0000_64",
+					  "data/result/my_unet_multidata_pe69_bs9_6class_no_test_v8_100ep_image_one",
+					  "data/result/CNN_5_class_with_test_128"
+					  ]
+
+	result_CNN_json_name = ["CNN_5_class_dir_v3",
+							"CNN_5_class_dir_with_testing",
+							"CNN_6_class_image_one",
+							"CNN_5_class_with_test_128"
+							]
+
+	for i in range(len(list_CNN_num_class)):
+		num_class = list_CNN_num_class[i]
+		num_class = 1
+		print(result_CNN_json_name[i])
+
+		print("class\metrics", "jaccard", "dice", "RI", "Accuracy", "AdaptedRandError", "Fscore")
+		json_list = [["class\metrics", "jaccard", "dice", "RI", "Accuracy", "AdaptedRandError", "Fscore", "Vrand_split",
+					  "Vrand_merge", "Rand_Fscore", "Vinfo_split", "Vinfo_merge", "InformationTheoreticFscore"]]
+
+		json_list_all = json_list.copy()
+		
+		index_name = 0
+		for index_label_name in range(num_class):
+			list_name = os.listdir(os.path.join(result_CNN_dir[i], mask_name_label_list[index_label_name]))
+
+			json_temp = []
+			for num,testName in enumerate(list_name):
+				print(num + 1, "image is ", len(list_name))
+
+				dir_etal = os.path.join("data", "testTestMask", deleteZero_and_predict_mask(testName))
+
+				etal = io.imread(dir_etal, as_gray=True)
+				etal = to_0_255_format_img(etal)
+				if (etal.size == 0):
+					print("error etal")
+
+				test_img_name = "predict_" + testName
+
+				test_img_dir = os.path.join(os.path.join(result_CNN_dir[i], mask_name_label_list[index_label_name]), testName)
+
+				img = io.imread(test_img_dir, as_gray=True)
+
+				img = to_0_255_format_img(img)
+
+				if (img.size == 0):
+					print("error img")
+
+				ret, bin_true = cv2.threshold(etal, 128, 255, 0)
+				ret, bin_img_true = cv2.threshold(img, 128, 255, 0)
+
+				# print(img)
+				# print(etal)
+				# viewImage(bin_true,"etal")
+				# viewImage(bin_img_true,"img")
+
+				y_true = bin_true.ravel()
+				y_pred = bin_img_true.ravel()
+
+				# blac
+				ret, bin_pred1 = cv2.threshold(etal, 0, 0, 0)
+				y_pred1 = bin_pred1.ravel()
+				# Brez = jaccard_similarity_score(y_true, y_pred1)
+
+				# white
+				ret, bin_pred2 = cv2.threshold(etal, 255, 255, 1)
+				y_pred2 = bin_pred2.ravel()
+				# Wrez = jaccard_similarity_score(y_true, y_pred2)
+
+				test = jaccard(y_true, y_true)
+				Brez2 = jaccard(y_true, y_pred1)
+				Wrez2 = jaccard(y_true, y_pred2)
+
+				# viewImage(y_pred1,"bitB")
+				# viewImage(y_pred2,"bitW")
+
+				#
+				# print(Brez,Wrez)
+				# print(Brez2,Wrez2, test)
+				# cv2.waitKey(0)
+
+				rez = jaccard(y_true, y_pred)
+				rez2 = dice(y_true, y_pred)
+				res3 = RI(y_true, y_pred)
+				res4 = Accuracy(y_true, y_pred)
+				res5 = Fscore(y_true, y_pred)  # Adapted Rand Error
+
+				Vrand_split, Vrand_merge, Rand_Fscore, Vinfo_split, Vinfo_merge, InformationTheoreticFscore = CrowdsourcingMetrics(
+					y_true, y_pred)
+
+				# print("Vrand_split", "Vrand_merge", "Rand_Fscore", "Vinfo_split", "Vinfo_merge", "InformationTheoreticFscore")
+				# print(Vrand_split, Vrand_merge, Rand_Fscore, Vinfo_split, Vinfo_merge, InformationTheoreticFscore)
+
+				if len (json_temp) == 0:
+					json_temp.append([mask_name_label_list[index_label_name], rez, rez2, res3, res4, 1 - res5, res5, Vrand_split, Vrand_merge, Rand_Fscore, Vinfo_split, Vinfo_merge, InformationTheoreticFscore])
+					json_list_all.append([index_name, mask_name_label_list[index_label_name], rez, rez2, res3, res4, 1 - res5, res5, Vrand_split, Vrand_merge, Rand_Fscore, Vinfo_split, Vinfo_merge, InformationTheoreticFscore])
+				else:
+					json_list_all.append([index_name, mask_name_label_list[index_label_name], rez, rez2, res3, res4, 1 - res5, res5, Vrand_split, Vrand_merge, Rand_Fscore, Vinfo_split, Vinfo_merge, InformationTheoreticFscore])
+					t_list = [mask_name_label_list[index_label_name], rez, rez2, res3, res4, 1 - res5, res5, Vrand_split, Vrand_merge, Rand_Fscore, Vinfo_split, Vinfo_merge, InformationTheoreticFscore]
+					for j in range(1, len(json_temp[0])):
+						json_temp[0][j] += t_list[j]
+						
+				index_name += 1
+
+			for j in range(1,len(json_temp[0])):
+				json_temp[0][j] /= len(list_name)
+
+			json_list += json_temp
+		with open(result_CNN_dir[i] + "/result_" + result_CNN_json_name[i] + ".json", 'w') as file:
+			json.dump(json_list, file)
+		with open(result_CNN_dir[i] + "/result_" + result_CNN_json_name[i] + "ALL.json", 'w') as file:
+			json.dump(json_list_all, file)
 
 
-		#blac
-		ret,bin_pred1 = cv2.threshold(etal, 0, 0, 0)
-		y_pred1 = bin_pred1.ravel()
-		#Brez = jaccard_similarity_score(y_true, y_pred1)
-
-
-		#white
-		ret,bin_pred2 = cv2.threshold(etal, 255, 255, 1)
-		y_pred2 = bin_pred2.ravel()
-		#Wrez = jaccard_similarity_score(y_true, y_pred2)
-
-		test =  jaccard(y_true, y_true)
-		Brez2 = jaccard(y_true, y_pred1)
-		Wrez2 = jaccard(y_true, y_pred2)
-
-
-		#viewImage(y_pred1,"bitB")
-		#viewImage(y_pred2,"bitW")
-
-		#
-		#print(Brez,Wrez)
-		#print(Brez2,Wrez2, test)
-		#cv2.waitKey(0)
-
-		rez = jaccard(y_true, y_pred)
-		rez2 = dice(y_true, y_pred)
-		res3 = RI(y_true, y_pred)
-		res4 = Accuracy(y_true, y_pred)
-		res5 = Fscore(y_true, y_pred) #Adapted Rand Error
-
-		Vrand_split, Vrand_merge, Rand_Fscore, Vinfo_split, Vinfo_merge, InformationTheoreticFscore = CrowdsourcingMetrics(y_true, y_pred)
-		print(mask_name_label_list[index_label_name], rez, rez2, res3, res4, 1-res5, res5)
-		json_list.append([mask_name_label_list[index_label_name], rez, rez2, res3, res4, 1-res5, res5, Vrand_split, Vrand_merge, Rand_Fscore, Vinfo_split, Vinfo_merge, InformationTheoreticFscore])
-
-		cv2.waitKey(0)
-		cv2.destroyAllWindows()
-
-	with open(result_CNN_dir[i] + "/result_"+result_CNN_json_name[i]+ ".json", 'w') as file:
-		json.dump(json_list, file)
+TestsMetricDir()

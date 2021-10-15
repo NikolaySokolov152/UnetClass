@@ -33,7 +33,7 @@ myGene = get_train_generator_data(dir_img_name = 'data/train/original',
                                   save_to_dir = None, #"data/myltidata/train4/temp",
                                   seed = 1,
                                   )
-
+print("now")
 count = 0
 for elem in myGene:
     x,y = elem
@@ -48,4 +48,26 @@ for elem in myGene:
         #    cv2.imshow("test Y_" + mask_name_label_list[j],  y[i][:,:,j])
     cv2.waitKey()
     count+=1
+
+from AGCWD import*
+
+#filedir = "data/original data/original"
+filedir = "G:\HDD D\данные с митохондриями\Новые данные/nanoproject\work\_01_K_Brain"
+for image_name in os.listdir(filedir):
+    if is_img(image_name):
+        img = io.imread(os.path.join(filedir, image_name)) #, as_gray=True)
+        #img = cv2.imread(os.path.join(filedir, image_name))
+
+        print(img.shape)
+        if len(img.shape) == 3:
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        img = img[:512,:]
+
+
+        corect_img = agcwd(img)
+        print(corect_img.shape)
+        cv2.imshow("test orig_"+image_name,  img)
+        cv2.imshow("test AGCWD_"+image_name,  corect_img)
+        cv2.waitKey()
+        cv2.destroyAllWindows()
 

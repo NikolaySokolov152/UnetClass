@@ -6,6 +6,9 @@ import numpy as np
 import os
 import time
 
+import skimage.io as io
+from AGCWD import*
+
 #borders
 #mitochondria
 #mitochondria borders
@@ -47,9 +50,11 @@ for i in range(len(size_data_arr)):
 	for img_name in os.listdir(dir_input_img):
 		count = 0
 		if is_Img(os.path.join(dir_input_img, img_name)):
-				img = cv2.imread(os.path.join(dir_input_img, img_name), 0)
+				img = io.imread(os.path.join(dir_input_img, img_name))
+				if len(img.shape) == 3:
+					img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+				img = agcwd(img)
 				h,w = img.shape[0:2]
-				
 				
 				if not os.path.isdir(out_dir+"/original"):
 					print("создаю out_dir:" + "original")

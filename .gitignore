@@ -14,7 +14,11 @@ relabling/
 result/
 журнал обучения/
 *.xcf
-
+train/
+cutting data/
+*.zip
+testTest/
+testTestMask/
 delete data experiment
 unet_myltidata*
 

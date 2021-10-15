@@ -5,6 +5,8 @@ from data import *
 import skimage.io as io
 import numpy as np
 from splitImages import *
+from AGCWD import *
+
 
 #rgb
 any                 = [192, 192, 192]   #light-gray
@@ -42,9 +44,11 @@ def test(model_name, save_dir, num_class = 1, size_test_train = 12):
 def test_one_img(model_name, save_dir, img_name, filepath = "data/test", num_class = 1):
 
     model = unet(model_name, num_class = num_class)
-    
-    img = io.imread(os.path.join(filepath, img_name), as_gray=True)
 
+    img = io.imread(os.path.join(filepath, img_name))
+    if len(img.shape) == 3:
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    img = agcwd(img)
     img = to_0_1_format_img(img)
 
     img = trans.resize(img, (256,256))
@@ -86,10 +90,16 @@ def test_tiled(model_name, num_class, save_mask_dir,  filenames, filepath = "dat
     
     model = unet(model_name, num_class = num_class)
     
-    for img_name in filenames:
+    for i,img_name in enumerate(filenames):
+        print(i+1, "image is ", len(filenames))
 
-        img = io.imread(os.path.join(filepath, img_name), as_gray=True)
+        img = io.imread(os.path.join(filepath, img_name))
+        if len(img.shape) == 3:
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        img = agcwd(img)
         img = to_0_1_format_img(img)
+
+
     
         tiled_name = img_name.split('.')[0]
         tiled_arr, tile_info = split_image(img, tiled_name, save_dir, size, overlap, unique_area)
@@ -107,13 +117,13 @@ def test_tiled(model_name, num_class, save_mask_dir,  filenames, filepath = "dat
 
 
 def test_models():
-    list_CNN_name = ["my_unet_multidata_pe69_bs9_6class_no_test_v8_100ep.hdf5",
+    list_CNN_name = ["my_unet_multidata_pe76_bs9_5class_no_test_v2.hdf5",
                      "my_unet_multidata_pe70_bs10_6class_no_test_v9_last.hdf5",
                      "my_unet_multidata_pe69_bs9_6class_no_test_v8_100ep.hdf5",
                      "my_unet_multidata_pe76_bs9_6class_no_test_v2.hdf5"]
-    list_CNN_num_class = [6,6]
+    list_CNN_num_class = [5]
 
-    result_CNN_dir = ["data/result/my_unet_multidata_pe69_bs9_6class_no_test_v8_100ep",
+    result_CNN_dir = ["data/result/my_unet_multidata_pe76_bs9_5class_no_test_v2_2",
                       "data/result/my_unet_multidata_pe70_bs10_6class_no_test_v9_last",
                       "data/result/my_unet_multidata_pe69_bs9_6class_no_test_v8_100ep"]
 
@@ -135,9 +145,44 @@ def test_models():
                 img_name= "testing0000.png",
                 num_class = list_CNN_num_class[i])
 
-if __name__ == "__main__":
-    test_models()
+def test_models_all_dir():
+    list_CNN_name = ["my_unet_multidata_pe76_bs7_5class_v2.hdf5",
+                     "my_unet_multidata_pe69_bs9_5class_no_test_v3.hdf5",
+                     "my_unet_multidata_pe69_bs9_5class_no_test_v3.hdf5",
+                     "my_unet_multidata_pe76_bs9_6class_no_test_v2.hdf5"]
 
+    list_CNN_num_class = [5]
+
+    result_CNN_dir = ["data/result/Testing_my_unet_multidata_pe76_bs7_5class_v2_with_testing0000",
+                      "data/result/my_unet_multidata_pe70_bs10_6class_no_test_v9_last",
+                      "data/result/my_unet_multidata_pe69_bs9_6class_no_test_v8_100ep"]
+
+    overlap_list = [64]
+
+    filepath =  "data/testTest"
+    list_test_img_dir = os.listdir(os.path.join(filepath))
+
+    for i in range(len(list_CNN_num_class)):
+        print("predict ", list_CNN_name[i], " model")
+        for overlap in overlap_list:
+            print("     predict tiled with overlap: ", overlap)
+            test_tiled(model_name = list_CNN_name[i],
+                       num_class = list_CNN_num_class[i],
+                       save_mask_dir = result_CNN_dir[i] + "_" + str(overlap),
+                       overlap = overlap,
+                       filepath = filepath,
+                       filenames = list_test_img_dir)
+"""
+        print("     predict one img")
+        test_one_img(model_name= list_CNN_name[i],
+                save_dir= result_CNN_dir[i]+"_image_one",
+                img_name= "testing0000.png",
+                num_class = list_CNN_num_class[i])
+"""
+
+if __name__ == "__main__":
+    #test_models()
+    test_models_all_dir()
 
 
 

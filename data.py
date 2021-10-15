@@ -5,7 +5,6 @@ import skimage.io as io
 import skimage.transform as trans
 import cv2
 import os
-
 import tensorflow as tf
 print(tf.__version__)
 
@@ -26,6 +25,14 @@ def is_img(name):
         return True
     else:
         return False
+
+def to_0_1_format_img(in_img):
+    max_val = in_img[:,:].max()
+    if max_val <= 1:
+        return in_img
+    else:
+        out_img = in_img / 255
+        return out_img
 
 def read_name_list(input_derectory, delete_name = None):
     dir_name_list = sorted(os.listdir(input_derectory), key=len)
@@ -215,8 +222,9 @@ def testGenerator(test_path, name_list = [], save_dir = None, num_image = 30,tar
 
     for img_name in name_dir_list[0:num_image]:
         name_list.append(img_name)
-        img = io.imread(os.path.join(test_path, img_name),as_gray = as_gray)
-        img = img / 255
+        img = io.imread(os.path.join(test_path, img_name), as_gray = as_gray)
+
+        img = to_0_1_format_img(img)
         img = trans.resize(img,target_size)
         img = np.reshape(img,img.shape+(1,)) if (not flag_multi_class) else img
         img = np.reshape(img,(1,)+img.shape)
@@ -236,7 +244,7 @@ def labelVisualize(num_class, trust_percentage, color_dict,img):
     #    print(img_out.shape)
         for i in range(num_class):
             img_out[img[:,:,i] >= trust_percentage] = color_dict[i]
-        return img_out/255
+        return to_0_1_format_img(img_out)
 
 def saveResult(save_path,npyfile, namelist, trust_percentage = 0.9 ,flag_multi_class = False,num_class = 2):
     for i,item in enumerate(npyfile):

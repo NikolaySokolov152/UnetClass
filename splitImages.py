@@ -105,7 +105,7 @@ def glit_image(img_arr, out_size, tile_info, overlap = 64):
     '''
     size = img_arr[0].shape[0]
     h, w = out_size[0:2]
-    print(h,w)
+    #print(h,w)
     count_x = tile_info[1]
     count_y = tile_info[0]
     
