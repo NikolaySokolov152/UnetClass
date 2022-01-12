@@ -1,6 +1,9 @@
 from model import *
 from data import *
 
+from AGCWD import*
+
+
 #os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 num_class = 5
@@ -33,6 +36,22 @@ myGene = get_train_generator_data(dir_img_name = 'data/train/original',
                                   save_to_dir = None, #"data/myltidata/train4/temp",
                                   seed = 1,
                                   )
+filedir = "data/test"
+
+img = io.imread(os.path.join(filedir, "testing0000.png"))
+if len(img.shape) == 3:
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+img = agcwd(img)
+img = to_0_1_format_img(img)
+cv2.imshow("img", img.copy())
+
+img = trans.resize(img, (256,256))
+
+cv2.imshow("img2", img)
+img = np.reshape(img, (1,) + img.shape)
+print(img.shape)
+cv2.waitKey()
+
 print("now")
 count = 0
 for elem in myGene:
@@ -48,8 +67,6 @@ for elem in myGene:
         #    cv2.imshow("test Y_" + mask_name_label_list[j],  y[i][:,:,j])
     cv2.waitKey()
     count+=1
-
-from AGCWD import*
 
 #filedir = "data/original data/original"
 filedir = "G:\HDD D\данные с митохондриями\Новые данные/nanoproject\work\_01_K_Brain"

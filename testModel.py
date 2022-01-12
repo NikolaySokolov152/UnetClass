@@ -18,18 +18,6 @@ axon                = [192,128,64]      #yellow
 vesicles            = [255,0,0]         #read
 
 
-#GPU desable
-try:
-    # Disable all GPUS
-    tf.config.set_visible_devices([], 'GPU')
-    visible_devices = tf.config.get_visible_devices()
-    for device in visible_devices:
-        assert device.device_type != 'GPU'
-except:
-    # Invalid device or cannot modify virtual devices once initialized.
-    pass
-
-
 def test(model_name, save_dir, num_class = 1, size_test_train = 12):
    
     model = unet(model_name, num_class = num_class)
@@ -99,8 +87,6 @@ def test_tiled(model_name, num_class, save_mask_dir,  filenames, filepath = "dat
         img = agcwd(img)
         img = to_0_1_format_img(img)
 
-
-    
         tiled_name = img_name.split('.')[0]
         tiled_arr, tile_info = split_image(img, tiled_name, save_dir, size, overlap, unique_area)
     
@@ -146,20 +132,35 @@ def test_models():
                 num_class = list_CNN_num_class[i])
 
 def test_models_all_dir():
-    list_CNN_name = ["my_unet_multidata_pe76_bs7_5class_v2.hdf5",
+    list_CNN_name = [
+                     #"my_unet_multidata_pe69_bs9_1class_no_test_agcwd_v1.hdf5",
+                     "my_unet_multidata_pe69_bs9_1class_no_test_v1.hdf5",
+                     #"my_unet_multidata_pe69_bs9_5class_no_test_agcwd_v1.hdf5",
                      "my_unet_multidata_pe69_bs9_5class_no_test_v3.hdf5",
-                     "my_unet_multidata_pe69_bs9_5class_no_test_v3.hdf5",
-                     "my_unet_multidata_pe76_bs9_6class_no_test_v2.hdf5"]
+                     #"my_unet_multidata_pe69_bs9_6class_no_test_agcwd_v1.hdf5",
+                     "my_unet_multidata_pe69_bs9_6class_no_test_v8_100ep.hdf5"
+                    ]
 
-    list_CNN_num_class = [5]
+    list_CNN_num_class = [
+                          #1,
+                          1,
+                          #5,
+                          5,
+                          #6,
+                          6
+                          ]
 
-    result_CNN_dir = ["data/result/Testing_my_unet_multidata_pe76_bs7_5class_v2_with_testing0000",
-                      "data/result/my_unet_multidata_pe70_bs10_6class_no_test_v9_last",
-                      "data/result/my_unet_multidata_pe69_bs9_6class_no_test_v8_100ep"]
+    result_CNN_dir = [
+                      #"data/result/agcwd/my_unet_multidata_pe69_bs9_1class_no_test_agcwd_v1",
+                      "data/result/no_agcwd/my_unet_multidata_pe69_bs9_1class_no_test_v1",
+                      #"data/result/agcwd/my_unet_multidata_pe69_bs9_5class_no_test_agcwd_v1",
+                      "data/result/no_agcwd/my_unet_multidata_pe69_bs9_5class_no_test_v3",
+                      #"data/result/agcwd/my_unet_multidata_pe69_bs9_6class_no_test_agcwd_v1",
+                      "data/result/no_agcwd/my_unet_multidata_pe69_bs9_6class_no_test_v8_100ep"]
 
     overlap_list = [64]
 
-    filepath =  "data/testTest"
+    filepath =  "data/test"
     list_test_img_dir = os.listdir(os.path.join(filepath))
 
     for i in range(len(list_CNN_num_class)):
@@ -171,7 +172,7 @@ def test_models_all_dir():
                        save_mask_dir = result_CNN_dir[i] + "_" + str(overlap),
                        overlap = overlap,
                        filepath = filepath,
-                       filenames = list_test_img_dir)
+                       filenames = list_test_img_dir) #, save_dir= "data/split test/")
 """
         print("     predict one img")
         test_one_img(model_name= list_CNN_name[i],
