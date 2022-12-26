@@ -54,8 +54,13 @@ cv2.waitKey()
 
 print("now")
 count = 0
+
+print(type(myGene))
 for elem in myGene:
+    print(type(elem))
     x,y = elem
+    print(type(x), type(y))
+    
     print(x.shape, " ", y.shape)
 
     for i in range(x.shape[0]):

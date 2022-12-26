@@ -25,141 +25,108 @@ def viewImage(image, name_of_window):
     #cv2.destroyAllWindows()
 
 def jaccard(x,y):
-  error = 0.0000001
-  x = np.asarray(x, bool) # Not necessary, if you keep your data
-  y = np.asarray(y, bool) # in a boolean array already!
-  return np.double(np.bitwise_and(x, y).sum()+error) / np.double(np.bitwise_or(x, y).sum()+error)
+  x = np.asarray(x, np.bool) # Not necessary, if you keep your data
+  y = np.asarray(y, np.bool) # in a boolean array already!
+  return np.double(np.bitwise_and(x, y).sum()) / np.double(np.bitwise_or(x, y).sum())
 
 def dice(y_true, y_pred):
-    error = 0.0000001
-    y_true = np.asarray(y_true, bool)  # Not necessary, if you keep your data
-    y_pred = np.asarray(y_pred, bool)  # in a boolean array already!
+    y_true = np.asarray(y_true, np.bool)  # Not necessary, if you keep your data
+    y_pred = np.asarray(y_pred, np.bool)  # in a boolean array already!
     intersection = np.double(np.bitwise_and(y_true, y_pred).sum())
     #print(2 * intersection, len(y_true) + len(y_pred), 1024*768)
     #print(intersection)
-    return (2. * intersection + error) / ((y_true.sum()) + (y_pred.sum())+ error)
+    return (2. * intersection) / ((y_true.sum()) + (y_pred.sum()))
     
 def RI(y_true, y_pred):
-    try:
-        y_true = np.asarray(y_true, bool)
-        y_pred = np.asarray(y_pred, bool)
+    y_true = np.asarray(y_true, np.bool)
+    y_pred = np.asarray(y_pred, np.bool)
+    
+    y_true = np.asarray(y_true, np.int32)
+    y_pred = np.asarray(y_pred, np.int32)
+    
+    #print(y_true.sum())
+    #print(y_pred.sum())
         
-        y_true = np.asarray(y_true, np.int32)
-        y_pred = np.asarray(y_pred, np.int32)
+    TN, FP, FN, TP = sklearn.metrics.confusion_matrix(y_true, y_pred).ravel()
+    
+    #print (TN, FP, FN, TP)
+    
+    n = len(y_true)
+    
+    a = 0.5 *(TP*(TP-1)+FP*(FP-1)+TN*(TN-1)+FN*(FN-1))
+    
+    b = 0.5 *((TP+FN)**2 + (TN+FP)**2 - (TP**2+ TN**2+ FP**2+ FN**2))
+    
+    #print(TP, TP**2, TN, TN**2, FP, FP**2, FN, FN**2)
+    
+    c = 0.5 *((TP+FP)**2 + (TN+FN)**2 - (TP**2+ TN**2+ FP**2+ FN**2))
+    
+    d = n*(n-1)/2 - (a+b+c)
         
-        #print(y_true.sum())
-        #print(y_pred.sum())
-            
-        TN, FP, FN, TP = sklearn.metrics.confusion_matrix(y_true, y_pred).ravel()
-        
-        #print (TN, FP, FN, TP)
-        
-        n = len(y_true)
-        
-        a = 0.5 *(TP*(TP-1)+FP*(FP-1)+TN*(TN-1)+FN*(FN-1))
-        
-        b = 0.5 *((TP+FN)**2 + (TN+FP)**2 - (TP**2+ TN**2+ FP**2+ FN**2))
-        
-        #print(TP, TP**2, TN, TN**2, FP, FP**2, FN, FN**2)
-        
-        c = 0.5 *((TP+FP)**2 + (TN+FN)**2 - (TP**2+ TN**2+ FP**2+ FN**2))
-        
-        d = n*(n-1)/2 - (a+b+c)
-            
-        RI = (a+b)/(a+b+c+d)
-    except:
-        print("RI EXEPTION")
-        RI = 0
+    RI = (a+b)/(a+b+c+d)
         
     return RI
 
 def Accuracy(y_true, y_pred):
 
-    try:
-        y_true = np.asarray(y_true, bool)
-        y_pred = np.asarray(y_pred, bool)
+    y_true = np.asarray(y_true, np.bool)
+    y_pred = np.asarray(y_pred, np.bool)
+    
+    y_true = np.asarray(y_true, np.int32)
+    y_pred = np.asarray(y_pred, np.int32)
+    
+    #print(y_true.sum())
+    #print(y_pred.sum())
         
-        y_true = np.asarray(y_true, np.int32)
-        y_pred = np.asarray(y_pred, np.int32)
+    TN, FP, FN, TP = sklearn.metrics.confusion_matrix(y_true, y_pred).ravel()
         
-        #print(y_true.sum())
-        #print(y_pred.sum())
-            
-        TN, FP, FN, TP = sklearn.metrics.confusion_matrix(y_true, y_pred).ravel()
-            
-        accuracy = float(TN + TP)/(TN + TP+ FN + FP)
-            
-    except:
-        print("Accuracy EXEPTION")
-        accuracy = 0
-         
-      
-    return accuracy
+    Accuracy = float(TN + TP)/(TN + TP+ FN + FP)
+        
+    return Accuracy
     
 def Precition(y_true, y_pred):
+
+    y_true = np.asarray(y_true, np.bool)
+    y_pred = np.asarray(y_pred, np.bool)
     
-    try:
-        y_true = np.asarray(y_true, bool)
-        y_pred = np.asarray(y_pred, bool)
+    y_true = np.asarray(y_true, np.int32)
+    y_pred = np.asarray(y_pred, np.int32)
+            
+    TN, FP, FN, TP = sklearn.metrics.confusion_matrix(y_true, y_pred).ravel()
         
-        y_true = np.asarray(y_true, np.int32)
-        y_pred = np.asarray(y_pred, np.int32)
-                
-        TN, FP, FN, TP = sklearn.metrics.confusion_matrix(y_true, y_pred).ravel()
-        
-        precition = float(TP)/(TP+FP)
-        
-    except:
-        print("Precition EXEPTION")
-        precition = 0
-        
-    return precition
+    return float(TP)/(TP+FP)
     
 def Recall(y_true, y_pred):
 
-    try:
-        y_true = np.asarray(y_true, bool)
-        y_pred = np.asarray(y_pred, bool)
-        
-        y_true = np.asarray(y_true, np.int32)
-        y_pred = np.asarray(y_pred, np.int32)
+    y_true = np.asarray(y_true, np.bool)
+    y_pred = np.asarray(y_pred, np.bool)
+    
+    y_true = np.asarray(y_true, np.int32)
+    y_pred = np.asarray(y_pred, np.int32)
+            
+    TN, FP, FN, TP = sklearn.metrics.confusion_matrix(y_true, y_pred).ravel()
                 
-        TN, FP, FN, TP = sklearn.metrics.confusion_matrix(y_true, y_pred).ravel()
-        
-        recall = float(TP)/(TP+FN)
-    except:
-        print("Recall EXEPTION")
-        recall = 0
-                
-    return recall
+    return float(TP)/(TP+FN)
     
 def Fscore(y_true, y_pred):
 
-    try:
-
-        y_true = np.asarray(y_true, bool)
-        y_pred = np.asarray(y_pred, bool)
-        
-        y_true = np.asarray(y_true, np.int32)
-        y_pred = np.asarray(y_pred, np.int32)
-        
-        #print(y_true.sum())
-        #print(y_pred.sum())
-        precition = Precition(y_true, y_pred)    
-        recall = Recall(y_true, y_pred) 
-
-        fscore = (2*precition*recall)/(precition+recall)
+    y_true = np.asarray(y_true, np.bool)
+    y_pred = np.asarray(y_pred, np.bool)
     
-    except:
-        print("Fscore EXEPTION")
-        fscore = 0
-                
-    return fscore
+    y_true = np.asarray(y_true, np.int32)
+    y_pred = np.asarray(y_pred, np.int32)
+    
+    #print(y_true.sum())
+    #print(y_pred.sum())
+    precition = Precition(y_true, y_pred)    
+    recall = Recall(y_true, y_pred)    
+    
+    return (2*precition*recall)/(precition+recall)
 
 
 def CrowdsourcingMetrics(y_true, y_pred):
-    y_true = np.asarray(y_true, bool)
-    y_pred = np.asarray(y_pred, bool)
+    y_true = np.asarray(y_true, np.bool)
+    y_pred = np.asarray(y_pred, np.bool)
 
     y_true = np.asarray(y_true, np.int16)
     y_pred = np.asarray(y_pred, np.int16)
@@ -329,83 +296,33 @@ def TestsMetric():
 
 
 def deleteZero_and_predict_mask(name):
-    rename = name.replace('predict_','')
+    rename = name.replace('predict_mask','')
     while rename[0] == '0' and len(rename) > 5:
         rename = rename[1:]
     return rename
 
 
-def TestsMetricDir(data = None, CNN_name = None, list_CNN_num_class = None, overlap = 64):
+def TestsMetricDir():
     mask_name_label_list = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"]
 
-    if data is None:
-        data = "2022_11_16"
+    list_CNN_num_class = [6,5,1]
 
-    if CNN_name is None:
-        CNN_name = [
-                    "real_data_256_full_unet_6_num_class_27_slices",
-                    "real_data_256_tiny_unet_5_num_class_27_slices",
-                    "real_data_256_tiny_unet_5_num_class_27_slices_AdamW",
-                    "real_data_256_tiny_unet_5_num_class_27_slices_AdamW_v2",
-                    "real_data_256_tiny_unet_5_num_class_27_slices_AdamW_v3",
-                    "real_data_256_tiny_unet_5_num_class_27_slices_v3",
-                    "real_data_256_tiny_unet_6_num_class_27_slices",
-                    "real_data_256_tiny_unet_6_num_class_27_slices_AdamW",
-                    "real_data_256_tiny_unet_6_num_class_27_slices_AdamW_v2",
-                    "real_data_256_tiny_unet_6_num_class_27_slices_AdamW_v3",
-                    "real_data_256_tiny_unet_6_num_class_27_slices_no_noise_no_zoom",
-                    "real_data_256_tiny_unet_6_num_class_27_slices_v3",
-                    "real_data_256_unet_6_num_class_27_slices_no_noise_no_zoom_v2",
-                    "real_data_256_unet_6_num_class_27_slices_no_noise_no_zoom_v3_new_gen",
-                    "real_data_256_unet_6_num_class_27_slices_no_noise_no_zoom_v3_new_gen_adamW",
-                    "real_data_256_unet_6_num_class_27_slices_no_noise_no_zoom_v3_new_gen_adamW_lr0001",
-                    "real_data_256_unet_6_num_class_27_slices_no_noise_no_zoom_v3_new_gen_adamW_lr001",
-                    "real_data_256_unet_6_num_class_27_slices_no_noise_no_zoom_v3_new_gen_adamW_lr001_v2",
-                    "real_data_256_unet_6_num_class_27_slices_no_noise_no_zoom_v3_new_gen_novorad"                      
-                   ]
-
-    if list_CNN_num_class is None:
-        list_CNN_num_class = [
-                              6,
-                              5,
-                              5,
-                              5,
-                              5,
-                              5,
-                              6,
-                              6,
-                              6,
-                              6,
-                              6,
-                              6,
-                              6,
-                              6,
-                              6,
-                              6,
-                              6,
-                              6,
-                              6,
-                              ]
-
-    result_CNN_dir = []
-    
-    for i in range(len(list_CNN_num_class)):
-        save_name = "data/result/" + data + "/" + str(list_CNN_num_class[i]) + "_class/" + CNN_name[i]
-        result_CNN_dir.append(save_name)
-
-    result_CNN_json_name = []
-    
-    for i in range(len(list_CNN_num_class)):
-        CNN_json_name = "CNN_" + str(list_CNN_num_class[i])
-        result_CNN_json_name.append(CNN_json_name)
+    result_CNN_dir = [
+                      "data/result/16_01_2022_new_unet_train_sintetic_lowlr_1000ep_6_classes_all_mito_64",
+                      "data/result/16_01_2022_new_unet_train_sintetic_lowlr_1000ep_5_classes_all_mito_64",
+                      "data/result/16_01_2022_new_unet_train_sintetic_lowlr_200ep_1_class_all_mito_64",
+                      ]
 
 
-    save_name_and_dice_result = []
+    result_CNN_json_name = ["CNN_6",
+                            "CNN_5",
+                            "CNN_1",
+                            "CNN_5",
+                            "CNN_6",
+                            "CNN_6"
+                            ]
 
     for i in range(len(list_CNN_num_class)):
-    
-        save_one_model_info = [CNN_name[i]]
-
         num_class = list_CNN_num_class[i]
         print(result_CNN_json_name[i])
 
@@ -417,13 +334,13 @@ def TestsMetricDir(data = None, CNN_name = None, list_CNN_num_class = None, over
         str_tabel_all = str_tabel
 
         index_name = 0
-        for index_label_name in range(num_class):
-            list_name = os.listdir(os.path.join(result_CNN_dir[i] + "_" + str(overlap), mask_name_label_list[index_label_name]))
+        for index_label_name in range(1):
+            list_name = os.listdir(os.path.join(result_CNN_dir[i], mask_name_label_list[index_label_name]))
             json_temp = []
             for num,testName in enumerate(list_name):
                 print(num + 1, "image is ", len(list_name))
 
-                dir_etal = os.path.join("data", "original data/testing", mask_name_label_list[index_label_name], deleteZero_and_predict_mask(testName))
+                dir_etal = os.path.join("data", "testTestMask/", deleteZero_and_predict_mask(testName))
 
                 etal = io.imread(dir_etal, as_gray=True)
                 etal = to_0_255_format_img(etal)
@@ -432,7 +349,7 @@ def TestsMetricDir(data = None, CNN_name = None, list_CNN_num_class = None, over
 
                 test_img_name = "predict_" + testName
 
-                test_img_dir = os.path.join(os.path.join(result_CNN_dir[i]+ "_" + str(overlap), mask_name_label_list[index_label_name]), testName)
+                test_img_dir = os.path.join(os.path.join(result_CNN_dir[i], mask_name_label_list[index_label_name]), testName)
 
                 img = io.imread(test_img_dir, as_gray=True)
 
@@ -487,14 +404,14 @@ def TestsMetricDir(data = None, CNN_name = None, list_CNN_num_class = None, over
                 # print(Vrand_split, Vrand_merge, Rand_Fscore, Vinfo_split, Vinfo_merge, InformationTheoreticFscore)
 
                 if len (json_temp) == 0:
-                    json_temp.append([mask_name_label_list[index_label_name].replace(' ', '_'), rez, rez2, res3, res4, 1 - res5, res5, Vrand_split, Vrand_merge, Rand_Fscore, Vinfo_split, Vinfo_merge, InformationTheoreticFscore])
+                    json_temp.append([mask_name_label_list[index_label_name], rez, rez2, res3, res4, 1 - res5, res5, Vrand_split, Vrand_merge, Rand_Fscore, Vinfo_split, Vinfo_merge, InformationTheoreticFscore])
 
                 else:
-                    t_list = [mask_name_label_list[index_label_name].replace(' ', '_'), rez, rez2, res3, res4, 1 - res5, res5, Vrand_split, Vrand_merge, Rand_Fscore, Vinfo_split, Vinfo_merge, InformationTheoreticFscore]
+                    t_list = [mask_name_label_list[index_label_name], rez, rez2, res3, res4, 1 - res5, res5, Vrand_split, Vrand_merge, Rand_Fscore, Vinfo_split, Vinfo_merge, InformationTheoreticFscore]
                     for j in range(1, len(json_temp[0])):
                         json_temp[0][j] += t_list[j]
 
-                for one_str in [index_name, mask_name_label_list[index_label_name].replace(' ', '_'), rez, rez2, res3, res4, 1 - res5, res5, Vrand_split, Vrand_merge, Rand_Fscore, Vinfo_split, Vinfo_merge, InformationTheoreticFscore]:
+                for one_str in [index_name, mask_name_label_list[index_label_name], rez, rez2, res3, res4, 1 - res5, res5, Vrand_split, Vrand_merge, Rand_Fscore, Vinfo_split, Vinfo_merge, InformationTheoreticFscore]:
                     str_tabel_all += str(one_str) + " "
                 str_tabel_all += '\n'
 
@@ -504,54 +421,14 @@ def TestsMetricDir(data = None, CNN_name = None, list_CNN_num_class = None, over
                 json_temp[0][j] /= len(list_name)
 
             for len_str in json_temp:
-                save_one_model_info.append(len_str)
                 for one_str in len_str:
                     str_tabel += str(one_str) + " "
                 str_tabel += '\n'
-                
 
-            with open(result_CNN_dir[i]+ "_" + str(overlap) + "/result_" + result_CNN_json_name[i] + ".txt", 'w') as file_mean:
+            with open(result_CNN_dir[i] + "/result_" + result_CNN_json_name[i] + ".txt", 'w') as file_mean:
                 file_mean.write(str_tabel)
-            with open(result_CNN_dir[i]+ "_" + str(overlap) + "/result_" + result_CNN_json_name[i] + "ALL.txt", 'w') as file_all:
+            with open(result_CNN_dir[i] + "/result_" + result_CNN_json_name[i] + "ALL.txt", 'w') as file_all:
                 file_all.write(str_tabel_all)
-                
-        save_name_and_dice_result.append(save_one_model_info)
 
-    
-    
-    for save_one_model_info in save_name_and_dice_result:
-        model_name = save_one_model_info[0]
-        len_classes = len(save_one_model_info) - 1
 
-        len_name = len(model_name)
-            
-        num_tab = (50 - len_name) // 4
-        
-        str_tab = ''
-        for t in range(num_tab):
-            str_tab += '\t'
-       
-        str_dice = ''
-        
-        for c in range(len_classes):
-            str_dice +=  " " + str(save_one_model_info[c+1][2])
-
-        print (model_name + str_tab + str_dice)
-        
-    all_names = 'class/name'
-    for i in range(len(save_name_and_dice_result)):
-        all_names += save_name_and_dice_result[i][0] + " "
-    print(all_names)
-    
-    for k in range(6):
-        class_info = "class_" + str(k) + ": "
-        for i in range(len(save_name_and_dice_result)):
-            if len(save_name_and_dice_result[i]) - 1 > k:
-                class_info += str(save_name_and_dice_result[i][k+1][2]) + " "
-            else:
-                class_info += " "
-        
-        print(class_info) 
-
-if __name__ == "__main__":
-    TestsMetricDir()
+TestsMetricDir()

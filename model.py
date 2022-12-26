@@ -5,7 +5,6 @@ import keras
 
 from keras.utils.vis_utils import plot_model
 import os
-os.environ["PATH"] += os.pathsep + 'C:/Program Files (x86)/Graphviz2.38/bin/'
 
 def unet(pretrained_weights = None,input_size = (256,256,1), num_class = 2):
     inputs = Input(input_size)

@@ -1,14 +1,12 @@
-#from model import *
-#from model_tiny import *
 from model import *
 from data import *
-
-import keras
 
 # import json
 import skimage.io as io
 import numpy as np
 from splitImages import *
+from AGCWD import *
+
 
 #rgb
 any                 = [192, 192, 192]   #light-gray
@@ -22,7 +20,7 @@ vesicles            = [255,0,0]         #read
 
 def test(model_name, save_dir, num_class = 1, size_test_train = 12):
    
-    model = unet(model_name, num_class = num_class)
+    model = keras.models.load_model(model_name, compile = False)
     name_list = []
     testGene = testGenerator(test_path = "data/test", name_list = name_list, save_dir = save_dir,\
                               num_image = size_test_train, flag_multi_class = True)
@@ -33,12 +31,12 @@ def test(model_name, save_dir, num_class = 1, size_test_train = 12):
 
 def test_one_img(model_name, save_dir, img_name, filepath = "data/test", num_class = 1):
 
-    model = unet(model_name, num_class = num_class)
+    model = keras.models.load_model(model_name, compile = False)
 
     img = io.imread(os.path.join(filepath, img_name))
     if len(img.shape) == 3:
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    img = agcwd(img)
+    
     img = to_0_1_format_img(img)
 
     img = trans.resize(img, (256,256))
@@ -77,7 +75,7 @@ def glit_mask(tiled_masks, num_class, out_size, tile_info, overlap = 64):
 
 #main tailing function
 def test_tiled(model_name, num_class, save_mask_dir,  filenames, filepath = "data/test", size = 256, overlap = 64, save_dir = None, unique_area = 0):
-        
+    
     model = keras.models.load_model(model_name, compile = False)
     
     for i,img_name in enumerate(filenames):
@@ -105,15 +103,33 @@ def test_tiled(model_name, num_class, save_mask_dir,  filenames, filepath = "dat
 
 
 def test_models():
-    list_CNN_name = ["my_unet_multidata_pe76_bs9_5class_no_test_v2.hdf5",
-                     "my_unet_multidata_pe70_bs10_6class_no_test_v9_last.hdf5",
-                     "my_unet_multidata_pe69_bs9_6class_no_test_v8_100ep.hdf5",
-                     "my_unet_multidata_pe76_bs9_6class_no_test_v2.hdf5"]
-    list_CNN_num_class = [5]
+    data = "2022_11_16"
 
-    result_CNN_dir = ["data/result/my_unet_multidata_pe76_bs9_5class_no_test_v2_2",
-                      "data/result/my_unet_multidata_pe70_bs10_6class_no_test_v9_last",
-                      "data/result/my_unet_multidata_pe69_bs9_6class_no_test_v8_100ep"]
+    CNN_name = [
+                #"real_data_256_tiny_unet_5_num_class_27_slices",
+                #"real_data_256_tiny_unet_5_num_class_27_slices_v3",
+                "real_data_256_unet_6_num_class_27_slices_no_noise_no_zoom_v2",
+                #"real_data_256_unet_6_num_class_27_slices_no_noise_no_zoom_v3_new_gen"            
+               ]
+     
+    list_CNN_name = []
+     
+    for name in CNN_name:
+        change_name = "обучение " + data + "/" + name + ".hdf5"  
+        list_CNN_name.append(change_name)
+
+    list_CNN_num_class = [
+                          #5,
+                          #5,
+                          #6,
+                          #6
+                          ]
+
+    result_CNN_dir = []
+    
+    for i in range(len(CNN_name)):
+        save_name = "data/result_all_slices/" + data + "/" + str(list_CNN_num_class[i]) + "_class/" + CNN_name[i]
+        result_CNN_dir.append(save_name)
 
     overlap_list = [64]
 
@@ -133,34 +149,16 @@ def test_models():
                 img_name= "testing0000.png",
                 num_class = list_CNN_num_class[i])
 
-
-from testMetrics import TestsMetricDir
-
 def test_models_all_dir():
-
-    data = "2022_12_23"
+    data = "2022_11_16"
 
     CNN_name = [
-                "model_by_config1_2_1_classes_unet_sintetic",
-                "model_by_config2_2_1_classes_tiny_unet_v3_sintetic",
-                "model_by_config3_2_1_classes_mobile_unet_v2_sintetic",
-                "model_by_config1_2_5_classes_unet_sintetic",
-                "model_by_config2_2_5_classes_tiny_unet_v3_sintetic",
-                "model_by_config3_2_5_classes_mobile_unet_v2_sintetic",
-                "model_by_config1_2_6_classes_unet_sintetic",
-                "model_by_config2_2_6_classes_tiny_unet_v3_sintetic",
-                "model_by_config3_2_6_classes_mobile_unet_v2_sintetic"
-                #"model_by_loss_config1_1_classes_unet_loss dice_distance",
-                #"model_by_loss_config2_1_classes_unet_loss BCE",
-                #"model_by_loss_config3_1_classes_unet_loss dice_distance and BCE",
-                #"model_by_loss_config1_5_classes_unet_loss dice_distance",
-                #"model_by_loss_config2_5_classes_unet_loss BCE",
-                #"model_by_loss_config3_5_classes_unet_loss dice_distance and BCE",
-                #"model_by_loss_config1_6_classes_unet_loss dice_distance",
-                #"model_by_loss_config2_6_classes_unet_loss BCE",
-                #"model_by_loss_config3_6_classes_unet_loss dice_distance and BCE"
+                #"real_data_256_tiny_unet_5_num_class_27_slices",
+                #"real_data_256_tiny_unet_5_num_class_27_slices_v3",
+                "real_data_256_unet_6_num_class_27_slices_no_noise_no_zoom_v2",
+                #"real_data_256_unet_6_num_class_27_slices_no_noise_no_zoom_v3_new_gen"            
                ]
-    
+     
     list_CNN_name = []
      
     for name in CNN_name:
@@ -168,35 +166,21 @@ def test_models_all_dir():
         list_CNN_name.append(change_name)
 
     list_CNN_num_class = [
-                          #6,
                           #5,
-                          #1,
-                          #6,
                           #5,
-                          #1,
-                          #6,
-                          #5,
-                          #1,
-                          1,
-                          1,
-                          1,
-                          5,
-                          5,
-                          5,
                           6,
-                          6,
-                          6
+                          #6
                           ]
 
     result_CNN_dir = []
     
     for i in range(len(CNN_name)):
-        save_name = "data/result/" + data + "/" + str(list_CNN_num_class[i]) + "_class/" + CNN_name[i]
+        save_name = "data/result_all_slices/" + data + "/" + str(list_CNN_num_class[i]) + "_class/" + CNN_name[i]
         result_CNN_dir.append(save_name)
 
-    overlap_list = [128]
+    overlap_list = [64]
 
-    filepath =  "data/test"
+    filepath =  "data/train slices"
     list_test_img_dir = os.listdir(os.path.join(filepath))
     list_test_img_dir = [name for name in list_test_img_dir if name.endswith(".png") ]
 
@@ -210,10 +194,6 @@ def test_models_all_dir():
                        overlap = overlap,
                        filepath = filepath,
                        filenames = list_test_img_dir) #, save_dir= "data/split test/")
-
-
-
-    TestsMetricDir(data, CNN_name, list_CNN_num_class, overlap = 128)
 """
         print("     predict one img")
         test_one_img(model_name= list_CNN_name[i],
@@ -221,7 +201,6 @@ def test_models_all_dir():
                 img_name= "testing0000.png",
                 num_class = list_CNN_num_class[i])
 """
-
 
 if __name__ == "__main__":
     #test_models()

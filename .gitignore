@@ -12,9 +12,12 @@ v2
 testMetrics/
 relabling/
 result/
+data/result*
+data/результаты*
 журнал обучения/
+обучение*
 *.xcf
-train/
+train*
 cutting data/
 *.zip
 testTest/
