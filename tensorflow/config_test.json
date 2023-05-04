@@ -1,0 +1,63 @@
+{
+    "experiment_data": "2022_12_22",
+    
+    "augmentation":{
+        "rotation_range": 7,
+        "width_shift_range": 0.05,
+        "height_shift_range": 0.05,
+        "zoom_range": 0.2,
+        "horizontal_flip": true,
+        "vertical_flip": true,
+        "noise_limit": 3,
+        "fill_mode": 0
+    },
+
+    "save_inform": {
+        "save_to_dir":       null,
+        "save_prefix_image": "image_",
+        "save_prefix_mask":  "mask_",
+        "save_prefix_model": "",
+        "save_suffix_model": "move"
+    },
+
+    "model" : {
+        "type_model": "mobile_unet_v2",
+        "optimizer": "Adam",
+        "loss": "lovasz"
+    },
+
+    "train": {
+        "dir_img_path": "G:/Data/Unet_multiclass/data/cutting data/original",
+        "dir_mask_path_without_name":"G:/Data/Unet_multiclass/data/cutting data/",
+        "mask_name_label_list": ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"],
+        "num_class": 6,
+        "batch_size": 3,
+        "num_epochs": 1
+    },
+
+    "data_info": {
+        "add_mask_prefix": ""
+    },
+
+    "img_transform_data": {
+        "color_mode_img": "gray",
+        "mode_mask": "separated",
+        "target_size": [256, 256]
+    },
+
+    "generator_config": {
+        "type_gen": "default",
+        "augment": true,
+        "tailing": false,
+        "shuffle": true,
+        "mode": "train",
+        "seed": 42,
+        "subsampling": "random",
+        "share_validat": 0.2
+    },
+    
+    "debug_mode": false,
+    "move_to_date_folder": true
+}
+
+
