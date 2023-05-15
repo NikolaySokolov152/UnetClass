@@ -40,7 +40,7 @@ class LossMulticlass():
         for i in range(self.num_classes):
             dice += self.loss_class(y_pred[:,i,:,:], y_true[:,i,:,:])
 
-        return dice
+        return dice/self.num_classes
 
 def getLossByName(name_loss, num_classes = 1, last_activation = "sigmoid_activation"):
     calculate_stable_loss = False

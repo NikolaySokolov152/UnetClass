@@ -1,0 +1,5 @@
+{
+  "experiment_data": "Lars_test_2023_05_10",
+  "config_path": "configs/test_loss_activation/config_real.json",
+  "list_experiments": ["trainMultipleActivation", "trainMultipleLoss"]
+}

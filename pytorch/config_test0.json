@@ -17,8 +17,8 @@
         "save_to_dir":       null,
         "save_prefix_image": "image_",
         "save_prefix_mask":  "mask_",
-        "save_prefix_model": "_&_",
-        "save_suffix_model": "_!_"
+        "save_prefix_model": "&",
+        "save_suffix_model": "!"
     },
 
     "model" : {
@@ -27,8 +27,8 @@
     },
 
     "train": {
-        "dir_img_path": "C:/Users/Sokol-PC/Synthetics/dataset/fake_synthetic_layer/original",
-        "dir_mask_path_without_name":"C:/Users/Sokol-PC/Synthetics/dataset/fake_synthetic_layer/",
+        "dir_img_path": "C:/Users/Sokol-PC/Synthetics/dataset/test_gen/original",
+        "dir_mask_path_without_name":"C:/Users/Sokol-PC/Synthetics/dataset/test_gen/",
         "mask_name_label_list": ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"],
         "num_class": 6,
         "batch_size": 1,

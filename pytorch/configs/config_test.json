@@ -17,24 +17,24 @@
         "save_to_dir":       null,
         "save_prefix_image": "image_",
         "save_prefix_mask":  "mask_",
-        "save_prefix_model": "",
-        "save_suffix_model": "move"
+        "save_prefix_model": "~",
+        "save_suffix_model": "&"
     },
 
     "model" : {
         "type_model": "tiny_unet_v3",
-        "last_activation": "linear_activation"
+        "last_activation": "sigmoid_activation"
     },
 
     "train": {
-        "dir_img_path": "G:/Data/Unet_multiclass/data/cutting data/original",
+        "dir_img_path":              "G:/Data/Unet_multiclass/data/cutting data/original",
         "dir_mask_path_without_name":"G:/Data/Unet_multiclass/data/cutting data/",
         "mask_name_label_list": ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"],
-        "num_class": 6,
+        "num_class": 3,
         "batch_size": 7,
-        "num_epochs": 1,
+        "num_epochs": 3,
         "optimizer": "Adam",
-        "loss": "DiceLossMulticlass",
+        "loss": "DiceLoss",
         "seed": 42
     },
 

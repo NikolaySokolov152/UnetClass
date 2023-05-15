@@ -6,7 +6,7 @@ import math
 
 import sklearn.metrics
 
-############################################### доделать сохранение метрик в файл
+############################################### передлелать структуру, вынеся сами метрики в отдельный файл
 
 def to_0_255_format_img(in_img):
     max_val = in_img[:, :].max()
@@ -291,6 +291,44 @@ def GetTestMetric(model_name, result_mertic_data, using_metrics, is_print = True
             print(text_metrics)
     return text_metrics, text_metrics_all
 
+def GetFinalTestMetricForExcel(dict_results_mertics_data, using_metrics, class_names, is_print = True):
+
+    text_metrics = "Model "
+    for class_name in class_names:
+        text_metrics += f" {class_name.replace(' ', '_')}"
+    text_metrics += '\n'
+
+    for model_name in dict_results_mertics_data.keys():
+        result_mertic_data = dict_results_mertics_data[model_name]
+
+        #[imgs{classnames[metric[]]}] -> {metric{classnames[imgs]}}
+        dict_metrics = {}
+
+        for class_name_and_metrics in result_mertic_data:
+            for class_name, metrics in class_name_and_metrics.items():
+                for metric_id, metric in enumerate(metrics):
+                    metric_name = using_metrics[metric_id].__name__
+                    if not metric_name in dict_metrics.keys():
+                        dict_metrics[metric_name] = {}
+
+                    if not class_name in dict_metrics[metric_name].keys():
+                        dict_metrics[metric_name][class_name] = [metric]
+                    else:
+                        dict_metrics[metric_name][class_name].append(metric)
+
+        for metric_name, classes_data in dict_metrics.items():
+            text_metrics += f"{model_name} {metric_name}"
+            for class_name, metrics in classes_data.items():
+                mean_metric = sum(metrics)/len(metrics)
+
+                text_metrics+=f" {mean_metric:.3f}"
+            text_metrics+='\n'
+
+    text_metrics = text_metrics.replace(".", ",")
+    if is_print:
+        print(text_metrics)
+    return text_metrics
+
 def CalulateMetricsDir(CNN_name,
                        num_classes,
                        path_train = None,
@@ -344,6 +382,24 @@ def CalulateMetricsDir(CNN_name,
             model_results.append(model_results_temp)
 
     text_result, text_result_all = GetTestMetric(CNN_name, model_results, using_metrics, is_print=is_print_metric)
+    test_for_excel = GetFinalTestMetricForExcel({CNN_name: model_results}, using_metrics, class_names, is_print=is_print_metric)
+
+    if not os.path.isdir(save_report_path):
+        print(f"create dir:'{save_report_path}'")
+        os.makedirs(save_report_path)
+
+    with open(os.path.join(save_report_path, f'{CNN_name}{"_merge" if merge_images else ""}_mean.txt'),'w') as file_mean:
+        file_mean.write(text_result)
+        print(f"{CNN_name}{'_merge' if merge_images else ''}_mean.txt was saved")
+
+    with open(os.path.join(save_report_path, f'{CNN_name}{"_merge" if merge_images else ""}_all.txt'),'w') as file_all:
+        file_all.write(text_result_all)
+        print(f"{CNN_name}{'_merge' if merge_images else ''}_all.txt was saved")
+
+    with open(os.path.join(save_report_path, f'excel_{CNN_name}{"_merge" if merge_images else ""}.txt'),'w') as file_for_excel:
+        file_for_excel.write(test_for_excel)
+        print(f"excel_{CNN_name}{'_merge' if merge_images else ''}.txt was saved")
+
     return model_results, text_result, text_result_all
 
 def CalulateMetricsDirs(CNN_names,
@@ -353,7 +409,7 @@ def CalulateMetricsDirs(CNN_names,
                         predict_prefix = "predict_",
                         class_names = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"],
                         using_metrics = [Jaccard, Dice, RI, Accuracy, Precition, Recall, Fscore, CrowdsourcingMetrics],
-                        save_report_path = None,
+                        save_report_path = "data/report/",
                         origin_image_path = 'original',
                         path_to_standart_model_result = "data/result/",
                         str_data_time = "2023_05_02",
@@ -371,7 +427,7 @@ def CalulateMetricsDirs(CNN_names,
         save_one_model_info = CNN_names[i]
         num_class = list_CNN_num_class[i]
         model_paths_train = None if paths_train is None else paths_train[i]
-        model_save_report_path = None if save_report_path is None else save_report_path[i]
+        model_save_report_path = None if (save_report_path is None or type(save_report_path) is not list) else save_report_path[i]
 
         model_results, text_result, text_result_all = CalulateMetricsDir(CNN_name = save_one_model_info,
                                                         num_classes = num_class,
@@ -393,10 +449,25 @@ def CalulateMetricsDirs(CNN_names,
 
     if is_print_metric:
         print(all_text_results)
-    # save to path_to_standart_model_result +/+ str_data_time
+
+    if save_report_path is None:
+        save_report_path = ''
+    else:
+        if not os.path.isdir(save_report_path):
+            print(f"create dir:'{save_report_path}'")
+            os.makedirs(save_report_path)
+
+    with open(os.path.join(save_report_path, f'{str_data_time}_test_models{"_merge" if merge_images else ""}_mean.txt'),'w') as file_mean:
+        file_mean.write(all_text_results)
+
+    with open(os.path.join(save_report_path, f'{str_data_time}_test_models{"_merge" if merge_images else ""}_all.txt'),'w') as file_all:
+        file_all.write(all_text_results_all)
+    print(f"{str_data_time} test was saved to path '{save_report_path}'")
+
+    return all_text_results, all_text_results_all
 
 if __name__ == "__main__":
-    str_data = "2023_05_02"
+    str_data = "2023_05_01"
 
     classnames = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"]
 

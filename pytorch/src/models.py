@@ -258,3 +258,12 @@ def Lars76_unet(n_channels, n_classes):
         return smp.Unet("resnet34", classes=n_classes, encoder_weights="imagenet", in_channels=n_channels)
     else:
         return smp.Unet("resnet34", classes=n_classes, encoder_weights=None, in_channels=n_channels)
+
+
+
+if __name__ == "__main__":
+    from torchsummary import summary
+    model = UNet(1,6)
+    #model = Tiny_unet_v3(1,6)
+    summary(model, (1, 256,256))
+

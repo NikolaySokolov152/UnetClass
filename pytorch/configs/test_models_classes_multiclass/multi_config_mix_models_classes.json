@@ -1,0 +1,5 @@
+{
+  "experiment_data": "Models_and_classes_multiclass_mix_2023_05_14",
+  "config_path": "configs/test_models_classes_multiclass/config_multiclass_mix.json",
+  "list_experiments": ["trainMultipleModels","trainMultipleClasses"]
+}
