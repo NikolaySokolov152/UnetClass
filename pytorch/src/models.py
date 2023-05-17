@@ -263,7 +263,10 @@ def Lars76_unet(n_channels, n_classes):
 
 if __name__ == "__main__":
     from torchsummary import summary
-    model = UNet(1,6)
+    #model = UNet(1,6)
     #model = Tiny_unet_v3(1,6)
+    #model = MobileUNet(1,6)
+    model = Lars76_unet(1,6)
+
     summary(model, (1, 256,256))
 

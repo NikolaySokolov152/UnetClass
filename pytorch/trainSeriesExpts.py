@@ -53,12 +53,12 @@ def trainMultipleClasses(config_file,
 
 def trainMultipleLoss(config_file,
                       config_path,
-                      losses = ["BCELoss",
-                                "MSELoss",
-                                "DiceLoss",
+                      losses = ['BCELossMulticlass',
                                 'DiceLossMulticlass',
-                                'BCELossMulticlass',
-                                'MSELossMulticlass'],
+                                'MSELossMulticlass',
+                                "BCELoss",
+                                "MSELoss",
+                                "DiceLoss"],
                       funs = []):
     # change_save_suffix = config["save_inform"]["save_suffix_model"]
     # config["move_to_date_folder"] = False

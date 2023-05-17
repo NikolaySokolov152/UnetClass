@@ -36,11 +36,23 @@ class LossMulticlass():
         self.loss_class = loss
 
     def __call__(self, y_pred, y_true):
-        dice = 0.0
+        mitric = 0.0
         for i in range(self.num_classes):
-            dice += self.loss_class(y_pred[:,i,:,:], y_true[:,i,:,:])
+            mitric += self.loss_class(y_pred[:,i,:,:], y_true[:,i,:,:])
 
-        return dice/self.num_classes
+        return mitric/self.num_classes
+
+class LossMulticlassEps():
+    def __init__(self, num_classes, loss):
+        self.num_classes = num_classes
+        self.loss_class = loss
+
+    def __call__(self, y_pred, y_true, eps):
+        mitric = 0.0
+        for i in range(self.num_classes):
+            mitric += self.loss_class(y_pred[:,i,:,:], y_true[:,i,:,:], eps)
+
+        return mitric/self.num_classes
 
 def getLossByName(name_loss, num_classes = 1, last_activation = "sigmoid_activation"):
     calculate_stable_loss = False
@@ -69,15 +81,15 @@ def getLossByName(name_loss, num_classes = 1, last_activation = "sigmoid_activat
     elif name_loss == 'BCELossMulticlass':
         if last_activation == "sigmoid_activation":
             #print("Using bce_with_logits (numerical stable)")
-            loss_func = LossMulticlass(num_classes, bce_with_logits)
+            loss_func = LossMulticlassEps(num_classes, bce_with_logits)
             calculate_stable_loss = True
         elif last_activation == "softsign_activation":
             #print("Using softsign_with_logits (numerical stable)")
-            loss_func = LossMulticlass(num_classes, softsign_with_logits)
+            loss_func = LossMulticlassEps(num_classes, softsign_with_logits)
             calculate_stable_loss = True
         elif last_activation == "inv_square_root_activation":
             #print("Using inv_square_with_logits (numerical stable)")
-            loss_func = LossMulticlass(num_classes, inv_square_with_logits)
+            loss_func = LossMulticlassEps(num_classes, inv_square_with_logits)
             calculate_stable_loss = True
         else:
             #print("Using BCELoss (not necessarily numerical stable)")

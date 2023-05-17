@@ -65,12 +65,13 @@ def saveResultMask(save_path, npyfile, namelist, num_class = 2 , classnames = ['
 
             if (os.path.isfile(os.path.join(out_dir, "predict_" + namelist[i]))):
                 os.remove(os.path.join(out_dir, "predict_" + namelist[i]))
-            io.imsave(os.path.join(out_dir, "predict_" + namelist[i]), item[:,:,class_index])
+            io.imsave(os.path.join(out_dir, "predict_" + namelist[i]), item[:,:,class_index], check_contrast=False)
 
 def predictModel(model, data, device, last_activation, eps = EPSILON):
     result = []
     model.eval()
     with torch.no_grad():
+        print(last_activation)
         time.sleep(0.2)  # чтобы tqdm не печатал вперед print
         tqdm_test_loop = tqdm.tqdm(data, file=sys.stdout, desc="Test", colour="GREEN")
         for epoch_valid_iteration, inputs in enumerate(tqdm_test_loop):
@@ -83,7 +84,7 @@ def predictModel(model, data, device, last_activation, eps = EPSILON):
     return np.array(result)
 
 
-def test_tiled(model_path, num_class, save_mask_dir, dataset={'filenames': None, "filepath": "data/test", "classnames": ['0', '1', '2', '3', '4', '5', '6']},
+def test_tiled(model_path, num_class, save_mask_dir, last_activation = None, dataset={'filenames': None, "filepath": "data/test", "classnames": ['0', '1', '2', '3', '4', '5', '6']},
                tiled_data={"size":256, "overlap":64, "unique_area":0}, save_dir = None):
     filenames = dataset["filenames"]
     filepath = dataset["filepath"]
@@ -97,8 +98,8 @@ def test_tiled(model_path, num_class, save_mask_dir, dataset={'filenames': None,
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
+    last_activation = "sigmoid_activation" if last_activation is None else last_activation
     model.to(device)
-    last_activation = 'sigmoid_activation'
 
     for i, img_name in enumerate(filenames):
         print(i + 1, "image is ", len(filenames))

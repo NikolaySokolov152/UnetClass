@@ -195,9 +195,10 @@ def fitModel(my_data_generator,
                     torch.save(model, modelName + '.pt')
                     print(f"Loss of the model has decreased. {minimum_validation_error} to {val_history_losses[-1]}. model {modelName} was saving", flush=True)
                     minimum_validation_error = val_history_losses[-1]
+                else:
+                    print(f"best result loss: {minimum_validation_error}, on epoch: {model_saving_epoch}")
 
                 validation_work_time.append(tqdm_valid_loop.format_dict['elapsed'])
-
         else:
             if use_validation and not len(my_data_generator.gen_valid) > 0:
                 print("WARNING!!! Validation dataset error ! I use train data !")
@@ -208,6 +209,8 @@ def fitModel(my_data_generator,
                 torch.save(model, modelName + '.pt')
                 print(f"Loss of the model has decreased. {minimum_validation_error} to {history_losses[-1]}. model {modelName} was saving", flush=True)
                 minimum_validation_error = history_losses[-1]
+            else:
+                print(f"best result loss: {minimum_validation_error}, on epoch: {model_saving_epoch}")
 
         my_data_generator.on_epoch_end()
 

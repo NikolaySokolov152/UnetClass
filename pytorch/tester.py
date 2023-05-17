@@ -11,6 +11,7 @@ def test_models_all_dir(str_data,
                         CNN_name,
                         overlap_list,
                         file_test_path,
+                        last_activations = None,
                         save_report_path = "data/report/",
                         using_metrics = [Jaccard, Dice]):
 
@@ -43,10 +44,12 @@ def test_models_all_dir(str_data,
 
             dataset = {'filenames': list_test_img_dir, "filepath": file_test_path, "classnames": classnames}
             tiled_data = {"size": 256, "overlap": overlap, "unique_area": 0}
+            last_activation = last_activations[i] if type(last_activations) is list else last_activations
 
             test_tiled(model_path=list_CNN_name[i],
                        num_class=list_CNN_num_class[i],
                        save_mask_dir=result_CNN_dir[i] + "_" + str(overlap),
+                       last_activation=last_activation,
                        dataset = dataset,
                        tiled_data=tiled_data,
                        )  # , save_dir= "data/split test/")
@@ -114,6 +117,7 @@ def test_models_only_all_mito(str_data,
                               overlap_list,
                               file_test_path,
                               etal_path,
+                              last_activations = None,
                               save_report_path = "data/report_mito/",
                               using_metrics = [Jaccard, Dice]):
 
@@ -146,10 +150,12 @@ def test_models_only_all_mito(str_data,
 
             dataset = {'filenames': list_test_img_dir, "filepath": file_test_path, "classnames": classnames}
             tiled_data = {"size": 256, "overlap": overlap, "unique_area": 0}
+            last_activation = last_activations[i] if type(last_activations) is list else last_activations
 
             test_tiled(model_path=list_CNN_name[i],
                        num_class=list_CNN_num_class[i],
                        save_mask_dir=result_CNN_dir[i] + "_" + str(overlap),
+                       last_activation=last_activation,
                        dataset = dataset,
                        tiled_data=tiled_data,
                        )  # , save_dir= "data/split test/")
@@ -213,86 +219,68 @@ def test_models_only_all_mito(str_data,
     with open(os.path.join(save_report_path, f'excel_{str_data}_test_models.txt'),'w') as file_for_excel:
         file_for_excel.write(test_for_excel)
 
-def standart_test():
-    str_data = "Models_and_classes_real_2023_05_10"
-
+def standart_test(calculate_all_mito = True):
     using_metrics = [Dice]
 
-    CNN_names = [
-        "model_by_config_real_1_classes_Lars76_unet",
-        "model_by_config_real_1_classes_mobile_unet",
-        "model_by_config_real_1_classes_tiny_unet",
-        "model_by_config_real_1_classes_tiny_unet_v3",
-        "model_by_config_real_1_classes_unet",
-        "model_by_config_real_5_classes_Lars76_unet",
-        "model_by_config_real_5_classes_mobile_unet",
-        "model_by_config_real_5_classes_tiny_unet",
-        "model_by_config_real_5_classes_tiny_unet_v3",
-        "model_by_config_real_5_classes_unet",
-        "model_by_config_real_6_classes_Lars76_unet",
-        "model_by_config_real_6_classes_mobile_unet",
-        "model_by_config_real_6_classes_tiny_unet",
-        "model_by_config_real_6_classes_tiny_unet_v3",
-        "model_by_config_real_6_classes_unet",
-    ]
+    models = ["unet",
+              "tiny_unet",
+              "tiny_unet_v3",
+              "mobile_unet",
+              "Lars76_unet"]
 
-    types_datasets = ["_real_", "_mix_", "_sint_"]
+    num_classes = [1, 5, 6]
 
-    last_dataset = "_real_"
+    types_datasets = ["real", "mix", "sint", "sint_v2"]
+
     for type_dataset in types_datasets:
-        if not type_dataset == "_real_":
-            str_data = str_data.replace(last_dataset, type_dataset)
-            for i, cnn_name in enumerate(CNN_names):
-                CNN_names[i] = cnn_name.replace(last_dataset, type_dataset)
+        CNN_names = []
+        list_CNN_num_class = []
+        path_models = f"Models_and_classes_multiclass_{type_dataset}_2023_05_14"
 
-            last_dataset = type_dataset
+        for num_class in num_classes:
+            for model_name in models:
+                CNN_name = f"model_by_config_multiclass_{type_dataset}_{num_class}_classes_{model_name}"
+                CNN_names.append(CNN_name)
+                list_CNN_num_class.append(num_class)
 
-        list_CNN_num_class = [
-            1,
-            1,
-            1,
-            1,
-            1,
-            5,
-            5,
-            5,
-            5,
-            5,
-            6,
-            6,
-            6,
-            6,
-            6,
-        ]
         overlap_list = [128]
+        last_activation = None
 
         classnames = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"]
         # путь до картинок для теста
         file_test_path = "G:/Data/Unet_multiclass/data/test"
+        save_report_path = "data/report/" + type_dataset
 
-        test_models_all_dir(str_data,
+        test_models_all_dir(path_models,
                             classnames,
                             list_CNN_num_class,
                             CNN_names,
                             overlap_list,
                             file_test_path,
+                            last_activations=last_activation,
+                            save_report_path=save_report_path,
                             using_metrics=using_metrics)
 
-        # путь до картинок для теста
-        file_test_path = "G:/Data/Unet_multiclass/data/EPFL_test/original"
-        etal_path = "G:/Data/Unet_multiclass/data/EPFL_test"
+        if calculate_all_mito:
+            # путь до картинок для теста
+            file_test_path = "G:/Data/Unet_multiclass/data/EPFL_test/original"
+            etal_path = "G:/Data/Unet_multiclass/data/EPFL_test"
+            save_report_path = "data/report_mito/" + type_dataset
 
-        test_models_only_all_mito(str_data,
-                                  classnames,
-                                  list_CNN_num_class,
-                                  CNN_names,
-                                  overlap_list,
-                                  file_test_path,
-                                  etal_path,
-                                  using_metrics = using_metrics)
+            test_models_only_all_mito(path_models,
+                                      classnames,
+                                      list_CNN_num_class,
+                                      CNN_names,
+                                      overlap_list,
+                                      file_test_path,
+                                      etal_path,
+                                      last_activations=last_activation,
+                                      save_report_path=save_report_path,
+                                      using_metrics = using_metrics)
 
-def activation_test():
-    str_data = "Lars_test_2023_05_10"
+def activation_test(calculate_all_mito = False):
+    str_data1 = "Lars_test"
+    str_data2 = "2023_05_15"
 
     using_metrics = [Dice]
 
@@ -308,19 +296,25 @@ def activation_test():
 
     losses = ["BCELoss",
               "MSELoss",
-              "DiceLoss"]
+              "DiceLoss",
+              'DiceLossMulticlass',
+              'BCELossMulticlass',
+              'MSELossMulticlass']
 
     for type_dataset in types_datasets:
         CNN_names = []
         list_CNN_num_class = []
+        all_last_activations = []
+
+        str_data = "_".join([str_data1, type_dataset, str_data2])
 
         for last_activation in last_activations:
             for loss in losses:
                 list_CNN_num_class.append(6)
                 CNN_name = "_".join(["model_by_config", type_dataset, last_activation, loss, "Lars76_unet"])
                 CNN_names.append(CNN_name)
+                all_last_activations.append(last_activation)
 
-        print(len(CNN_names))
         overlap_list = [128]
         classnames = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"]
 
@@ -334,23 +328,100 @@ def activation_test():
                             CNN_names,
                             overlap_list,
                             file_test_path,
+                            last_activations = all_last_activations,
                             save_report_path=save_report_path,
                             using_metrics = using_metrics)
 
-        save_report_path_mito = "data/report_Lars_mito/" + type_dataset
-        # путь до картинок для теста
-        file_test_path_mito = "G:/Data/Unet_multiclass/data/EPFL_test/original"
-        etal_path_mito = "G:/Data/Unet_multiclass/data/EPFL_test"
+        if calculate_all_mito:
+            save_report_path_mito = "data/report_Lars_mito/" + type_dataset
+            # путь до картинок для теста
+            file_test_path_mito = "G:/Data/Unet_multiclass/data/EPFL_test/original"
+            etal_path_mito = "G:/Data/Unet_multiclass/data/EPFL_test"
 
-        #test_models_only_all_mito(str_data,
-        #                          classnames,
-        #                          list_CNN_num_class,
-        #                          CNN_names,
-        #                          overlap_list,
-        #                          file_test_path_mito,
-        #                          etal_path_mito,
-        #                          save_report_path=save_report_path_mito,
-        #                          using_metrics = using_metrics)
+            test_models_only_all_mito(str_data,
+                                      classnames,
+                                      list_CNN_num_class,
+                                      CNN_names,
+                                      overlap_list,
+                                      file_test_path_mito,
+                                      etal_path_mito,
+                                      last_activations = all_last_activations,
+                                      save_report_path=save_report_path_mito,
+                                      using_metrics = using_metrics)
+
+#delete !
+def standart_test_one_used_fun(calculate_all_mito = True):
+    str_data = "Models_and_classes_sint_v2_2023_05_15"
+
+    using_metrics = [Dice]
+
+    CNN_names = [
+        "model_by_config_sint_v2_1_classes_Lars76_unet",
+        "model_by_config_sint_v2_1_classes_mobile_unet",
+        "model_by_config_sint_v2_1_classes_tiny_unet",
+        "model_by_config_sint_v2_1_classes_tiny_unet_v3",
+        "model_by_config_sint_v2_1_classes_unet",
+        "model_by_config_sint_v2_5_classes_Lars76_unet",
+        "model_by_config_sint_v2_5_classes_mobile_unet",
+        "model_by_config_sint_v2_5_classes_tiny_unet",
+        "model_by_config_sint_v2_5_classes_tiny_unet_v3",
+        "model_by_config_sint_v2_5_classes_unet",
+        "model_by_config_sint_v2_6_classes_Lars76_unet",
+        "model_by_config_sint_v2_6_classes_mobile_unet",
+        "model_by_config_sint_v2_6_classes_tiny_unet",
+        "model_by_config_sint_v2_6_classes_tiny_unet_v3",
+        "model_by_config_sint_v2_6_classes_unet",
+    ]
+
+    list_CNN_num_class = [
+        1,
+        1,
+        1,
+        1,
+        1,
+        5,
+        5,
+        5,
+        5,
+        5,
+        6,
+        6,
+        6,
+        6,
+        6,
+    ]
+    overlap_list = [128]
+    last_activation = None
+
+    classnames = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"]
+    # путь до картинок для теста
+    file_test_path = "G:/Data/Unet_multiclass/data/test"
+
+    test_models_all_dir(str_data,
+                        classnames,
+                        list_CNN_num_class,
+                        CNN_names,
+                        overlap_list,
+                        file_test_path,
+                        last_activations=last_activation,
+                        using_metrics=using_metrics)
+
+    if calculate_all_mito:
+        # путь до картинок для теста
+        file_test_path = "G:/Data/Unet_multiclass/data/EPFL_test/original"
+        etal_path = "G:/Data/Unet_multiclass/data/EPFL_test"
+        save_report_path = "data/report_mito/" + type_dataset
+
+        test_models_only_all_mito(str_data,
+                                  classnames,
+                                  list_CNN_num_class,
+                                  CNN_names,
+                                  overlap_list,
+                                  file_test_path,
+                                  etal_path,
+                                  last_activations=last_activation,
+                                  save_report_path=save_report_path,
+                                  using_metrics=using_metrics)
 
 def test_test_config():
     str_data = "2023_05_01"
@@ -368,10 +439,17 @@ def test_test_config():
     # путь до картинок для теста
     file_test_path = "G:/Data/Unet_multiclass/data/test"
 
-    test_models_all_dir(str_data, classnames, list_CNN_num_class, CNN_names, overlap_list, file_test_path)
-
+    test_models_all_dir(str_data=str_data,
+                        classnames=classnames,
+                        list_CNN_num_class=list_CNN_num_class,
+                        CNN_name=CNN_names,
+                        overlap_list=overlap_list,
+                        file_test_path=file_test_path,
+                        last_activations="sigmoid_activation",
+                        using_metrics = [Jaccard, Dice])
 
 if __name__ == "__main__":
     #test_test_config()
-    #standart_test()
-    activation_test()
+    standart_test(calculate_all_mito=True)
+    #activation_test(calculate_all_mito=False)
+    standart_test_one_used_fun(calculate_all_mito=True)
