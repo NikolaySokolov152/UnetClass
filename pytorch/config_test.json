@@ -32,7 +32,8 @@
         "mask_name_label_list": ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"],
         "num_class": 6,
         "batch_size": 7,
-        "num_epochs": 1,
+        "num_epochs": 5,
+        "lr_scheduler": "standart",
         "optimizer": "Adam",
         "loss": "DiceLossMulticlass",
         "seed": 42

@@ -11,6 +11,9 @@ import sys
 
 import time
 
+from torch.utils.data import DataLoader
+
+
 def to_0_1_format_img(in_img):
     max_val = in_img[:, :].max()
     if max_val <= 1:
@@ -66,6 +69,45 @@ class TailingData:
 '''
 
 
+def create_transform(aug_dict, transform_data, augment=True):
+    list_compose = []
+
+    if augment:
+        if "noise_limit" in aug_dict.keys() and aug_dict["noise_limit"] != 0:
+            list_compose.append(albu.GaussNoise(p=0.9, var_limit=aug_dict["noise_limit"] / 256, per_channel=False))
+
+        if "horizontal_flip" in aug_dict.keys() and aug_dict["horizontal_flip"]:
+            list_compose.append(albu.HorizontalFlip(p=0.5))
+        if "vertical_flip" in aug_dict.keys() and aug_dict["vertical_flip"]:
+            list_compose.append(albu.VerticalFlip(p=0.5))
+
+        list_compose.append(
+            albu.ShiftScaleRotate(p=0.5, rotate_limit=0, scale_limit=0, shift_limit_x=aug_dict["width_shift_range"], \
+                                  shift_limit_y=aug_dict["height_shift_range"], border_mode=aug_dict["fill_mode"]))
+
+        if "brightness_shift_range" in aug_dict.keys() and "contrast_shift_range" in aug_dict.keys():
+            list_compose.append(albu.RandomBrightnessContrast(p=0.33,
+                                                              brightness_limit=aug_dict["brightness_shift_range"],
+                                                              contrast_limit=aug_dict["contrast_shift_range"]))
+        if "gamma_limit" in aug_dict.keys():
+            list_compose.append(albu.RandomGamma(p=0.33, gamma_limit=aug_dict["gamma_limit"]))
+
+        if "rotation_range" in aug_dict.keys():
+            list_compose.append(albu.Rotate(p=0.5, limit=aug_dict["rotation_range"], border_mode=aug_dict["fill_mode"]))
+
+        if "zoom_range" in aug_dict.keys():
+            list_compose.append(albu.RandomResizedCrop(p=1, height=transform_data.target_size[1],
+                                                       width=transform_data.target_size[0], \
+                                                       scale=(1 - aug_dict["zoom_range"], 1 + aug_dict["zoom_range"]),
+                                                       ratio=(1 - aug_dict["zoom_range"], 1 + aug_dict["zoom_range"])))
+
+    list_compose.append(
+        albu.Resize(height=transform_data.target_size[1], width=transform_data.target_size[0]))
+
+    # add more https://albumentations.ai/docs/api_reference/full_reference/
+
+    return albu.Compose(list_compose)
+
 class Generator(Dataset):
     def __init__(self, dir_data, list_class_name, num_classes, transform_data, aug_dict, mode, save_inform, tailing,
                  augment):
@@ -87,40 +129,10 @@ class Generator(Dataset):
                 print("\nINFO: I'm a validation generator turn off augmentation for myself !\n")
                 self.augment = False
 
-        self.composition = self.create_transform(aug_dict)
+        self.composition = create_transform(aug_dict, self.transform_data, self.augment)
 
         self.first_loop = True
 
-    def create_transform(self, aug_dict):
-        list_compose = []
-
-        if self.augment:
-
-            if aug_dict["noise_limit"] != 0:
-                list_compose.append(albu.GaussNoise(p=0.9, var_limit=aug_dict["noise_limit"] / 256, per_channel=False))
-
-            if aug_dict["horizontal_flip"]:
-                list_compose.append(albu.HorizontalFlip(p=0.5))
-            if aug_dict["vertical_flip"]:
-                list_compose.append(albu.VerticalFlip(p=0.5))
-
-            list_compose.append(
-                albu.ShiftScaleRotate(p=0.5, rotate_limit=0, scale_limit=0, shift_limit_x=aug_dict["width_shift_range"], \
-                                      shift_limit_y=aug_dict["height_shift_range"], border_mode=aug_dict["fill_mode"]))
-
-            list_compose.append(albu.Rotate(p=0.5, limit=aug_dict["rotation_range"], border_mode=aug_dict["fill_mode"]))
-
-            list_compose.append(albu.RandomResizedCrop(p=1, height=self.transform_data.target_size[1],
-                                                       width=self.transform_data.target_size[0], \
-                                                       scale=(1 - aug_dict["zoom_range"], 1 + aug_dict["zoom_range"]),
-                                                       ratio=(1 - aug_dict["zoom_range"], 1 + aug_dict["zoom_range"])))
-
-        list_compose.append(
-            albu.Resize(height=self.transform_data.target_size[1], width=self.transform_data.target_size[0]))
-
-        # add more https://albumentations.ai/docs/api_reference/full_reference/
-
-        return albu.Compose(list_compose)
 
     def __len__(self):
         'Denotes the number of batches per epoch'
@@ -416,38 +428,7 @@ class AugmentGenerator(Dataset):
                 print("\nINFO: I'm a validation generator turn off augmentation for myself !\n", flush=True)
                 self.augment = False
 
-        self.composition = self.create_transform(aug_dict)
-
-    def create_transform(self, aug_dict):
-        list_compose = []
-
-        if self.augment:
-
-            if aug_dict["noise_limit"] != 0:
-                list_compose.append(albu.GaussNoise(p=0.9, var_limit=aug_dict["noise_limit"] / 256, per_channel=False))
-
-            if aug_dict["horizontal_flip"]:
-                list_compose.append(albu.HorizontalFlip(p=0.5))
-            if aug_dict["vertical_flip"]:
-                list_compose.append(albu.VerticalFlip(p=0.5))
-
-            list_compose.append(
-                albu.ShiftScaleRotate(p=0.5, rotate_limit=0, scale_limit=0, shift_limit_x=aug_dict["width_shift_range"], \
-                                      shift_limit_y=aug_dict["height_shift_range"], border_mode=aug_dict["fill_mode"]))
-
-            list_compose.append(albu.Rotate(p=0.5, limit=aug_dict["rotation_range"], border_mode=aug_dict["fill_mode"]))
-
-            list_compose.append(albu.RandomResizedCrop(p=1, height=self.transform_data.target_size[1],
-                                                       width=self.transform_data.target_size[0], \
-                                                       scale=(1 - aug_dict["zoom_range"], 1 + aug_dict["zoom_range"]),
-                                                       ratio=(1 - aug_dict["zoom_range"], 1 + aug_dict["zoom_range"])))
-
-        list_compose.append(
-            albu.Resize(height=self.transform_data.target_size[1], width=self.transform_data.target_size[0]))
-
-        # add more https://albumentations.ai/docs/api_reference/full_reference/
-
-        return albu.Compose(list_compose)
+        self.composition = create_transform(aug_dict, self.transform_data, self.augment)
 
     def __len__(self):
         'Denotes the number of batches per epoch'
@@ -477,7 +458,6 @@ class AugmentGenerator(Dataset):
 
         if self.mode == 'train':
             y = []
-
             for work_index in work_indexes:
                 y.append(self.masks[work_index])
 
@@ -501,16 +481,54 @@ class AugmentGenerator(Dataset):
         return aug_img, aug_masks
 
     def augment_batch(self, img_batch, masks_batch):
-        for i in range(self.transform_data.batch_size):
+        for i in range(self.batch_size):
             img_batch[i], masks_batch[i] = self.random_transform_one_frame(img_batch[i], masks_batch[i])
 
         return img_batch, masks_batch
+
+        #for i in range(self.transform_data.batch_size):
+        #    img_batch[i], masks_batch[i] = self.random_transform_one_frame(img_batch[i], masks_batch[i])
+
+        #return img_batch, masks_batch
 
         # def on_epoch_end(self):
     #    print()
     ##    print(self.inform_generator)
     ##    print(self.small_list_img_name)
     #    print()
+
+class AugmentImages(Dataset):
+    def __init__(self, imgs, masks, indexes, aug_dict, transform_data, augment):
+        self.imgs=imgs
+        self.masks=masks
+        self.indexes=indexes
+        self.augment=augment
+        self.composition = create_transform(aug_dict, transform_data, self.augment)
+
+    def __len__(self):
+        return len(self.indexes)
+
+    def __iter__(self):
+        for index in self.indexes:
+            x, y = self.random_transform_one_frame(self.imgs[index], self.masks[index])
+            x = torch.from_numpy(x).permute(2, 0, 1)
+            y = torch.from_numpy(y).permute(2, 0, 1)
+            yield x, y
+
+    def __getitem__(self, item):
+        index = self.indexes[item]
+        x, y = self.random_transform_one_frame(self.imgs[index], self.masks[index])
+        x = torch.from_numpy(x).permute(2, 0, 1)
+        y = torch.from_numpy(y).permute(2, 0, 1)
+
+        return x, y
+
+    def random_transform_one_frame(self, img, masks):
+        composed = self.composition(image=img, mask=masks)
+        aug_img = composed['image']
+        aug_masks = composed['mask']
+
+        return aug_img, aug_masks
 
 class DataGeneratorReaderAll():
     'Generates data with reading all data in RAM'
@@ -624,6 +642,14 @@ class DataGeneratorReaderAll():
             raise AttributeError('The "mode_mask" parameter should be set to "separated" otherwise not implemented.')
 
         return imgs, masks_glob
+
+    def getTrainDataLoaderPytorch(self, num_workers = 0):
+        gen = AugmentImages(self.all_imges, self.all_masks, self.gen_train.indexes, self.aug_dict, self.transform_data, self.augment)
+        smart_gen = DataLoader(gen,
+                               batch_size=self.transform_data.batch_size,
+                               num_workers=num_workers
+                               )
+        return smart_gen
 
     def on_epoch_end(self):
         size_val = int(round(len(self.list_img_name) * self.share_val))

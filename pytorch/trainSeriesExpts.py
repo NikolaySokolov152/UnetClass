@@ -12,7 +12,6 @@ def build_argparser_multi():
 def trainMultipleModels(config_file,
                          config_path,
                          models = ["unet",
-                                   "tiny_unet",
                                    "tiny_unet_v3",
                                    "mobile_unet",
                                    "Lars76_unet"],
@@ -29,7 +28,7 @@ def trainMultipleModels(config_file,
         if len(funs) > 0:
             funs[0](config_file, config_path, funs=funs[1:])
         else:
-            trainByConfig(config_file, config_path)
+            print(trainByConfig(config_file, config_path))
 
 def trainMultipleClasses(config_file,
                          config_path,
@@ -49,14 +48,11 @@ def trainMultipleClasses(config_file,
         if len(funs) > 0:
             funs[0](config_file, new_path, funs=funs[1:])
         else:
-            trainByConfig(config_file, new_path)
+            print(trainByConfig(config_file, config_path))
 
 def trainMultipleLoss(config_file,
                       config_path,
-                      losses = ['BCELossMulticlass',
-                                'DiceLossMulticlass',
-                                'MSELossMulticlass',
-                                "BCELoss",
+                      losses = ["BCELoss",
                                 "MSELoss",
                                 "DiceLoss"],
                       funs = []):
@@ -75,7 +71,30 @@ def trainMultipleLoss(config_file,
             funs[0](config_file, new_path, funs=funs[1:])
         else:
             #print("fake work:", new_path)
-            trainByConfig(config_file, new_path)
+            print(trainByConfig(config_file, config_path))
+
+def trainMultipleMulticlassLoss(config_file,
+                      config_path,
+                      losses = ['BCELossMulticlass',
+                                'DiceLossMulticlass',
+                                'MSELossMulticlass'],
+                      funs = []):
+    # change_save_suffix = config["save_inform"]["save_suffix_model"]
+    # config["move_to_date_folder"] = False
+
+    for loss in losses:
+        print(f"\nLearning model with loss: {loss}\n")
+
+        # config["save_inform"]["save_suffix_model"] = change_save_suffix + "_" + str(n_class) + "_classes"
+        config_file["train"]["loss"] = loss
+
+        new_path = os.path.basename(config_path)[:-5] + "_" + str(loss) + ".json"
+
+        if len(funs) > 0:
+            funs[0](config_file, new_path, funs=funs[1:])
+        else:
+            #print("fake work:", new_path)
+            print(trainByConfig(config_file, config_path))
 
 def trainMultipleActivation(config_file,
                             config_path,
@@ -102,7 +121,7 @@ def trainMultipleActivation(config_file,
         if len(funs) > 0:
             funs[0](config_file, new_path, funs=funs[1:])
         else:
-            trainByConfig(config_file, new_path)
+            print(trainByConfig(config_file, config_path))
 
 def trainMultipleOptimazer(config_file,
                            config_path,
@@ -126,13 +145,13 @@ def trainMultipleOptimazer(config_file,
         if len(funs) > 0:
             funs[0](config_file, new_path, funs=funs[1:])
         else:
-            trainByConfig(config_file, new_path)
+            print(trainByConfig(config_file, config_path))
 
 def trainMultiple(config_file, config_path, funs = []):
     if len(funs) > 0:
         funs[0](config_file, config_path, funs=funs[1:])
     else:
-        trainByConfig(config_file, config_path)
+        print(trainByConfig(config_file, config_path))
 
 def strListTrainMultiple2fun(strList):
     result = []

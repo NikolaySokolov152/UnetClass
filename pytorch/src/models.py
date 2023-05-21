@@ -236,12 +236,17 @@ class MobileUNet(nn.Module):
         # D1
         x1 = self.conv3x3(x)  # (32, 112, 112)
         x2 = self.irb_bottleneck1(x1)  # (16,112,112) s1
+        # D2
         x3 = self.irb_bottleneck2(x2)  # (24,56,56) s2
+        # D3
         x4 = self.irb_bottleneck3(x3)  # (32,28,28) s3
+        # D4
         x5 = self.irb_bottleneck4(x4)  # (64,14,14)
         x6 = self.irb_bottleneck5(x5)  # (96,14,14) s4
+        # D5
         x7 = self.irb_bottleneck6(x6)  # (160,7,7)
         x8 = self.irb_bottleneck7(x7)  # (320,7,7)
+        # C1
         x9 = self.conv1x1_encode(x8)  # (1280,7,7) s5
 
         # Right arm / Decoding arm with skip connections
@@ -260,13 +265,15 @@ def Lars76_unet(n_channels, n_classes):
         return smp.Unet("resnet34", classes=n_classes, encoder_weights=None, in_channels=n_channels)
 
 
-
 if __name__ == "__main__":
     from torchsummary import summary
     #model = UNet(1,6)
     #model = Tiny_unet_v3(1,6)
-    #model = MobileUNet(1,6)
-    model = Lars76_unet(1,6)
+    model = MobileUNet(1,6)
+    #model = Lars76_unet(1,6)
 
+    #model = smp.Unet("mobilenet_v2", classes=6, in_channels=1)
+
+    print(model)
     summary(model, (1, 256,256))
 

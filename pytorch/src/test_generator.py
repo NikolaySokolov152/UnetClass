@@ -158,9 +158,12 @@ def weak_test_gen_DataGeneratorReaderAll():
                          width_shift_range=0.1,
                          height_shift_range=0.1,
                          zoom_range=0.2,
+                         brightness_shift_range = 0.15,
+                         contrast_shift_range = 0.2,
+                         gamma_limit = [90, 110],
                          horizontal_flip=True,
                          vertical_flip=True,
-                         noise_limit=5,
+                         noise_limit=3,
                          fill_mode=0)  # cv2.BORDER_CONSTANT = 0
 
 
@@ -213,14 +216,14 @@ def weak_test_gen_DataGeneratorReaderAll():
     print(len(myGen.gen_valid))
     size_train = len(myGen.gen_train)
 
-    gen_train = myGen.gen_train
+    #gen_train = myGen.gen_train
+    gen_train = myGen.getTrainDataLoaderPytorch()
 
     print(type(myGen.gen_train))
 
     print("\ntrain\n")
 
-    for i in range(2 * size_train):
-        x, y = gen_train[i]
+    for x, y in (gen_train):
         x = x.permute(0, 2, 3, 1).numpy()
         y = y.permute(0, 2, 3, 1).numpy()
         print(x.shape, " ", y.shape)

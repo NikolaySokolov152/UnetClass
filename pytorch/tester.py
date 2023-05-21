@@ -219,7 +219,7 @@ def test_models_only_all_mito(str_data,
     with open(os.path.join(save_report_path, f'excel_{str_data}_test_models.txt'),'w') as file_for_excel:
         file_for_excel.write(test_for_excel)
 
-def standart_test(calculate_all_mito = True):
+def standart_test(calculate_all_mito = True, calculate_our_markup=True):
     using_metrics = [Dice]
 
     models = ["unet",
@@ -247,25 +247,27 @@ def standart_test(calculate_all_mito = True):
         last_activation = None
 
         classnames = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"]
-        # путь до картинок для теста
-        file_test_path = "G:/Data/Unet_multiclass/data/test"
-        save_report_path = "data/report/" + type_dataset
 
-        test_models_all_dir(path_models,
-                            classnames,
-                            list_CNN_num_class,
-                            CNN_names,
-                            overlap_list,
-                            file_test_path,
-                            last_activations=last_activation,
-                            save_report_path=save_report_path,
-                            using_metrics=using_metrics)
+        if calculate_our_markup:
+            # путь до картинок для теста
+            file_test_path = "G:/Data/Unet_multiclass/data/test"
+            save_report_path = "data/report/" + type_dataset
+
+            test_models_all_dir(path_models,
+                                classnames,
+                                list_CNN_num_class,
+                                CNN_names,
+                                overlap_list,
+                                file_test_path,
+                                last_activations=last_activation,
+                                save_report_path=save_report_path,
+                                using_metrics=using_metrics)
 
         if calculate_all_mito:
             # путь до картинок для теста
-            file_test_path = "G:/Data/Unet_multiclass/data/EPFL_test/original"
-            etal_path = "G:/Data/Unet_multiclass/data/EPFL_test"
-            save_report_path = "data/report_mito/" + type_dataset
+            file_test_path = "G:/Data/Unet_multiclass/data/orig_EPFL_data/original"
+            etal_path = "G:/Data/Unet_multiclass/data/orig_EPFL_data"
+            save_report_path = "data/report_epfl_mito/" + type_dataset
 
             test_models_only_all_mito(path_models,
                                       classnames,
@@ -349,80 +351,6 @@ def activation_test(calculate_all_mito = False):
                                       save_report_path=save_report_path_mito,
                                       using_metrics = using_metrics)
 
-#delete !
-def standart_test_one_used_fun(calculate_all_mito = True):
-    str_data = "Models_and_classes_sint_v2_2023_05_15"
-
-    using_metrics = [Dice]
-
-    CNN_names = [
-        "model_by_config_sint_v2_1_classes_Lars76_unet",
-        "model_by_config_sint_v2_1_classes_mobile_unet",
-        "model_by_config_sint_v2_1_classes_tiny_unet",
-        "model_by_config_sint_v2_1_classes_tiny_unet_v3",
-        "model_by_config_sint_v2_1_classes_unet",
-        "model_by_config_sint_v2_5_classes_Lars76_unet",
-        "model_by_config_sint_v2_5_classes_mobile_unet",
-        "model_by_config_sint_v2_5_classes_tiny_unet",
-        "model_by_config_sint_v2_5_classes_tiny_unet_v3",
-        "model_by_config_sint_v2_5_classes_unet",
-        "model_by_config_sint_v2_6_classes_Lars76_unet",
-        "model_by_config_sint_v2_6_classes_mobile_unet",
-        "model_by_config_sint_v2_6_classes_tiny_unet",
-        "model_by_config_sint_v2_6_classes_tiny_unet_v3",
-        "model_by_config_sint_v2_6_classes_unet",
-    ]
-
-    list_CNN_num_class = [
-        1,
-        1,
-        1,
-        1,
-        1,
-        5,
-        5,
-        5,
-        5,
-        5,
-        6,
-        6,
-        6,
-        6,
-        6,
-    ]
-    overlap_list = [128]
-    last_activation = None
-
-    classnames = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"]
-    # путь до картинок для теста
-    file_test_path = "G:/Data/Unet_multiclass/data/test"
-
-    test_models_all_dir(str_data,
-                        classnames,
-                        list_CNN_num_class,
-                        CNN_names,
-                        overlap_list,
-                        file_test_path,
-                        last_activations=last_activation,
-                        using_metrics=using_metrics)
-
-    if calculate_all_mito:
-        # путь до картинок для теста
-        file_test_path = "G:/Data/Unet_multiclass/data/EPFL_test/original"
-        etal_path = "G:/Data/Unet_multiclass/data/EPFL_test"
-        save_report_path = "data/report_mito/" + type_dataset
-
-        test_models_only_all_mito(str_data,
-                                  classnames,
-                                  list_CNN_num_class,
-                                  CNN_names,
-                                  overlap_list,
-                                  file_test_path,
-                                  etal_path,
-                                  last_activations=last_activation,
-                                  save_report_path=save_report_path,
-                                  using_metrics=using_metrics)
-
 def test_test_config():
     str_data = "2023_05_01"
 
@@ -450,6 +378,5 @@ def test_test_config():
 
 if __name__ == "__main__":
     #test_test_config()
-    standart_test(calculate_all_mito=True)
+    standart_test(calculate_all_mito=True, calculate_our_markup=False)
     #activation_test(calculate_all_mito=False)
-    standart_test_one_used_fun(calculate_all_mito=True)

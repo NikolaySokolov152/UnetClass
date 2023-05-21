@@ -1,3 +1,5 @@
+import os.path
+
 from src.train import *
 from src.dataGenerator import *
 from src.models import *
@@ -39,7 +41,7 @@ def build_argparser():
     return args
 
 # функция изменения lr
-def lr_scheduler(epoch):
+def standart_lr_scheduler(epoch):
     if epoch < 100:
         return 0.0001
     elif epoch < 125:
@@ -50,32 +52,47 @@ def lr_scheduler(epoch):
         return 0.000005
     return 0.000001
 
-def config_parcer(dict_config):
-    # GET WORKING DEVICE
-    if not dict_config["device"]:
-        device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    else:
-        if dict_config["device"].lower() == 'cuda':
-            if torch.cuda.is_available():
-                device = 'cuda'
-            else:
-                print("WARNING! Cuda device no working, I using CPU!")
-        elif dict_config["device"].lower() == 'cpu':
-            device = 'cpu'
-        else:
-            print("WARNING! I don't know what is using device, I will use the device as I see fit")
-            device = 'cuda' if torch.cuda.is_available() else 'cpu'
-            print("Using device:", device)
+def loss_lr_scheduler(epoch):
+    if epoch < 300:
+        return 0.0001
+    elif epoch < 350:
+        return 0.00005
+    elif epoch < 400:
+        return 0.00001
+    elif epoch < 450:
+        return 0.000005
+    return 0.000001
 
+def loss_mix_lr_scheduler(epoch):
+    if epoch < 200:
+        return 0.0001
+    elif epoch < 225:
+        return 0.00005
+    elif epoch < 250:
+        return 0.00001
+    elif epoch < 275:
+        return 0.000005
+    return 0.000001
+
+def activation_parcer(dict_config):
+    # GET LAST ACTIVATION
     if not "last_activation" in dict_config["model"].keys():
         last_activation = 'sigmoid_activation'
     else:
         last_activation = dict_config["model"]["last_activation"]
+    return last_activation
 
+def set_cofig_seed(dict_config):
+    # SET SEED
+    if "train" in dict_config.keys() and "seed" in dict_config["train"].keys():
+        seed_all(dict_config["train"]["seed"])
+    else:
+        seed_all(42)
+        dict_config["train"]["seed"] = 42
 
+def generator_parcer(dict_config):
     # GET DATA FOR GENERATOR
     augmentation = dict_config["augmentation"]
-
     if not augmentation["rotation_range"]:
         augmentation["rotation_range"] = 0
     if not augmentation["width_shift_range"]:
@@ -105,13 +122,6 @@ def config_parcer(dict_config):
     save_inform = SaveData(save_to_dir       = dict_config["save_inform"]["save_to_dir"],
                            save_prefix_image = dict_config["save_inform"]["save_prefix_image"],
                            save_prefix_mask  = dict_config["save_inform"]["save_prefix_mask"])
-
-    # SET SEED
-    if "train" in dict_config.keys() and "seed" in dict_config["train"].keys():
-        seed_all(dict_config["train"]["seed"])
-    else:
-        seed_all(42)
-        dict_config["train"]["seed"] = 42
 
     # GET DATA GENERATOR
     if not dict_config["generator_config"]["type_gen"] or dict_config["generator_config"]["type_gen"] == "default":
@@ -145,6 +155,24 @@ def config_parcer(dict_config):
     else:
         print("GEN CHOISE ERROR: now you can only choose: 'default', 'all_reader' generator")
         raise AttributeError("GEN CHOISE ERROR: now you can only choose: 'default', 'all_reader' generator")
+    return myGen
+
+def divece_model_optimizer_parcer(dict_config):
+    # GET WORKING DEVICE
+    if not dict_config["device"]:
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    else:
+        if dict_config["device"].lower() == 'cuda':
+            if torch.cuda.is_available():
+                device = 'cuda'
+            else:
+                print("WARNING! Cuda device no working, I using CPU!")
+        elif dict_config["device"].lower() == 'cpu':
+            device = 'cpu'
+        else:
+            print("WARNING! I don't know what is using device, I will use the device as I see fit")
+            device = 'cuda' if torch.cuda.is_available() else 'cpu'
+            print("Using device:", device)
 
     # GET MODEL
     num_channel = 1 if dict_config["img_transform_data"]["color_mode_img"] == 'gray' else 3
@@ -157,21 +185,21 @@ def config_parcer(dict_config):
         if not dict_config["model"]["type_model"] or dict_config["model"]["type_model"] == "unet":
             if not dict_config["model"]["type_model"]:
                 dict_config["model"]["type_model"] = "unet"
-            model = UNet(n_classes = dict_config["train"]["num_class"],
-                         n_channels= num_channel)
+            model = UNet(n_classes=dict_config["train"]["num_class"],
+                         n_channels=num_channel)
         elif dict_config["model"]["type_model"] == "tiny_unet":
-            model = Tiny_unet(n_classes = dict_config["train"]["num_class"],
-                              n_channels= num_channel)
+            model = Tiny_unet(n_classes=dict_config["train"]["num_class"],
+                              n_channels=num_channel)
         elif dict_config["model"]["type_model"] == "tiny_unet_v3":
-            model = Tiny_unet_v3(n_classes = dict_config["train"]["num_class"],
-                                 n_channels= num_channel)
+            model = Tiny_unet_v3(n_classes=dict_config["train"]["num_class"],
+                                 n_channels=num_channel)
         elif dict_config["model"]["type_model"] == "mobile_unet":
-            model = MobileUNet(n_classes = dict_config["train"]["num_class"],
-                               n_channels= num_channel)
+            model = MobileUNet(n_classes=dict_config["train"]["num_class"],
+                               n_channels=num_channel)
         elif dict_config["model"]["type_model"] == "Lars76_unet":
             # из статьи "Effect of the output activation function on the probabilities and errors in medical image segmentation"
             # https://arxiv.org/pdf/2109.00903.pdf
-            model = Lars76_unet(n_classes  =dict_config["train"]["num_class"],
+            model = Lars76_unet(n_classes=dict_config["train"]["num_class"],
                                 n_channels=num_channel)
         else:
             str_using_model = "' ,'".join(using_model)
@@ -179,7 +207,6 @@ def config_parcer(dict_config):
             raise AttributeError(f"MODEL CHOICE ERROR: now you can only choose: '{str_using_model}' model")
 
     model.to(device)
-
     # GET OPTIMIZER
     using_optimizer = ['Adam', 'AdamW', 'RMSprop', 'NovoGrad']
 
@@ -196,7 +223,9 @@ def config_parcer(dict_config):
         print(f"OPTIMIZER CHOICE ERROR: now you can only choose: '{str_using_optimizer}' optimizer")
         raise AttributeError(
             f"OPTIMIZER CHOICE ERROR: now you can only choose: '{str_using_optimizer}' optimizer")
+    return device, model, optimizer
 
+def losses_parcer(dict_config):
     # GET LOSSES
     using_loss = ['DiceLoss', 'BCELoss', 'MSELoss', 'DiceLossMulticlass', 'BCELossMulticlass', 'MSELossMulticlass']
 
@@ -223,32 +252,62 @@ def config_parcer(dict_config):
             str_using_loss = "' ,'".join(using_loss)
             print(f"LOSS CHOICE ERROR: now you can only choose: '{str_using_loss}' loss. " + str(ex))
             raise AttributeError(f"LOSS CHOICE ERROR: now you can only choose: '{str_using_loss}' loss. " + str(ex))
+    return losses
 
+def metrics_parcer(dict_config):
     # GET METRICS
-    #metrics = [universal_dice_coef_multilabel(dict_config["train"]["num_class"]),
+
+    # metrics = [universal_dice_coef_multilabel(dict_config["train"]["num_class"]),
     #           universal_dice_coef_multilabel_arr(dict_config["train"]["num_class"])]
     metrics = [Dice(), DiceMultilabel(dict_config["train"]["num_class"])]
+    return metrics
 
+def num_epochs_parcer(dict_config):
     # GET NUM EPOCHS
     num_epochs = dict_config["train"]["num_epochs"]
+    return num_epochs
 
+def lr_scheduler_parcer(dict_config):
+    # GET SHEDULER
+    if (not "lr_scheduler" in dict_config["train"].keys()) or dict_config["train"]["lr_scheduler"] == "standart":
+        lr_scheduler = standart_lr_scheduler
+    elif dict_config["train"]["lr_scheduler"] == "lr_scheduler_loss_mix":
+        lr_scheduler = loss_mix_lr_scheduler
+    elif dict_config["train"]["lr_scheduler"] == "lr_scheduler_loss":
+        lr_scheduler = loss_lr_scheduler
+    return lr_scheduler
+
+def model_name_parcer(dict_config):
     # GET SAVE MODEL NAME
     modelName = ""
 
     if len(dict_config["save_inform"]["save_prefix_model"]) > 0:
         modelName += dict_config["save_inform"]["save_prefix_model"] + "_"
-                     #str(dict_config["img_transform_data"]["target_size"][0]) + "_" +\
+        # str(dict_config["img_transform_data"]["target_size"][0]) + "_" +\
 
-    modelName += dict_config["model"]["type_model"] #+ "_"  +\
-                 # str(dict_config["train"]["num_class"]) + "_num_class" #+ "_" +\
-                 #dict_config["model"]["optimizer"]
+    modelName += dict_config["model"]["type_model"]  # + "_"  +\
+    # str(dict_config["train"]["num_class"]) + "_num_class" #+ "_" +\
+    # dict_config["model"]["optimizer"]
 
     if len(dict_config["save_inform"]["save_suffix_model"]) > 0:
         modelName += "_" + dict_config["save_inform"]["save_suffix_model"]
 
+    return modelName
+
+def config_parcer(dict_config):
+    last_activation = activation_parcer(dict_config)
+    myGen = generator_parcer(dict_config)
+    num_epochs = num_epochs_parcer(dict_config)
+    lr_scheduler = lr_scheduler_parcer(dict_config)
+    device, model, optimizer = divece_model_optimizer_parcer(dict_config)
+    losses = losses_parcer(dict_config)
+    metrics = metrics_parcer(dict_config)
+
     # DEBUGGING TRAIN LOADER
     if dict_config["debug_mode"]:
-        print("print Train randoms seed:",dict_config["train"]["seed"])
+        model_name = model_name_parcer(dict_config)
+
+        print("print Train randoms seed:", dict_config["train"]["seed"])
         print ("print myGen:")
         print ("\ttypeGen:", myGen.typeGen)
         print ("\tdir_data:", "dir_img_name", myGen.dir_data.dir_img_name, ", dir_mask_name", myGen.dir_data.dir_mask_name, ", add_mask_prefix",  myGen.dir_data.add_mask_prefix)
@@ -265,11 +324,13 @@ def config_parcer(dict_config):
         print ("\tseed:", myGen.seed)
         print ("\ttailing:", myGen.tailing)
         print ("\tlen list_img_name:", len(myGen.list_img_name))
+        print("\tlr_scheduler:", lr_scheduler.__name__)
         print()
 
         print ("print Model:")
         print ("\tnum_epochs:", num_epochs)
-        print ("\tmodelName:", modelName)
+        print("\tmodel:", model.__class__.__name__)
+        print ("\tmodelName:", model_name)
         print ("\toptimizer:", optimizer)
         print ("\tModelSize:", sum(p.numel() for p in model.parameters()))
         print("losses:", losses)
@@ -277,21 +338,9 @@ def config_parcer(dict_config):
         print("last_activation:", last_activation)
         print()
 
-    return myGen, model, last_activation, num_epochs, device, optimizer, metrics, losses, modelName
+    return myGen, model, last_activation, num_epochs, device, optimizer, metrics, losses, lr_scheduler
 
-def trainByConfig(config_file, path_config):
-    # при запуске нескольких экспериментов забивается память
-    with torch.no_grad():
-        torch.cuda.empty_cache()
-    gc.collect()
-
-    myGen, model, last_activation, num_epochs, device, optimizer, losses, metrics, modelName = config_parcer(config_file)
-
-    path_config = os.path.basename(path_config)[:-5] + "_" + modelName + ".json"
-    setproctitle.setproctitle(os.path.basename(path_config)[:-5])
-
-    modelName = "model_by_" + os.path.basename(path_config)[:-5]
-
+def trainByConfig(config_file, path_config, retrain = False):
     data_save = None
     if (config_file["move_to_date_folder"]):
         if "experiment_data" in config_file.keys() and config_file["experiment_data"] is not None:
@@ -300,7 +349,28 @@ def trainByConfig(config_file, path_config):
             now = datetime.datetime.now()
             data_save = f"{now.year:04}_{now.month:02}_{now.day:02}"
 
-    history = fitModel(myGen, model, last_activation, num_epochs, device, optimizer, losses, metrics, modelName, lr_scheduler = lr_scheduler)
+    model_name_parc = model_name_parcer(config_file)
+
+    path_config = os.path.basename(path_config)[:-5] + "_" + model_name_parc + ".json"
+    setproctitle.setproctitle(os.path.basename(path_config)[:-5])
+    modelName = "model_by_" + os.path.basename(path_config)[:-5]
+
+    if not retrain:
+        try:
+            if os.path.isdir(data_save):
+                if os.path.isfile(os.path.join(data_save, modelName + '.pt')):
+                    return "already trained"
+        except Exception as ex:
+            return str(ex)
+
+    # при запуске нескольких экспериментов забивается память
+    with torch.no_grad():
+        torch.cuda.empty_cache()
+    gc.collect()
+
+    myGen, model, last_activation, num_epochs, device, optimizer, losses, metrics, lr_scheduler = config_parcer(config_file)
+
+    history = fitModel(myGen, model, last_activation, num_epochs, device, optimizer, losses, metrics, modelName, lr_scheduler=lr_scheduler)
 
     try:
         history['lr'] = np.array(history['lr']).astype(float).tolist()
@@ -320,6 +390,7 @@ def trainByConfig(config_file, path_config):
             json.dump(config_file, file, indent=4)
         shutil.move(modelName + '.pt', os.path.join(data_save, modelName + '.pt'))
         shutil.move("history_" + modelName + '.json', os.path.join(data_save, "history_" + modelName + '.json'))
+    return f"End experiment: {modelName}"
 
 if __name__ == '__main__':
     args = build_argparser()

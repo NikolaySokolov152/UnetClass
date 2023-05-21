@@ -93,6 +93,7 @@ def fitModel(my_data_generator,
         # Train loop
         time.sleep(0.2) # чтобы tqdm не печатал вперед print
         tqdm_train_loop = tqdm(my_data_generator.gen_train,
+        #tqdm_train_loop=tqdm(my_data_generator.getTrainDataLoaderPytorch(0),
                                desc="\t",
                                ncols=cmd_size-len(f"lr= {now_lr}")-3,
                                file=sys.stdout,
@@ -101,7 +102,6 @@ def fitModel(my_data_generator,
         # desc изменен,чтобы не было 0% в начале
         for epoch_train_iteration, (inputs, targets) in enumerate(tqdm_train_loop):
             inputs, targets = inputs.requires_grad_().to(device), targets.to(device)
-
             # PREDICT WITHOUT ACTIVATION !!!!
             outputs = model(inputs)
             loss = calculate_losses(losses, outputs, targets, EPSILON, last_activation)
