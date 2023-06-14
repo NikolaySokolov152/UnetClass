@@ -1,5 +1,8 @@
 {
   "experiment_data": "Multiple_test",
   "config_path": "config_test0.json",
-  "list_experiments": []
+  "list_experiments": ["trainMultipleLoss"],
+  "list_arguments": [
+                     ["LossDistance2Nearest",["LossDistance2Nearest","DiceLossMulticlass"]]
+                    ]
 }

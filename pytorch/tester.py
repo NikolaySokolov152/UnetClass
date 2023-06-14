@@ -4,6 +4,8 @@ import os
 
 ################################################ сделать с конфиг файлом
 ################################################ доделать test.py
+################################################ сделать тестирование без сохранения картинок
+################################################ разобраться с двойным прогресс баром
 
 def test_models_all_dir(str_data,
                         classnames,
@@ -11,9 +13,10 @@ def test_models_all_dir(str_data,
                         CNN_name,
                         overlap_list,
                         file_test_path,
-                        last_activations = None,
-                        save_report_path = "data/report/",
-                        using_metrics = [Jaccard, Dice]):
+                        last_activations=None,
+                        save_report_path="data/report/",
+                        using_metrics=[Jaccard, Dice],
+                        only_excel_file=True):
 
     list_CNN_name = []
     for name in CNN_name:
@@ -85,20 +88,20 @@ def test_models_all_dir(str_data,
         print(f"create dir:'{save_report_path}'")
         os.makedirs(save_report_path)
 
-    with open(os.path.join(save_report_path, f'{str_data}_test_models_merge_mean.txt'),'w') as file_mean:
-        file_mean.write(all_text_results_merge)
+    if not only_excel_file:
+        with open(os.path.join(save_report_path, f'{str_data}_test_models_merge_mean.txt'),'w') as file_mean:
+            file_mean.write(all_text_results_merge)
 
-    with open(os.path.join(save_report_path, f'{str_data}_test_models_merge_all.txt'),'w') as file_all:
-        file_all.write(all_text_results_merge_all)
+        with open(os.path.join(save_report_path, f'{str_data}_test_models_merge_all.txt'),'w') as file_all:
+            file_all.write(all_text_results_merge_all)
 
-    with open(os.path.join(save_report_path, f'{str_data}_test_models_mean.txt'),
-              'w') as file_mean:
-        file_mean.write(all_text_results)
+        with open(os.path.join(save_report_path, f'{str_data}_test_models_mean.txt'),
+                  'w') as file_mean:
+            file_mean.write(all_text_results)
 
-    with open(os.path.join(save_report_path, f'{str_data}_test_models_all.txt'),
-              'w') as file_all:
-        file_all.write(all_text_results_all)
-    print(f"{str_data} test was saved to path '{save_report_path}'")
+        with open(os.path.join(save_report_path, f'{str_data}_test_models_all.txt'),
+                  'w') as file_all:
+            file_all.write(all_text_results_all)
 
     test_for_excel_merge = GetFinalTestMetricForExcel(all_results_metrics_merge, using_metrics, classnames)
     test_for_excel =       GetFinalTestMetricForExcel(all_results_metrics, using_metrics, classnames)
@@ -109,6 +112,7 @@ def test_models_all_dir(str_data,
     with open(os.path.join(save_report_path, f'excel_{str_data}_test_models.txt'),'w') as file_for_excel:
         file_for_excel.write(test_for_excel)
 
+    print(f"{str_data} test was saved to path '{save_report_path}'")
 
 def test_models_only_all_mito(str_data,
                               classnames,
@@ -117,9 +121,10 @@ def test_models_only_all_mito(str_data,
                               overlap_list,
                               file_test_path,
                               etal_path,
-                              last_activations = None,
-                              save_report_path = "data/report_mito/",
-                              using_metrics = [Jaccard, Dice]):
+                              last_activations=None,
+                              save_report_path="data/report_mito/",
+                              using_metrics=[Jaccard, Dice],
+                              only_excel_file=True):
 
     list_CNN_name = []
     for name in CNN_name:
@@ -128,7 +133,6 @@ def test_models_only_all_mito(str_data,
         list_CNN_name.append(change_name)
 
     result_CNN_dir = []
-
     for i in range(len(CNN_name)):
         save_name = "data/result_mito/" + str_data + "/" + str(list_CNN_num_class[i]) + "_class/" + CNN_name[i]
         result_CNN_dir.append(save_name)
@@ -195,20 +199,20 @@ def test_models_only_all_mito(str_data,
         print(f"create dir:'{save_report_path}'")
         os.makedirs(save_report_path)
 
-    with open(os.path.join(save_report_path, f'{str_data}_test_models_merge_mean.txt'),'w') as file_mean:
-        file_mean.write(all_text_results_merge)
+    if not only_excel_file:
+        with open(os.path.join(save_report_path, f'{str_data}_test_models_merge_mean.txt'),'w') as file_mean:
+            file_mean.write(all_text_results_merge)
 
-    with open(os.path.join(save_report_path, f'{str_data}_test_models_merge_all.txt'),'w') as file_all:
-        file_all.write(all_text_results_merge_all)
+        with open(os.path.join(save_report_path, f'{str_data}_test_models_merge_all.txt'),'w') as file_all:
+            file_all.write(all_text_results_merge_all)
 
-    with open(os.path.join(save_report_path, f'{str_data}_test_models_mean.txt'),
-              'w') as file_mean:
-        file_mean.write(all_text_results)
+        with open(os.path.join(save_report_path, f'{str_data}_test_models_mean.txt'),
+                  'w') as file_mean:
+            file_mean.write(all_text_results)
 
-    with open(os.path.join(save_report_path, f'{str_data}_test_models_all.txt'),
-              'w') as file_all:
-        file_all.write(all_text_results_all)
-    print(f"{str_data} test was saved to path '{save_report_path}'")
+        with open(os.path.join(save_report_path, f'{str_data}_test_models_all.txt'),
+                  'w') as file_all:
+            file_all.write(all_text_results_all)
 
     test_for_excel_merge = GetFinalTestMetricForExcel(all_results_metrics_merge, using_metrics, classnames)
     test_for_excel =       GetFinalTestMetricForExcel(all_results_metrics, using_metrics, classnames)
@@ -218,24 +222,28 @@ def test_models_only_all_mito(str_data,
 
     with open(os.path.join(save_report_path, f'excel_{str_data}_test_models.txt'),'w') as file_for_excel:
         file_for_excel.write(test_for_excel)
+    print(f"{str_data} test was saved to path '{save_report_path}'")
 
 def standart_test(calculate_all_mito = True, calculate_our_markup=True):
     using_metrics = [Dice]
 
     models = ["unet",
-              "tiny_unet",
+              #"tiny_unet",
               "tiny_unet_v3",
               "mobile_unet",
               "Lars76_unet"]
 
     num_classes = [1, 5, 6]
 
-    types_datasets = ["real", "mix", "sint", "sint_v2"]
-
+    types_datasets = ["real",
+                      "mix",
+                      "sint",
+                      #"sint_v2"
+                      ]
     for type_dataset in types_datasets:
         CNN_names = []
         list_CNN_num_class = []
-        path_models = f"Models_and_classes_multiclass_{type_dataset}_2023_05_14"
+        path_models = f"Models_and_classes_multiclass_BCG_{type_dataset}_2023_05_21"
 
         for num_class in num_classes:
             for model_name in models:
@@ -251,7 +259,7 @@ def standart_test(calculate_all_mito = True, calculate_our_markup=True):
         if calculate_our_markup:
             # путь до картинок для теста
             file_test_path = "G:/Data/Unet_multiclass/data/test"
-            save_report_path = "data/report/" + type_dataset
+            save_report_path = "data/report/BCG/" + type_dataset
 
             test_models_all_dir(path_models,
                                 classnames,
@@ -267,7 +275,7 @@ def standart_test(calculate_all_mito = True, calculate_our_markup=True):
             # путь до картинок для теста
             file_test_path = "G:/Data/Unet_multiclass/data/orig_EPFL_data/original"
             etal_path = "G:/Data/Unet_multiclass/data/orig_EPFL_data"
-            save_report_path = "data/report_epfl_mito/" + type_dataset
+            save_report_path = "data/report_epfl_mito/BCG" + type_dataset
 
             test_models_only_all_mito(path_models,
                                       classnames,
@@ -282,7 +290,7 @@ def standart_test(calculate_all_mito = True, calculate_our_markup=True):
 
 def activation_test(calculate_all_mito = False):
     str_data1 = "Lars_test"
-    str_data2 = "2023_05_15"
+    str_data2 = "2023_05_20"
 
     using_metrics = [Dice]
 
@@ -376,7 +384,162 @@ def test_test_config():
                         last_activations="sigmoid_activation",
                         using_metrics = [Jaccard, Dice])
 
+def experiments_test(calculate_all_mito = False, calculate_our_markup=True):
+    using_metrics = [Dice]
+    str_data = "Test_real_v2_dataset"
+
+    CNN_names = [
+        "model_by_config_multiclass_real_v2_1_classes_DiceLossMulticlass_Lars76_unet",
+        "model_by_config_multiclass_real_v2_1_classes_DiceLossMulticlass_tiny_unet_v3",
+        "model_by_config_multiclass_real_v2_5_classes_DiceLossMulticlass_Lars76_unet",
+        "model_by_config_multiclass_real_v2_5_classes_DiceLossMulticlass_tiny_unet_v3",
+        "model_by_config_multiclass_real_v2_6_classes_DiceLossMulticlass_Lars76_unet",
+        "model_by_config_multiclass_real_v2_6_classes_DiceLossMulticlass_tiny_unet_v3",
+    ]
+
+    list_CNN_num_class = [
+        1,
+        1,
+        5,
+        5,
+        6,
+        6,
+    ]
+    overlap_list = [128]
+
+    last_activation = None
+
+    classnames = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"]
+
+    if calculate_our_markup:
+        # путь до картинок для теста
+        file_test_path = "G:/Data/Unet_multiclass/data/test"
+        save_report_path = "data/report/dataset_real_v2"
+
+        test_models_all_dir(str_data,
+                            classnames,
+                            list_CNN_num_class,
+                            CNN_names,
+                            overlap_list,
+                            file_test_path,
+                            last_activations=last_activation,
+                            save_report_path=save_report_path,
+                            using_metrics=using_metrics)
+
+    if calculate_all_mito:
+        # путь до картинок для теста
+        file_test_path = "G:/Data/Unet_multiclass/data/orig_EPFL_data/original"
+        etal_path = "G:/Data/Unet_multiclass/data/orig_EPFL_data"
+        save_report_path = "data/report_epfl_mito/dataset_real_v2/"
+
+        test_models_only_all_mito(str_data,
+                                  classnames,
+                                  list_CNN_num_class,
+                                  CNN_names,
+                                  overlap_list,
+                                  file_test_path,
+                                  etal_path,
+                                  last_activations=last_activation,
+                                  save_report_path=save_report_path,
+                                  using_metrics=using_metrics)
+
+def datasets_test(calculate_all_mito = False, calculate_our_markup=True, calculate_all_Lucchipp_mito=False):
+    using_metrics = [Dice]
+
+    models = [
+              "unet",
+              "tiny_unet_v3",
+              "mobile_unet",
+              "Lars76_unet"
+             ]
+
+    num_classes = [1, 5, 6]
+
+    types_datasets = [
+                      "real_v2",
+                      "sint_v10",
+                      "mix_v2"
+                      ]
+
+    losses = [
+              #"BCELossMulticlass",
+              #"MSELossMulticlass",
+              "DiceLossMulticlass",
+              #"LossDistance2Nearest",
+              #"LossDistance2Nearest_DiceLossMulticlass"
+              ]
+
+    for type_dataset in types_datasets:
+        CNN_names = []
+        list_CNN_num_class = []
+        path_models = f"Test_{type_dataset}_dataset"
+
+        for num_class in num_classes:
+            for model_name in models:
+                for loss in losses:
+                    CNN_name = f"model_by_config_multiclass_{type_dataset}_{num_class}_classes_{loss}_{model_name}"
+                    CNN_names.append(CNN_name)
+                    list_CNN_num_class.append(num_class)
+
+        overlap_list = [128]
+        last_activation = None
+
+        classnames = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"]
+
+        if calculate_our_markup:
+            # путь до картинок для теста
+            file_test_path = "G:/Data/Unet_multiclass/data/test"
+            save_report_path = f"data/report/dataset_{type_dataset}"
+
+            test_models_all_dir(path_models,
+                                classnames,
+                                list_CNN_num_class,
+                                CNN_names,
+                                overlap_list,
+                                file_test_path,
+                                last_activations=last_activation,
+                                save_report_path=save_report_path,
+                                using_metrics=using_metrics)
+
+        if calculate_all_mito:
+            # путь до картинок для теста
+            file_test_path = "G:/Data/Unet_multiclass/data/orig_EPFL_data/original"
+            etal_path = "G:/Data/Unet_multiclass/data/orig_EPFL_data"
+            save_report_path = f"data/report_epfl_mito/dataset_{type_dataset}"
+
+            test_models_only_all_mito(path_models,
+                                      classnames,
+                                      list_CNN_num_class,
+                                      CNN_names,
+                                      overlap_list,
+                                      file_test_path,
+                                      etal_path,
+                                      last_activations=last_activation,
+                                      save_report_path=save_report_path,
+                                      using_metrics = using_metrics)
+
+        if calculate_all_Lucchipp_mito:
+            # путь до картинок для теста
+            file_test_path = "G:/Data/Unet_multiclass/data/Luchi_pp_EPFL_test/original"
+            etal_path = "G:/Data/Unet_multiclass/data/Luchi_pp_EPFL_test"
+            save_report_path = f"data/report_lucchipp_mito/dataset_{type_dataset}"
+
+            test_models_only_all_mito(path_models,
+                                      classnames,
+                                      list_CNN_num_class,
+                                      CNN_names,
+                                      overlap_list,
+                                      file_test_path,
+                                      etal_path,
+                                      last_activations=last_activation,
+                                      save_report_path=save_report_path,
+                                      using_metrics = using_metrics)
+
 if __name__ == "__main__":
-    #test_test_config()
-    standart_test(calculate_all_mito=True, calculate_our_markup=False)
-    #activation_test(calculate_all_mito=False)
+    #test_test_config
+    #experiments_test(calculate_all_mito = True)
+    #standart_test(calculate_all_mito=True, calculate_our_markup=True)
+    activation_test(calculate_all_mito=False)
+    #datasets_test(calculate_all_mito=False)
+    datasets_test(calculate_our_markup=False, calculate_all_mito=True)
+    datasets_test(calculate_our_markup=False, calculate_all_Lucchipp_mito=True)

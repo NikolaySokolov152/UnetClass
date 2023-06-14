@@ -1,0 +1,10 @@
+{
+  "experiment_data": "Test_v7_dataset",
+  "config_path": "configs/test_dataset/config_multiclass_sint_v7.json",
+  "list_experiments": ["trainMultipleModels","trainMultipleClasses", "trainMultipleLoss"],
+  "list_arguments": [
+                     ["tiny_unet_v3", "Lars76_unet"],
+                     [6, 5, 1],
+                     ["DiceLossMulticlass"]
+                    ]
+}

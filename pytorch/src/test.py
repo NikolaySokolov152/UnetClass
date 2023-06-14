@@ -14,8 +14,6 @@ import tqdm
 
 
 EPSILON = 1e-7
-
-
 ########################################################## разобраться с чтеним без альфа канала
 
 def to_0_1_format_img(in_img):
@@ -71,10 +69,9 @@ def predictModel(model, data, device, last_activation, eps = EPSILON):
     result = []
     model.eval()
     with torch.no_grad():
-        print(last_activation)
-        time.sleep(0.2)  # чтобы tqdm не печатал вперед print
-        tqdm_test_loop = tqdm.tqdm(data, file=sys.stdout, desc="Test", colour="GREEN")
-        for epoch_valid_iteration, inputs in enumerate(tqdm_test_loop):
+        #time.sleep(0.2)  # чтобы tqdm не печатал вперед print
+        #tqdm_test_loop = tqdm.tqdm(data, file=sys.stdout, desc="\tSlice", colour="GREEN")
+        for epoch_valid_iteration, inputs in enumerate(data):
             inputs = inputs.to(device)
             outputs = model(inputs)
             # ADD LAST ACTIVATION
@@ -101,9 +98,11 @@ def test_tiled(model_path, num_class, save_mask_dir, last_activation = None, dat
     last_activation = "sigmoid_activation" if last_activation is None else last_activation
     model.to(device)
 
-    for i, img_name in enumerate(filenames):
-        print(i + 1, "image is ", len(filenames))
-
+    ret_images = []
+    print(last_activation)
+    time.sleep(0.2)
+    slices_tqdm = tqdm.tqdm(filenames, file=sys.stdout, desc="Test")
+    for img_name in slices_tqdm:
         ##########################################################
         #img = io.imread(os.path.join(filepath, img_name))
         # io открывает с альфа каналом, поэтому всего может быть и 2 и 4 канала (1, 2, 3 ,4)
@@ -127,4 +126,8 @@ def test_tiled(model_path, num_class, save_mask_dir, last_activation = None, dat
         res_img = glit_mask(results, num_class, img.shape, tile_info, overlap)
         # print("glit_mask", res_img.shape)
 
-        saveResultMask(save_mask_dir, res_img, [img_name], num_class=num_class, classnames=classnames)
+        ret_images.append(res_img)
+        if save_mask_dir is not None:
+            saveResultMask(save_mask_dir, res_img, [img_name], num_class=num_class, classnames=classnames)
+
+    return ret_images

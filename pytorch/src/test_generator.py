@@ -223,10 +223,15 @@ def weak_test_gen_DataGeneratorReaderAll():
 
     print("\ntrain\n")
 
-    for x, y in (gen_train):
+    #for x, y in (gen_train):
+    for x,y in tqdm(myGen.gen_train,
+                   desc="\t",
+                   file=sys.stdout,
+                   colour="GREEN",
+                   disable=False):
         x = x.permute(0, 2, 3, 1).numpy()
         y = y.permute(0, 2, 3, 1).numpy()
-        print(x.shape, " ", y.shape)
+        #print(x.shape, " ", y.shape)
 
         viewDataBatch(x, y)
 

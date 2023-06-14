@@ -58,6 +58,7 @@ def fitModel(my_data_generator,
              losses,
              modelName,
              lr_scheduler = None,
+             silence_mode = False,
              use_validation = True,
              use_train_metric = True):
 
@@ -91,13 +92,15 @@ def fitModel(my_data_generator,
         train_metric = torch.zeros(len(metrics))
         loss_val = 0.0
         # Train loop
-        time.sleep(0.2) # чтобы tqdm не печатал вперед print
+        if not silence_mode:
+            time.sleep(0.2) # чтобы tqdm не печатал вперед print
         tqdm_train_loop = tqdm(my_data_generator.gen_train,
         #tqdm_train_loop=tqdm(my_data_generator.getTrainDataLoaderPytorch(0),
                                desc="\t",
                                ncols=cmd_size-len(f"lr= {now_lr}")-3,
                                file=sys.stdout,
-                               colour="GREEN")
+                               colour="GREEN",
+                               disable=silence_mode)
         # ncols изменен, чтобы при set_postfix_str не было переноса на новую строку
         # desc изменен,чтобы не было 0% в начале
         for epoch_train_iteration, (inputs, targets) in enumerate(tqdm_train_loop):
@@ -155,12 +158,14 @@ def fitModel(my_data_generator,
             with torch.no_grad():
                 val_metric = torch.zeros(len(metrics))
                 val_loss_val = 0.0
-                time.sleep(0.2)  # чтобы tqdm не печатал вперед print
+                if not silence_mode:
+                    time.sleep(0.2)  # чтобы tqdm не печатал вперед print
                 tqdm_valid_loop = tqdm(my_data_generator.gen_valid,
                                        desc="\t",
                                        ncols=cmd_size-len(f"lr= {now_lr}")-3,
                                        file=sys.stdout,
-                                       colour="GREEN")
+                                       colour="GREEN",
+                                       disable=silence_mode)
                 for epoch_valid_iteration, (inputs, targets) in enumerate(tqdm_valid_loop):
                     inputs, targets = inputs.to(device), targets.to(device)
 

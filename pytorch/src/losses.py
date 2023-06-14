@@ -2,6 +2,9 @@ import torch
 from torch.nn import BCELoss, MSELoss
 from torch.nn import functional as F
 
+import numpy as np
+import cv2
+
 @torch.jit.script
 def softsign_with_logits(y_hat : torch.Tensor, y_true : torch.Tensor, epsilon : float) -> torch.Tensor:
     z = 1 + torch.abs(y_hat)
@@ -22,29 +25,45 @@ def inv_square_with_logits(y_hat : torch.Tensor, y_true : torch.Tensor, epsilon 
 def bce_with_logits(y_hat : torch.Tensor, y_true : torch.Tensor, epsilon : float) -> torch.Tensor:
     return F.binary_cross_entropy_with_logits(y_hat, y_true)
 
-class DiceLoss():
+@torch.jit.script
+class DiceLoss:
     def __init__(self):
         self.smooth = 0.00001
-    def __call__(self, y_pred, y_true):
+    def __call__(self, y_pred : torch.Tensor, y_true : torch.Tensor):
         numerator = (y_pred * y_true).sum()
         denominator = y_pred.sum() + y_true.sum()
         return 1 - (2 * numerator + self.smooth) / (denominator + self.smooth)
 
-class LossMulticlass():
-    def __init__(self, num_classes, loss):
-        self.num_classes = num_classes
-        self.loss_class = loss
+@torch.jit.script
+class LossMulticlassDice:
+    def __init__(self, num_classes:int):
+        self.num_classes:int = num_classes
+        self.loss_class = DiceLoss()
 
-    def __call__(self, y_pred, y_true):
+    def __call__(self, y_pred : torch.Tensor, y_true: torch.Tensor):
         mitric = 0.0
         for i in range(self.num_classes):
             mitric += self.loss_class(y_pred[:,i,:,:], y_true[:,i,:,:])
 
         return mitric/self.num_classes
 
-class LossMulticlassEps():
-    def __init__(self, num_classes, loss):
-        self.num_classes = num_classes
+#@torch.jit.script
+class LossMulticlass:
+    def __init__(self, num_classes:int, loss):
+        self.num_classes:int = num_classes
+        self.loss_class = loss
+
+    def __call__(self, y_pred : torch.Tensor, y_true: torch.Tensor):
+        mitric = 0.0
+        for i in range(self.num_classes):
+            mitric += self.loss_class(y_pred[:,i,:,:], y_true[:,i,:,:])
+
+        return mitric/self.num_classes
+
+#@torch.jit.script
+class LossMulticlassEps:
+    def __init__(self, num_classes:int, loss):
+        self.num_classes:int = num_classes
         self.loss_class = loss
 
     def __call__(self, y_pred, y_true, eps):
@@ -53,6 +72,57 @@ class LossMulticlassEps():
             mitric += self.loss_class(y_pred[:,i,:,:], y_true[:,i,:,:], eps)
 
         return mitric/self.num_classes
+
+@torch.jit.script
+class LossDistance2Nearest:
+    def __init__(self, num_classes: int):
+        self.num_classes: int = num_classes
+        self.max_dist: int = 32
+        self.overlap_dist: int = 1
+        self.smooth:float = 0.00001
+        self.error_penalty:int = 1
+
+    def __call__(self, y_pred:torch.Tensor, y_true:torch.Tensor):
+        metric = 0.0
+        for c in range(self.num_classes):
+            conv_true = self.batch_slice_distanse(y_true[:,c,:,:])
+            conv_pred = self.batch_slice_distanse(y_pred[:,c,:,:])
+
+            # подсчет 2 дистанций для избавления от ошибок 1 и 2 рода
+            dictance_counts = torch.mul(y_pred[:,c,:,:], conv_true).sum()\
+                              +torch.mul(y_true[:,c,:,:], conv_pred).sum()
+
+            # smooth - защита деления на 0 (нет класса и нечего не предсказалось)
+            batch_mean_mark = y_pred[:, c, :, :].sum() + y_true[:, c, :, :].sum() + self.smooth
+            metric += dictance_counts / (2 * batch_mean_mark)
+
+        return metric/self.num_classes
+
+    #optimaze version
+    def batch_slice_distanse(self, slice:torch.Tensor):
+        map_inv_distanse = torch.clamp(slice, 0, self.error_penalty)
+        slice2conv = torch.unsqueeze(slice, 1) # size:(b, 1, h, w)
+
+        kernel_size = 2 * (self.overlap_dist) + 1
+        kernel = torch.ones((kernel_size, kernel_size), dtype=torch.float)
+        kernel = kernel.to(slice.get_device())
+        kernel_tensor = torch.unsqueeze(torch.unsqueeze(kernel, 0), 0)  # size: (1, 1, k, k)
+
+        for kernel_r_size in range(1, self.max_dist//self.error_penalty):
+            # morpthological pytorch
+            slice2conv = torch.clamp(torch.nn.functional.conv2d(slice2conv,
+                                                                kernel_tensor,
+                                                                padding=(self.overlap_dist, self.overlap_dist)),
+                                     0,
+                                     self.error_penalty)
+
+            map_inv_distanse+=torch.squeeze(slice2conv)
+
+        map_distanse = torch.full(slice.shape, self.max_dist, dtype=torch.float)
+        map_distanse = map_distanse.to(slice.get_device())
+
+        map_distanse -= map_inv_distanse
+        return map_distanse
 
 def getLossByName(name_loss, num_classes = 1, last_activation = "sigmoid_activation"):
     calculate_stable_loss = False
@@ -95,9 +165,11 @@ def getLossByName(name_loss, num_classes = 1, last_activation = "sigmoid_activat
             #print("Using BCELoss (not necessarily numerical stable)")
             loss_func = LossMulticlass(num_classes, BCELoss())
     elif name_loss == 'DiceLossMulticlass':
-        loss_func = LossMulticlass(num_classes, DiceLoss())
+        loss_func = LossMulticlassDice(num_classes)
     elif name_loss == 'MSELossMulticlass':
         loss_func = LossMulticlass(num_classes, MSELoss())
+    elif name_loss == "LossDistance2Nearest":
+        loss_func = LossDistance2Nearest(num_classes)
     else:
         raise Exception(f"LOSS NAME ERROR ! I NO LOSS FUNCTION {name_loss}")
 

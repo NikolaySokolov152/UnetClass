@@ -1,0 +1,64 @@
+{
+    "experiment_data": "null",
+    "device": "cuda",
+
+    "augmentation":{
+        "rotation_range": 15,
+        "width_shift_range": 0.075,
+        "height_shift_range": 0.075,
+        "zoom_range": 0.2,
+        "horizontal_flip": true,
+        "vertical_flip": true,
+        "noise_limit": 3,
+        "fill_mode": 0
+    },
+
+    "save_inform": {
+        "save_to_dir":       null,
+        "save_prefix_image": "image_",
+        "save_prefix_mask":  "mask_",
+        "save_prefix_model": "",
+        "save_suffix_model": ""
+    },
+
+    "model" : {
+        "type_model": "Lars76_unet",
+        "last_activation": "sigmoid_activation"
+    },
+
+    "train": {
+        "dir_img_path":              "data/train/sint_dataset_v4/original/",
+        "dir_mask_path_without_name":"data/train/sint_dataset_v4/",
+        "mask_name_label_list": ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"],
+        "num_class": 6,
+        "batch_size": 7,
+        "num_epochs": 200,
+        "optimizer": "Adam",
+        "loss": "DiceLossMulticlass",
+        "seed": 42
+    },
+
+    "data_info": {
+        "add_mask_prefix": ""
+    },
+
+    "img_transform_data": {
+        "color_mode_img": "gray",
+        "mode_mask": "separated",
+        "target_size": [256, 256]
+    },
+
+    "generator_config": {
+        "type_gen": "all_reader",
+        "augment": true,
+        "tailing": false,
+        "shuffle": true,
+        "mode": "train",
+        "seed": 1,
+        "subsampling": "random",
+        "share_validat": 0.2
+    },
+
+    "debug_mode": false,
+    "move_to_date_folder": true
+}

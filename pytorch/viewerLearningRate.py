@@ -43,7 +43,8 @@ def viewData(history, name = "", save_path = None, view = True, print_save_model
     
     # loss
     ax = fig.add_subplot(2, 2, 3)
-    ax.set_ylim(ymin = 0)
+    ax.set_ylim(ymin = 0, ymax = max(history["loss"] + history["val_loss"]))
+    
     ax.plot(range(1, count_epoch+1), history["loss"])
     ax.plot(range(1, count_epoch+1), history["val_loss"])
     if print_save_model_point:
@@ -88,7 +89,7 @@ def build_argparser():
 
 def getLossActivationDirs():
     str_data1 = "Lars_test"
-    str_data2 = "2023_05_15"
+    str_data2 = "2023_05_20"
     types_datasets = ["real", "mix", "sint"]
 
     return_dir = []
@@ -97,10 +98,14 @@ def getLossActivationDirs():
     return return_dir
 
 def getStandartTestDirs():
-    str_data1 = "Models_and_classes_multiclass"
-    str_data2 = "2023_05_14"
+    str_data1 = "Models_and_classes_multiclass_BCG"
+    str_data2 = "2023_05_21"
 
-    types_datasets = ["real", "mix", "sint", "sint_v2"]
+    types_datasets = ["real",
+                      "mix",
+                      "sint",
+                      #"sint_v2"
+                      ]
 
     return_dir = []
     for dataset in types_datasets:
@@ -113,7 +118,10 @@ if __name__ == "__main__":
     #paths = [args.path]
     #paths = ['Models_and_classes_sint_2023_05_10']
 
-    paths = getStandartTestDirs() + getLossActivationDirs() + ["Models_and_classes_sint_v2_2023_05_15"]
+    #paths = getStandartTestDirs() + getLossActivationDirs() + ["Models_and_classes_sint_v2_2023_05_15"]
+    #paths = ["new_loss_dist_test"] #+ getStandartTestDirs()
+    paths = ["Test_v10_dataset",
+             "Test_mix_v2_dataset"]
 
     for i, path in enumerate(paths):
         print(f"In the work {i+1} of {len(paths)} dirs named '{path}'")

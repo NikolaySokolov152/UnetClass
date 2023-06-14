@@ -1,0 +1,11 @@
+{
+  "experiment_data": "Test_real_v2_dataset_v2",
+  "config_path": "configs/test_dataset/config_multiclass_real_v2.json",
+  "list_experiments": ["trainMultipleModels","trainMultipleClasses", "trainMultipleLoss", "trainMultipleActivation"],
+  "list_arguments": [
+                     ["unet", "mobile_unet", "tiny_unet_v3", "Lars76_unet"],
+                     [6, 5, 1],
+                     ["DiceLossMulticlass", "MSELoss", "MSELossMulticlass"],
+                     ["arctan_activation", "sigmoid_activation", "hardtanh_activation", "cdf_activation"]
+                    ]
+}

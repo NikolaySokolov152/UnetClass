@@ -259,7 +259,7 @@ class DataGenerator():
     def __init__(self, dir_data=InfoDirData(),
                  list_class_name=["1", "2", "3", "4"], num_classes=2, mode='train', tailing=False,
                  aug_dict=dict(), augment=False, shuffle=True, seed=42, subsampling="crossover",
-                 transform_data=TransformData(), save_inform=SaveData(), share_validat=0.2):
+                 transform_data=TransformData(), save_inform=SaveData(), share_validat=0.2, silence_mode=False):
 
         self.typeGen = "DataGenerator"
 
@@ -279,6 +279,8 @@ class DataGenerator():
         self.seed = seed
 
         self.tailing = tailing
+
+        self.silence_mode = silence_mode
 
         img_type = ('.png', '.jpg', '.jpeg')
         self.list_img_name = [name for name in os.listdir(dir_data.dir_img_name) if name.endswith((img_type))]
@@ -536,7 +538,7 @@ class DataGeneratorReaderAll():
     def __init__(self, dir_data=InfoDirData(),
                  list_class_name=["1", "2", "3", "4"], num_classes=2, mode='train', tailing=False,
                  aug_dict=dict(), augment=False, shuffle=True, seed=42, subsampling="crossover",
-                 transform_data=TransformData(), save_inform=SaveData(), share_validat=0.2):
+                 transform_data=TransformData(), save_inform=SaveData(), share_validat=0.2, silence_mode=False):
         self.typeGen = "DataGeneratorReaderAll"
 
         self.dir_data = dir_data
@@ -555,6 +557,8 @@ class DataGeneratorReaderAll():
         self.seed = seed
 
         self.tailing = tailing
+
+        self.silence_mode = silence_mode
 
         img_type = ('.png', '.jpg', '.jpeg')
 
@@ -600,7 +604,7 @@ class DataGeneratorReaderAll():
         imgs = []
         masks_glob = []
         time.sleep(0.2)  # чтобы tqdm не печатал вперед print
-        for name in tqdm(img_names, file=sys.stdout, desc='Load slices'):
+        for name in tqdm(img_names, file=sys.stdout, desc='Load slices', disable=self.silence_mode):
             img_path = os.path.join(self.dir_data.dir_img_name, name)
 
             if self.transform_data.color_mode_img == "rgb":
@@ -620,7 +624,7 @@ class DataGeneratorReaderAll():
 
 
         if self.transform_data.mode_mask == 'separated':
-            for index_name, name in enumerate(tqdm(img_names, file=sys.stdout, desc='Load masks')):
+            for index_name, name in enumerate(tqdm(img_names, file=sys.stdout, desc='Load masks', disable=self.silence_mode)):
 
                 class_mask = np.zeros((*imgs[index_name].shape[:2], self.num_classes), np.float32)
 
@@ -633,7 +637,7 @@ class DataGeneratorReaderAll():
                         masks = image.astype(np.float32)
                         masks = to_0_1_format_img(masks)
                     else:
-                        # print("no open ", img_path)
+                        print("no open ", img_path)
                         masks = np.zeros(imgs[index_name].shape[:2], np.float32)
 
                     class_mask[:, :, i] = masks

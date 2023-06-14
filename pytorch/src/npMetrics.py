@@ -384,9 +384,17 @@ def CalulateMetricsDir(CNN_name,
     text_result, text_result_all = GetTestMetric(CNN_name, model_results, using_metrics, is_print=is_print_metric)
     test_for_excel = GetFinalTestMetricForExcel({CNN_name: model_results}, using_metrics, class_names, is_print=is_print_metric)
 
+
     if not os.path.isdir(save_report_path):
         print(f"create dir:'{save_report_path}'")
         os.makedirs(save_report_path)
+
+    # для длинных путей
+    save_report_path = os.path.abspath(save_report_path)
+    if save_report_path.startswith(u"\\\\"):
+        save_report_path = u"\\\\?\\UNC\\" + save_report_path[2:]
+    else:
+        save_report_path = u"\\\\?\\" + save_report_path
 
     with open(os.path.join(save_report_path, f'{CNN_name}{"_merge" if merge_images else ""}_mean.txt'),'w') as file_mean:
         file_mean.write(text_result)

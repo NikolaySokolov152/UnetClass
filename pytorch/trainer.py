@@ -35,8 +35,9 @@ def seed_all(seed):
 
 def build_argparser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--config', type=str, default = "config_test.json")
+    parser.add_argument('-c', '--config', type=str, default = "config_test0.json")
     #parser.add_argument('-c', '--config', type=str, default = None)
+    parser.add_argument('-s', '--silence_mode', type=bool, default=False)
     args = parser.parse_args()
     return args
 
@@ -50,7 +51,7 @@ def standart_lr_scheduler(epoch):
         return 0.00001
     elif epoch < 175:
         return 0.000005
-    return 0.000001
+    return 0.0000001
 
 def loss_lr_scheduler(epoch):
     if epoch < 300:
@@ -82,6 +83,14 @@ def activation_parcer(dict_config):
         last_activation = dict_config["model"]["last_activation"]
     return last_activation
 
+def silence_mode_parcer(dict_config):
+    # GET LAST ACTIVATION
+    if "silence_mode" in dict_config.keys():
+        silence_mode = dict_config["silence_mode"]
+    else:
+        silence_mode = False
+    return silence_mode
+
 def set_cofig_seed(dict_config):
     # SET SEED
     if "train" in dict_config.keys() and "seed" in dict_config["train"].keys():
@@ -90,7 +99,7 @@ def set_cofig_seed(dict_config):
         seed_all(42)
         dict_config["train"]["seed"] = 42
 
-def generator_parcer(dict_config):
+def generator_parcer(dict_config, silence_mode=False):
     # GET DATA FOR GENERATOR
     augmentation = dict_config["augmentation"]
     if not augmentation["rotation_range"]:
@@ -137,7 +146,8 @@ def generator_parcer(dict_config):
                           subsampling     = dict_config["generator_config"]["subsampling"],
                           transform_data  = transform_data,
                           save_inform     = save_inform,
-                          share_validat   = dict_config["generator_config"]["share_validat"])
+                          share_validat   = dict_config["generator_config"]["share_validat"],
+                          silence_mode=silence_mode)
     elif dict_config["generator_config"]["type_gen"] == "all_reader":
             myGen = DataGeneratorReaderAll(dir_data = dir_data,
                           num_classes     = dict_config["train"]["num_class"],
@@ -151,7 +161,8 @@ def generator_parcer(dict_config):
                           subsampling     = dict_config["generator_config"]["subsampling"],
                           transform_data  = transform_data,
                           save_inform     = save_inform,
-                          share_validat   = dict_config["generator_config"]["share_validat"])
+                          share_validat   = dict_config["generator_config"]["share_validat"],
+                          silence_mode=silence_mode)
     else:
         print("GEN CHOISE ERROR: now you can only choose: 'default', 'all_reader' generator")
         raise AttributeError("GEN CHOISE ERROR: now you can only choose: 'default', 'all_reader' generator")
@@ -227,7 +238,7 @@ def divece_model_optimizer_parcer(dict_config):
 
 def losses_parcer(dict_config):
     # GET LOSSES
-    using_loss = ['DiceLoss', 'BCELoss', 'MSELoss', 'DiceLossMulticlass', 'BCELossMulticlass', 'MSELossMulticlass']
+    using_loss = ['DiceLoss', 'BCELoss', 'MSELoss', 'DiceLossMulticlass', 'BCELossMulticlass', 'MSELossMulticlass', 'LossDistance2Nearest']
 
     losses = []
     if not "loss" in dict_config["train"].keys():
@@ -295,8 +306,10 @@ def model_name_parcer(dict_config):
     return modelName
 
 def config_parcer(dict_config):
+    set_cofig_seed(dict_config)
     last_activation = activation_parcer(dict_config)
-    myGen = generator_parcer(dict_config)
+    silence_mode = silence_mode_parcer(dict_config)
+    myGen = generator_parcer(dict_config, silence_mode)
     num_epochs = num_epochs_parcer(dict_config)
     lr_scheduler = lr_scheduler_parcer(dict_config)
     device, model, optimizer = divece_model_optimizer_parcer(dict_config)
@@ -338,7 +351,9 @@ def config_parcer(dict_config):
         print("last_activation:", last_activation)
         print()
 
-    return myGen, model, last_activation, num_epochs, device, optimizer, metrics, losses, lr_scheduler
+        print("Silence_mode", silence_mode)
+
+    return myGen, model, last_activation, num_epochs, device, optimizer, metrics, losses, lr_scheduler, silence_mode
 
 def trainByConfig(config_file, path_config, retrain = False):
     data_save = None
@@ -355,22 +370,19 @@ def trainByConfig(config_file, path_config, retrain = False):
     setproctitle.setproctitle(os.path.basename(path_config)[:-5])
     modelName = "model_by_" + os.path.basename(path_config)[:-5]
 
-    if not retrain:
-        try:
-            if os.path.isdir(data_save):
-                if os.path.isfile(os.path.join(data_save, modelName + '.pt')):
-                    return "already trained"
-        except Exception as ex:
-            return str(ex)
+    if (not retrain) and os.path.isdir(data_save) and os.path.isfile(os.path.join(data_save, modelName + '.pt')):
+        return f"{modelName} already trained"
+
+    print(f"start train model '{modelName}' and save in '{data_save}'")
 
     # при запуске нескольких экспериментов забивается память
     with torch.no_grad():
         torch.cuda.empty_cache()
     gc.collect()
 
-    myGen, model, last_activation, num_epochs, device, optimizer, losses, metrics, lr_scheduler = config_parcer(config_file)
+    myGen, model, last_activation, num_epochs, device, optimizer, losses, metrics, lr_scheduler, silence_mode = config_parcer(config_file)
 
-    history = fitModel(myGen, model, last_activation, num_epochs, device, optimizer, losses, metrics, modelName, lr_scheduler=lr_scheduler)
+    history = fitModel(myGen, model, last_activation, num_epochs, device, optimizer, losses, metrics, modelName, lr_scheduler=lr_scheduler, silence_mode=silence_mode)
 
     try:
         history['lr'] = np.array(history['lr']).astype(float).tolist()
@@ -393,15 +405,25 @@ def trainByConfig(config_file, path_config, retrain = False):
     return f"End experiment: {modelName}"
 
 if __name__ == '__main__':
+    print("parse")
     args = build_argparser()
+    silence_mode = args.silence_mode
     if args.config:
         path = args.config
         with open(args.config) as config_buffer:
+            print("open config")
             config = json.loads(config_buffer.read())
+
+        if not silence_mode:
+            if "silence_mode" in config.keys():
+                silence_mode = config["silence_mode"]
+        config["silence_mode"] = silence_mode
+
     else:
         config = None
         path = None
+        print("ERROR CONFIG")
 
-    trainByConfig(config, path)
+    print(trainByConfig(config, path))
 
     #viewerLearningRate.viewData(history.history)

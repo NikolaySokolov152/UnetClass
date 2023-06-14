@@ -6,34 +6,41 @@ def build_argparser_multi():
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--config', type=str, default = "multi_config_test.json")
     #parser.add_argument('-c', '--config', type=str, default = None)
+    parser.add_argument('-s', '--silence_mode', type=bool, default=False)
     args = parser.parse_args()
     return args
 
 def trainMultipleModels(config_file,
                          config_path,
                          models = ["unet",
+                                   #"tiny_unet",
                                    "tiny_unet_v3",
                                    "mobile_unet",
                                    "Lars76_unet"],
-                         funs = []):
+                         funs = [],
+                         args_exp=None):
     # change_save_suffix = config["save_inform"]["save_suffix_model"]
     # config["move_to_date_folder"] = False
 
     for model in models:
-        print(f"\nLearning '{model}'  model \n")
+        print(f"\nLearning '{model}'  model\n")
 
         # config["save_inform"]["save_suffix_model"] = change_save_suffix + "_" + str(n_class) + "_classes"
         config_file["model"]["type_model"] = model
 
         if len(funs) > 0:
-            funs[0](config_file, config_path, funs=funs[1:])
+            if args_exp is None:
+                funs[0](config_file, config_path, funs=funs[1:], args_exp=args_exp)
+            else:
+                funs[0](config_file, config_path, args_exp[0], funs=funs[1:], args_exp=args_exp[1:])
         else:
             print(trainByConfig(config_file, config_path))
 
 def trainMultipleClasses(config_file,
                          config_path,
                          classes = [6, 5, 1],
-                         funs = []):
+                         funs = [],
+                         args_exp=None):
     # change_save_suffix = config["save_inform"]["save_suffix_model"]
     # config["move_to_date_folder"] = False
 
@@ -46,16 +53,20 @@ def trainMultipleClasses(config_file,
         new_path = os.path.basename(config_path)[:-5] + "_" + str(n_class) + "_classes.json"
 
         if len(funs) > 0:
-            funs[0](config_file, new_path, funs=funs[1:])
+            if args_exp is None:
+                funs[0](config_file, new_path, funs=funs[1:], args_exp=args_exp)
+            else:
+                funs[0](config_file, new_path, args_exp[0], funs=funs[1:], args_exp=args_exp[1:])
         else:
-            print(trainByConfig(config_file, config_path))
+            print(trainByConfig(config_file, new_path))
 
 def trainMultipleLoss(config_file,
                       config_path,
                       losses = ["BCELoss",
                                 "MSELoss",
                                 "DiceLoss"],
-                      funs = []):
+                      funs = [],
+                      args_exp=None):
     # change_save_suffix = config["save_inform"]["save_suffix_model"]
     # config["move_to_date_folder"] = False
 
@@ -65,36 +76,20 @@ def trainMultipleLoss(config_file,
         # config["save_inform"]["save_suffix_model"] = change_save_suffix + "_" + str(n_class) + "_classes"
         config_file["train"]["loss"] = loss
 
-        new_path = os.path.basename(config_path)[:-5] + "_" + str(loss) + ".json"
+        if type(loss) is list:
+            str_loss = "_".join(loss)
+        else:
+            str_loss = loss
+        new_path = os.path.basename(config_path)[:-5] + "_" + str(str_loss) + ".json"
 
         if len(funs) > 0:
-            funs[0](config_file, new_path, funs=funs[1:])
+            if args_exp is None:
+                funs[0](config_file, new_path, funs=funs[1:], args_exp=args_exp)
+            else:
+                funs[0](config_file, new_path, args_exp[0], funs=funs[1:], args_exp=args_exp[1:])
         else:
             #print("fake work:", new_path)
-            print(trainByConfig(config_file, config_path))
-
-def trainMultipleMulticlassLoss(config_file,
-                      config_path,
-                      losses = ['BCELossMulticlass',
-                                'DiceLossMulticlass',
-                                'MSELossMulticlass'],
-                      funs = []):
-    # change_save_suffix = config["save_inform"]["save_suffix_model"]
-    # config["move_to_date_folder"] = False
-
-    for loss in losses:
-        print(f"\nLearning model with loss: {loss}\n")
-
-        # config["save_inform"]["save_suffix_model"] = change_save_suffix + "_" + str(n_class) + "_classes"
-        config_file["train"]["loss"] = loss
-
-        new_path = os.path.basename(config_path)[:-5] + "_" + str(loss) + ".json"
-
-        if len(funs) > 0:
-            funs[0](config_file, new_path, funs=funs[1:])
-        else:
-            #print("fake work:", new_path)
-            print(trainByConfig(config_file, config_path))
+            print(trainByConfig(config_file, new_path))
 
 def trainMultipleActivation(config_file,
                             config_path,
@@ -105,7 +100,8 @@ def trainMultipleActivation(config_file,
                                                "inv_square_root_activation",
                                                "cdf_activation",
                                                "hardtanh_activation"],
-                            funs = []):
+                            funs = [],
+                            args_exp=None):
 
     # change_save_suffix = config["save_inform"]["save_suffix_model"]
     # config["move_to_date_folder"] = False
@@ -119,9 +115,12 @@ def trainMultipleActivation(config_file,
         new_path = os.path.basename(config_path)[:-5] + "_" + str(last_activation) + ".json"
 
         if len(funs) > 0:
-            funs[0](config_file, new_path, funs=funs[1:])
+            if args_exp is None:
+                funs[0](config_file, new_path, funs=funs[1:], args_exp=args_exp)
+            else:
+                funs[0](config_file, new_path, args_exp[0], funs=funs[1:], args_exp=args_exp[1:])
         else:
-            print(trainByConfig(config_file, config_path))
+            print(trainByConfig(config_file, new_path))
 
 def trainMultipleOptimazer(config_file,
                            config_path,
@@ -129,7 +128,8 @@ def trainMultipleOptimazer(config_file,
                                           'AdamW',
                                           'RMSprop',
                                           'NovoGrad'],
-                           funs = []):
+                           funs = [],
+                           args_exp=None):
 
     # change_save_suffix = config["save_inform"]["save_suffix_model"]
     # config["move_to_date_folder"] = False
@@ -143,13 +143,19 @@ def trainMultipleOptimazer(config_file,
         new_path = os.path.basename(config_path)[:-5] + "_" + str(optimizer) + "_optimizer.json"
 
         if len(funs) > 0:
-            funs[0](config_file, new_path, funs=funs[1:])
+            if args_exp is None:
+                funs[0](config_file, new_path, funs=funs[1:], args_exp=args_exp)
+            else:
+                funs[0](config_file, new_path, args_exp[0], funs=funs[1:], args_exp=args_exp[1:])
         else:
-            print(trainByConfig(config_file, config_path))
+            print(trainByConfig(config_file, new_path))
 
-def trainMultiple(config_file, config_path, funs = []):
+def trainMultiple(config_file, config_path, arg=None, funs=[], args_exp=None):
     if len(funs) > 0:
-        funs[0](config_file, config_path, funs=funs[1:])
+        if args_exp is None:
+            funs[0](config_file, config_path, funs=funs[1:], args_exp=args_exp)
+        else:
+            funs[0](config_file, config_path, args_exp[0], funs=funs[1:], args_exp=args_exp[1:])
     else:
         print(trainByConfig(config_file, config_path))
 
@@ -163,7 +169,7 @@ def strListTrainMultiple2fun(strList):
 
 if __name__ == '__main__':
     args = build_argparser_multi()
-
+    silence_mode = args.silence_mode
     if args.config:
         multi_config_path = args.config
         with open(multi_config_path) as multi_config_buffer:
@@ -182,9 +188,23 @@ if __name__ == '__main__':
             else:
                 config_file["experiment_data"] = multi_config_file["experiment_data"]
 
-        list_multi_fun = strListTrainMultiple2fun(multi_config_file["list_experiments"])
+        if not silence_mode:
+            if "silence_mode" in multi_config_file.keys():
+                silence_mode = multi_config_file["silence_mode"]
+            elif "silence_mode" in config_file.keys():
+                silence_mode = config_file["silence_mode"]
 
-        trainMultiple(config_file, config_path, list_multi_fun)
+        config_file["silence_mode"] = silence_mode
+
+        list_multi_fun = strListTrainMultiple2fun(multi_config_file["list_experiments"])
+        
+        if "list_arguments" in multi_config_file.keys():
+            args_exp = multi_config_file["list_arguments"]
+        else:
+            args_exp = None
+        
+
+        trainMultiple(config_file, config_path, funs=list_multi_fun, args_exp=args_exp)
     else:
         print("ERROR OPEN CONFIG")
         raise ValueError("ERROR OPEN CONFIG")
