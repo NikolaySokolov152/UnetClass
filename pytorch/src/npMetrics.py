@@ -166,27 +166,31 @@ def calculateMetric(y_true, y_pred, metrics = []):
             result.append(metric(y_true, y_pred))
     return result
 
-# Вычисляет все данные метрики для каждого класса одного реального изображения
-def EvaluateSingleImageModelResults(etal_path, predict_path, test_img_name, predict_prefix, num_classes, class_names, using_metrics):
+
+# Вычисляет все данные метрики для каждого класса одного реального изображения с передачей предсказания модели
+def EvaluateSingleImageModelResultsFromPredict(etal_path,
+                                               model_predict,
+                                               num_classes,
+                                               class_names,
+                                               using_metrics,
+                                               threshold=128):
     result = {}
     # cycle through classes
     for i in range(num_classes):
         class_name = class_names[i]
 
-        etal_img_path = os.path.join(etal_path, class_name, test_img_name)
+        etal_img_path = os.path.join(etal_path, class_name, model_predict[0])
         etal = cv2.imread(etal_img_path, cv2.IMREAD_GRAYSCALE)
         etal = to_0_255_format_img(etal)
         if (etal is None):
             print("error etal")
 
-        predict_img_path = os.path.join(predict_path, class_name, predict_prefix+test_img_name)
-        pred_img = cv2.imread(predict_img_path, cv2.IMREAD_GRAYSCALE)
+        pred_img = model_predict[1]
         pred_img = to_0_255_format_img(pred_img)
         if (pred_img is None):
             print("error predict img")
 
         # бинаризация с порогом (на всякий случай)
-        threshold = 128
         ret, bin_true = cv2.threshold(etal, threshold, 255, 0)
         ret, bin_img_true = cv2.threshold(pred_img, threshold, 255, 0)
 
@@ -196,9 +200,44 @@ def EvaluateSingleImageModelResults(etal_path, predict_path, test_img_name, pred
 
         result[class_name.replace(' ', '_')] = calculateMetric(y_true, y_pred, using_metrics)
     return result
+# Вычисляет все данные метрики для каждого класса одного реального изображения
+def EvaluateSingleImageModelResults(etal_path,
+                                    predict_path,
+                                    test_img_name,
+                                    predict_prefix,
+                                    num_classes,
+                                    class_names,
+                                    using_metrics,
+                                    threshold=128):
+    predict_data = []
+    # cycle through classes
+    for i in range(num_classes):
+        class_name = class_names[i]
 
-# Вычисляет все данные метрики для каждого класса со всеми эталонами сразу
-def EvaluateMergeImageModelResults(etal_path, predict_path, test_img_names, predict_prefix, num_classes, class_names, using_metrics):
+        predict_img_path = os.path.join(predict_path, class_name, predict_prefix+test_img_name)
+        pred_img = cv2.imread(predict_img_path, cv2.IMREAD_GRAYSCALE)
+        if (pred_img is None):
+            print("error predict img")
+        predict_data.append(pred_img)
+    # переместить каналлы в конец
+    predict=np.array(pred_img).transpose(np.roll(np.range(pred_img.ndim), -1))
+    one_model_predict=(test_img_name, predict)
+
+    # отправить в функцию
+    return EvaluateSingleImageModelResultsFromPredict(etal_path,
+                                                      one_model_predict,
+                                                      num_classes,
+                                                      class_names,
+                                                      using_metrics,
+                                                      threshold=threshold)
+
+# Вычисляет все данные метрики для каждого класса со всеми эталонами сразу с передачей предсказания модели
+def EvaluateMergeImageModelResultsFromPredict(etal_path,
+                                              model_predicts,
+                                              num_classes,
+                                              class_names,
+                                              using_metrics,
+                                              threshold=128):
     result = {}
     # cycle through classes
     for i in range(num_classes):
@@ -207,26 +246,21 @@ def EvaluateMergeImageModelResults(etal_path, predict_path, test_img_names, pred
         etalons_merge = []
         pred_imgs_merge = []
 
-        for test_img_name in test_img_names:
+        for test_img_name, pred_img in model_predicts:
             etal_img_path = os.path.join(etal_path, class_name, test_img_name)
             etal = cv2.imread(etal_img_path, cv2.IMREAD_GRAYSCALE)
-            etal = to_0_255_format_img(etal)
             if (etal is None):
-                print("error etal")
+                raise Exception(f'error etalon img with path {etal_img_path}')
+            etal = to_0_255_format_img(etal)
 
-            predict_img_path = os.path.join(predict_path, class_name, predict_prefix+test_img_name)
-            pred_img = cv2.imread(predict_img_path, cv2.IMREAD_GRAYSCALE)
-            pred_img = to_0_255_format_img(pred_img)
-            if (pred_img is None):
-                print("error predict img")
-
+            # обработка предикта на всякий случай
+            pred_img = to_0_255_format_img(pred_img.take(i, axis=-1))
             # бинаризация с порогом (на всякий случай)
-            threshold = 128
             ret, bin_true = cv2.threshold(etal, threshold, 255, 0)
-            ret, bin_img_true = cv2.threshold(pred_img, threshold, 255, 0)
+            ret, bin_pred = cv2.threshold(pred_img, threshold, 255, 0)
 
             etalons_merge.append(bin_true)
-            pred_imgs_merge.append(bin_img_true)
+            pred_imgs_merge.append(bin_pred)
 
         # c векторами работать легче и нет требований на работу с окрестностями пикселей
         y_true = np.array(etalons_merge).ravel()
@@ -234,6 +268,32 @@ def EvaluateMergeImageModelResults(etal_path, predict_path, test_img_names, pred
 
         result[class_name.replace(' ', '_')] = calculateMetric(y_true, y_pred, using_metrics)
     return result
+# Вычисляет все данные метрики для каждого класса со всеми эталонами сразу
+def EvaluateMergeImageModelResults(etal_path,
+                                   predict_path,
+                                   test_img_names,
+                                   predict_prefix,
+                                   num_classes,
+                                   class_names,
+                                   using_metrics,
+                                   threshold=128):
+    # cycle through classes
+    model_predicts = []
+    for test_img_name in test_img_names:
+        predict_data = []
+        for i in range(num_classes):
+            class_name = class_names[i]
+
+            predict_img_path = os.path.join(predict_path, class_name, predict_prefix + test_img_name)
+            pred_img = cv2.imread(predict_img_path, cv2.IMREAD_GRAYSCALE)
+            if (pred_img is None):
+                print("error predict img")
+            predict_data.append(pred_img)
+        # переместить каналлы в конец
+        predict = np.array(pred_img).transpose(np.roll(np.range(pred_img.ndim), -1))
+        model_predicts.append((test_img_name, predict))
+
+    return EvaluateMergeImageModelResultsFromPredict(etal_path, model_predicts, num_classes, class_names, using_metrics, threshold=threshold)
 
 
 def GetTestMetric(model_name, result_mertic_data, using_metrics, is_print = True, is_all = False):
@@ -357,6 +417,7 @@ def CalulateMetricsDir(CNN_name,
     img_suffix = ('.png', '.jpg', '.jpeg')
     etal_image_names = [name for name in os.listdir(os.path.join(etal_path, origin_image_path)) if
                         name.endswith(img_suffix)]
+    print(etal_image_names)
     if len(etal_image_names) == 0:
         print("ERROR !!! NO ETALONS")
 
@@ -384,47 +445,47 @@ def CalulateMetricsDir(CNN_name,
     text_result, text_result_all = GetTestMetric(CNN_name, model_results, using_metrics, is_print=is_print_metric)
     test_for_excel = GetFinalTestMetricForExcel({CNN_name: model_results}, using_metrics, class_names, is_print=is_print_metric)
 
+    if save_report_path is not None:
+        if not os.path.isdir(save_report_path):
+            print(f"create dir:'{save_report_path}'")
+            os.makedirs(save_report_path)
 
-    if not os.path.isdir(save_report_path):
-        print(f"create dir:'{save_report_path}'")
-        os.makedirs(save_report_path)
+        # для длинных путей
+        save_report_path = os.path.abspath(save_report_path)
+        if save_report_path.startswith(u"\\\\"):
+            save_report_path = u"\\\\?\\UNC\\" + save_report_path[2:]
+        else:
+            save_report_path = u"\\\\?\\" + save_report_path
 
-    # для длинных путей
-    save_report_path = os.path.abspath(save_report_path)
-    if save_report_path.startswith(u"\\\\"):
-        save_report_path = u"\\\\?\\UNC\\" + save_report_path[2:]
-    else:
-        save_report_path = u"\\\\?\\" + save_report_path
+        with open(os.path.join(save_report_path, f'{CNN_name}{"_merge" if merge_images else ""}_mean.txt'),'w') as file_mean:
+            file_mean.write(text_result)
+            print(f"{CNN_name}{'_merge' if merge_images else ''}_mean.txt was saved")
 
-    with open(os.path.join(save_report_path, f'{CNN_name}{"_merge" if merge_images else ""}_mean.txt'),'w') as file_mean:
-        file_mean.write(text_result)
-        print(f"{CNN_name}{'_merge' if merge_images else ''}_mean.txt was saved")
+        with open(os.path.join(save_report_path, f'{CNN_name}{"_merge" if merge_images else ""}_all.txt'),'w') as file_all:
+            file_all.write(text_result_all)
+            print(f"{CNN_name}{'_merge' if merge_images else ''}_all.txt was saved")
 
-    with open(os.path.join(save_report_path, f'{CNN_name}{"_merge" if merge_images else ""}_all.txt'),'w') as file_all:
-        file_all.write(text_result_all)
-        print(f"{CNN_name}{'_merge' if merge_images else ''}_all.txt was saved")
-
-    with open(os.path.join(save_report_path, f'excel_{CNN_name}{"_merge" if merge_images else ""}.txt'),'w') as file_for_excel:
-        file_for_excel.write(test_for_excel)
-        print(f"excel_{CNN_name}{'_merge' if merge_images else ''}.txt was saved")
+        with open(os.path.join(save_report_path, f'excel_{CNN_name}{"_merge" if merge_images else ""}.txt'),'w') as file_for_excel:
+            file_for_excel.write(test_for_excel)
+            print(f"excel_{CNN_name}{'_merge' if merge_images else ''}.txt was saved")
 
     return model_results, text_result, text_result_all
 
-def CalulateMetricsDirs(CNN_names,
-                        list_CNN_num_class,
-                        paths_train = None,
-                        etal_path = "G:/Data/Unet_multiclass/data/original data/testing",
-                        predict_prefix = "predict_",
-                        class_names = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"],
-                        using_metrics = [Jaccard, Dice, RI, Accuracy, Precition, Recall, Fscore, CrowdsourcingMetrics],
-                        save_report_path = "data/report/",
-                        origin_image_path = 'original',
-                        path_to_standart_model_result = "data/result/",
-                        str_data_time = "2023_05_02",
-                        overlap = 128,
-                        merge_images = True,
-                        is_print_metric = True
-                        ):
+def CalulateMetricsDirListModels(CNN_names,
+                                 list_CNN_num_class,
+                                 paths_train = None,
+                                 etal_path = "G:/Data/Unet_multiclass/data/original data/testing",
+                                 predict_prefix = "predict_",
+                                 class_names = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"],
+                                 using_metrics = [Jaccard, Dice, RI, Accuracy, Precition, Recall, Fscore, CrowdsourcingMetrics],
+                                 save_report_path = "data/report/",
+                                 origin_image_path = 'original',
+                                 path_to_standart_model_result = "data/result/",
+                                 str_data_time = "2023_05_02",
+                                 overlap = 128,
+                                 merge_images = True,
+                                 is_print_metric = True
+                                 ):
 
     num_testing_result = len(list_CNN_num_class)
 
@@ -474,6 +535,65 @@ def CalulateMetricsDirs(CNN_names,
 
     return all_text_results, all_text_results_all
 
+
+def CalulateMetricsFromModelPredict(model_predicts,
+                                    CNN_name,
+                                    num_classes,
+                                    etal_path = "G:/Data/Unet_multiclass/data/original data/testing",
+                                    class_names = None,
+                                    using_metrics = [Jaccard, Dice, RI, Accuracy, Precition, Recall, Fscore, CrowdsourcingMetrics],
+                                    save_report_path = None,
+                                    merge_images = True,
+                                    is_print_metric = True
+                                   ):
+
+    if merge_images:
+        res = EvaluateMergeImageModelResultsFromPredict(etal_path,
+                                                        model_predicts,
+                                                        num_classes=num_classes,
+                                                        class_names=class_names,
+                                                        using_metrics=using_metrics)
+        model_results = [res]
+    else:
+        model_results = []
+        for one_model_predict in model_predicts:
+            model_results_temp = EvaluateSingleImageModelResultsFromPredict(etal_path,
+                                                                            one_model_predict,
+                                                                            num_classes=num_classes,
+                                                                            class_names=class_names,
+                                                                            using_metrics=using_metrics)
+            model_results.append(model_results_temp)
+
+    text_result, text_result_all = GetTestMetric(CNN_name, model_results, using_metrics, is_print=is_print_metric)
+    test_for_excel = GetFinalTestMetricForExcel({CNN_name: model_results}, using_metrics, class_names, is_print=is_print_metric)
+
+    if save_report_path is not None:
+        if not os.path.isdir(save_report_path):
+            print(f"create dir:'{save_report_path}'")
+            os.makedirs(save_report_path)
+
+        # для длинных путей
+        save_report_path = os.path.abspath(save_report_path)
+        if save_report_path.startswith(u"\\\\"):
+            save_report_path = u"\\\\?\\UNC\\" + save_report_path[2:]
+        else:
+            save_report_path = u"\\\\?\\" + save_report_path
+
+        with open(os.path.join(save_report_path, f'{CNN_name}{"_merge" if merge_images else ""}_mean.txt'),'w') as file_mean:
+            file_mean.write(text_result)
+            print(f"{CNN_name}{'_merge' if merge_images else ''}_mean.txt was saved")
+
+        with open(os.path.join(save_report_path, f'{CNN_name}{"_merge" if merge_images else ""}_all.txt'),'w') as file_all:
+            file_all.write(text_result_all)
+            print(f"{CNN_name}{'_merge' if merge_images else ''}_all.txt was saved")
+
+        with open(os.path.join(save_report_path, f'excel_{CNN_name}{"_merge" if merge_images else ""}.txt'),'w') as file_for_excel:
+            file_for_excel.write(test_for_excel)
+            print(f"excel_{CNN_name}{'_merge' if merge_images else ''}.txt was saved")
+
+    return model_results, text_result, text_result_all
+
+
 if __name__ == "__main__":
     str_data = "2023_05_01"
 
@@ -493,22 +613,22 @@ if __name__ == "__main__":
 
     overlap = 128
 
-    CalulateMetricsDirs(CNN_name,
-                        list_CNN_num_class,
-                        str_data_time=str_data,
-                        overlap=overlap,
-                        class_names = classnames,
-                        using_metrics = [Jaccard, Dice],
-                        path_to_standart_model_result=standart_path_to_model_result,
-                        merge_images = False
-                        )
+    CalulateMetricsDirListModels(CNN_name,
+                                 list_CNN_num_class,
+                                 str_data_time=str_data,
+                                 overlap=overlap,
+                                 class_names = classnames,
+                                 using_metrics = [Jaccard, Dice],
+                                 path_to_standart_model_result=standart_path_to_model_result,
+                                 merge_images = False
+                                 )
 
-    CalulateMetricsDirs(CNN_name,
-                        list_CNN_num_class,
-                        str_data_time=str_data,
-                        overlap=overlap,
-                        class_names = classnames,
-                        using_metrics=[Jaccard, Dice],
-                        path_to_standart_model_result=standart_path_to_model_result,
-                        merge_images=True
-                        )
+    CalulateMetricsDirListModels(CNN_name,
+                                 list_CNN_num_class,
+                                 str_data_time=str_data,
+                                 overlap=overlap,
+                                 class_names = classnames,
+                                 using_metrics=[Jaccard, Dice],
+                                 path_to_standart_model_result=standart_path_to_model_result,
+                                 merge_images=True
+                                 )

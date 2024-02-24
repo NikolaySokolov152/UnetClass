@@ -4,7 +4,7 @@ import json
 
 def build_argparser_multi():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--config', type=str, default = "multi_config_test.json")
+    parser.add_argument('-c', '--config', type=str, default = "segmentation/multi_config_test.json")
     #parser.add_argument('-c', '--config', type=str, default = None)
     parser.add_argument('-s', '--silence_mode', type=bool, default=False)
     args = parser.parse_args()
@@ -158,6 +158,42 @@ def trainMultiple(config_file, config_path, arg=None, funs=[], args_exp=None):
             funs[0](config_file, config_path, args_exp[0], funs=funs[1:], args_exp=args_exp[1:])
     else:
         print(trainByConfig(config_file, config_path))
+
+def trainMultipleDataProportion(config_file,
+                                config_path,
+                                proportions = [val/10 for val in range(1, 11)],
+                                funs = [],
+                                args_exp=None):
+
+    # change_save_suffix = config["save_inform"]["save_suffix_model"]
+    # config["move_to_date_folder"] = False
+
+    if type(proportions[0]) is list:
+        proportions = zip(*proportions)
+
+    for proportion in proportions:
+        print(f"\nLearning model with data proportional: {proportion}\n")
+
+        if type(config_file["data_info"]) is list:
+            if type(proportion) is float or type(proportion) is int:
+                config_file["data_info"][0]["proportion_of_dataset"] = proportion
+            else:
+                for i, dataset_info in enumerate(config_file["data_info"]):
+                    dataset_info["proportion_of_dataset"] = proportion[i]
+        else:
+            config_file["data_info"]["proportion_of_dataset"] = proportion
+        # config["save_inform"]["save_suffix_model"] = change_save_suffix + "_" + str(n_class) + "_classes"
+
+
+        new_path = os.path.basename(config_path)[:-5] + "_" + str(proportion) + "_data_proportional.json"
+
+        if len(funs) > 0:
+            if args_exp is None:
+                funs[0](config_file, new_path, funs=funs[1:], args_exp=args_exp)
+            else:
+                funs[0](config_file, new_path, args_exp[0], funs=funs[1:], args_exp=args_exp[1:])
+        else:
+            print(trainByConfig(config_file, new_path))
 
 def strListTrainMultiple2fun(strList):
     result = []

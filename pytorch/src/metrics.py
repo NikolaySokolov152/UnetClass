@@ -10,11 +10,16 @@ class Dice():
 class DiceMultilabel():
     def __init__(self, num_classes = 2):
         self.num_classes = num_classes
+        self.d1metric = Dice()
     def __call__(self, y_pred, y_true):
         dice = 0
         for index in range(self.num_classes):
-            dice += Dice()(y_true[:, index, :, :], y_pred[:, index, :, :])
+            dice += self.d1metric(y_true[:, index, :, :], y_pred[:, index, :, :])
         return dice / self.num_classes  # taking average
+
+
+
+
 
 '''
 def universal_dice_coef_multilabel(numLabels):

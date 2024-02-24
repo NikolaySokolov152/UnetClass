@@ -14,6 +14,9 @@ def to_0_255_format_img(in_img):
     else:
         return in_img
 
+def to_numpy_from_torch(tensor):
+    return tensor.detach().cpu().permute(0, 2, 3, 1).numpy()
+
 def printGenerator(gen, isPrintInput = True, isPrintLen = True):
     if isPrintInput:
         print("DEBUG_INPUT")
@@ -152,31 +155,48 @@ def viewDataBatch(x, y, isFast = True):
 
 def weak_test_gen_DataGeneratorReaderAll():
 
-    num_class = 6
+    num_class = 2
 
-    data_gen_args = dict(rotation_range=15,
-                         width_shift_range=0.1,
-                         height_shift_range=0.1,
+    data_gen_args = dict(rotation_range=10,
+                         width_shift_range=0.05,
+                         height_shift_range=0.05,
                          zoom_range=0.2,
-                         brightness_shift_range = 0.15,
-                         contrast_shift_range = 0.2,
-                         gamma_limit = [90, 110],
+                         brightness_shift_range=0.2,
+                         contrast_shift_range=0.2,
                          horizontal_flip=True,
                          vertical_flip=True,
                          noise_limit=3,
+                         rotate_90=.5,
                          fill_mode=0)  # cv2.BORDER_CONSTANT = 0
 
 
     # берутся первые классы из списка
-    mask_name_label_list = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial_boundaries"]
+    mask_name_label_list = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"]
+    #mask_name_label_list = ["output"]
 
-    #dir_data = InfoDirData(dir_img_name="C:/Users/Sokol-PC/Synthetics/dataset/fake_synthetic_layer/original",
-    #                       dir_mask_name="C:/Users/Sokol-PC/Synthetics/dataset/fake_synthetic_layer/",
+    dir_data = [InfoDirData(dir_img_name="C:/Users/Sokol-PC/Synthetics/dataset/synthetic_dataset10/original",
+                           dir_mask_name="C:/Users/Sokol-PC/Synthetics/dataset/synthetic_dataset10/",
+                           add_mask_prefix='',
+                           proportion_of_dataset=0.2),
+
+               InfoDirData(dir_img_name = "G:/Data/Unet_multiclass/data/cutting data/original",
+                           dir_mask_name ="G:/Data/Unet_multiclass/data/cutting data/",
+                           add_mask_prefix = '',
+                           proportion_of_dataset=0.2)]
+
+    dir_data = [dir_data[1], dir_data[0]]
+
+    #dir_data = InfoDirData(dir_img_name="data/zip_data_train/original.npy",
+    #                       dir_mask_name="data/zip_data_train/mask.npy",
     #                       add_mask_prefix='')
 
-    dir_data = InfoDirData(dir_img_name = "G:/Data/Unet_multiclass/data/cutting data/original",
-                           dir_mask_name ="G:/Data/Unet_multiclass/data/cutting data/",
-                           add_mask_prefix = '')
+    #dir_data = InfoDirData(dir_img_name="C:/Users/Sokol-PC/bachelor_diploma/train/original",
+    #                      dir_mask_name="C:/Users/Sokol-PC/bachelor_diploma/train/",
+    #                       add_mask_prefix='')
+
+    #dir_data = InfoDirData(dir_img_name="C:/Users/Sokol-PC/UnetClass/pytorch/unet_standart/img2img/data/cutting data/low_quality",
+    #                       dir_mask_name="C:/Users/Sokol-PC/UnetClass/pytorch/unet_standart/img2img/data/cutting data/",
+    #                       add_mask_prefix='')
 
     transform_data = TransformData(color_mode_img='gray',
                                    mode_mask='separated',
@@ -197,6 +217,7 @@ def weak_test_gen_DataGeneratorReaderAll():
                                    augment=True,
                                    tailing=False,
                                    shuffle=True,
+                                   type_load_data="img",
                                    seed=1,
                                    subsampling="random",
                                    transform_data=transform_data,
@@ -208,6 +229,9 @@ def weak_test_gen_DataGeneratorReaderAll():
     printAugmentGenerator(myGen.gen_train)
     printAugmentGenerator(myGen.gen_valid)
 
+    #myGen.saveNpyData()
+
+
     count = 0
 
     print(len(myGen))
@@ -217,7 +241,7 @@ def weak_test_gen_DataGeneratorReaderAll():
     size_train = len(myGen.gen_train)
 
     #gen_train = myGen.gen_train
-    gen_train = myGen.getTrainDataLoaderPytorch()
+    gen_train = myGen
 
     print(type(myGen.gen_train))
 
@@ -229,8 +253,15 @@ def weak_test_gen_DataGeneratorReaderAll():
                    file=sys.stdout,
                    colour="GREEN",
                    disable=False):
-        x = x.permute(0, 2, 3, 1).numpy()
-        y = y.permute(0, 2, 3, 1).numpy()
+        x = to_numpy_from_torch(x)
+        y = to_numpy_from_torch(y)
+
+        y_no_1 = y[y!=1.0]
+        y_no_01 = y_no_1[y_no_1!=0.0]
+
+        if len(y_no_01):
+            print("ERROR! mask have no binary data", len(y_no_01), y_no_01)
+
         #print(x.shape, " ", y.shape)
 
         viewDataBatch(x, y)
@@ -241,8 +272,8 @@ def weak_test_gen_DataGeneratorReaderAll():
 
     for i in range(2 * len(myGen.gen_valid)):
         x, y = myGen.gen_valid[i]
-        x = x.permute(0, 2, 3, 1).numpy()
-        y = y.permute(0, 2, 3, 1).numpy()
+        x = to_numpy_from_torch(x)
+        y = to_numpy_from_torch(y)
         print(x.shape, " ", y.shape)
 
         viewDataBatch(x, y)
@@ -254,8 +285,8 @@ def weak_test_gen_DataGeneratorReaderAll():
 
     for i in range(2 * size_train):
         x, y = gen_train[i]
-        x = x.permute(0, 2, 3, 1).numpy()
-        y = y.permute(0, 2, 3, 1).numpy()
+        x = to_numpy_from_torch(x)
+        y = to_numpy_from_torch(y)
         print(x.shape, " ", y.shape)
 
 
@@ -265,8 +296,8 @@ def weak_test_gen_DataGeneratorReaderAll():
     print("\nvalid\n")
     for i in range(2 * len(myGen.gen_valid)):
         x, y = myGen.gen_valid[i]
-        x = x.permute(0, 2, 3, 1).numpy()
-        y = y.permute(0, 2, 3, 1).numpy()
+        x = to_numpy_from_torch(x)
+        y = to_numpy_from_torch(y)
         print(x.shape, " ", y.shape)
 
 
@@ -279,7 +310,7 @@ def weak_test_gen_DataGeneratorReaderAll():
     myGen.on_epoch_end()
 
 def weak_test_gen_DataGenerator():
-    num_class = 6
+    num_class = 1
 
     data_gen_args = dict(rotation_range=15,
                          width_shift_range=0.1,
@@ -291,18 +322,26 @@ def weak_test_gen_DataGenerator():
                          fill_mode=0)  # cv2.BORDER_CONSTANT = 0
 
     # берутся первые классы из списка
-    mask_name_label_list = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial_boundaries"]
+    mask_name_label_list = ["output"]
 
-    dir_data = InfoDirData(dir_img_name="C:/Users/Sokol-PC/Synthetics/dataset/fake_synthetic_layer/original",
-                           dir_mask_name="C:/Users/Sokol-PC/Synthetics/dataset/fake_synthetic_layer/",
-                           add_mask_prefix='')
+   # dir_data = InfoDirData(dir_img_name="C:/Users/Sokol-PC/Synthetics/dataset/fake_synthetic_layer/original",
+   #                        dir_mask_name="C:/Users/Sokol-PC/Synthetics/dataset/fake_synthetic_layer/",
+    #                       add_mask_prefix='')
+
+    #dir_data = InfoDirData(dir_img_name="C:/Users/Sokol-PC/bachelor_diploma/train/original",
+    #                       dir_mask_name="C:/Users/Sokol-PC/bachelor_diploma/train/",
+    #                       add_mask_prefix='')
 
     # dir_data = InfoDirData(dir_img_name = "G:/Data/Unet_multiclass/data/cutting data/original/",
     #                       dir_mask_name = "G:/Data/Unet_multiclass/data/cutting data/",
     #                       add_mask_prefix = '')
 
+    dir_data = InfoDirData(dir_img_name="C:/Users/Sokol-PC/UnetClass/pytorch/unet_standart/img2img/data/cutting data/low_quality",
+                           dir_mask_name="C:/Users/Sokol-PC/UnetClass/pytorch/unet_standart/img2img/data/cutting data/",
+                           add_mask_prefix='')
+
     transform_data = TransformData(color_mode_img='gray',
-                                   mode_mask='separated',
+                                   mode_mask='image',
                                    target_size=(256, 256),
                                    batch_size=3)
 
@@ -347,8 +386,8 @@ def weak_test_gen_DataGenerator():
 
     for i in range(2 * size_train):
         x, y = gen_train[i]
-        x = x.permute(0, 2, 3, 1).numpy()
-        y = y.permute(0, 2, 3, 1).numpy()
+        x = to_numpy_from_torch(x)
+        y = to_numpy_from_torch(y)
         print(x.shape, " ", y.shape)
 
         viewDataBatch(x, y)
@@ -359,8 +398,8 @@ def weak_test_gen_DataGenerator():
 
     for i in range(2 * len(myGen.gen_valid)):
         x, y = myGen.gen_valid[i]
-        x = x.permute(0, 2, 3, 1).numpy()
-        y = y.permute(0, 2, 3, 1).numpy()
+        x = to_numpy_from_torch(x)
+        y = to_numpy_from_torch(y)
         print(x.shape, " ", y.shape)
 
         viewDataBatch(x, y)
@@ -372,8 +411,8 @@ def weak_test_gen_DataGenerator():
 
     for i in range(2 * size_train):
         x, y = gen_train[i]
-        x = x.permute(0, 2, 3, 1).numpy()
-        y = y.permute(0, 2, 3, 1).numpy()
+        x = to_numpy_from_torch(x)
+        y = to_numpy_from_torch(y)
         print(x.shape, " ", y.shape)
 
 
@@ -383,8 +422,8 @@ def weak_test_gen_DataGenerator():
     print("\nvalid\n")
     for i in range(2 * len(myGen.gen_valid)):
         x, y = myGen.gen_valid[i]
-        x = x.permute(0, 2, 3, 1).numpy()
-        y = y.permute(0, 2, 3, 1).numpy()
+        x = to_numpy_from_torch(x)
+        y = to_numpy_from_torch(y)
         print(x.shape, " ", y.shape)
 
 

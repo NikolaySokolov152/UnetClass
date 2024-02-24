@@ -1,5 +1,0 @@
-{
-  "experiment_data": "Models_and_classes_real_2023_05_15",
-  "config_path": "configs/test_models_classes/config_real.json",
-  "list_experiments": ["trainMultipleModels","trainMultipleClasses"]
-}

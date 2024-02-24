@@ -40,7 +40,7 @@ class tiledGen():
 def glit_mask(tiled_masks, num_class, out_size, tile_info, overlap = 64):
     masks = []
     for i_class in range(num_class):
-        pic = tiled_masks[:,:,:,i_class]
+        pic = tiled_masks.take(i_class, axis=-1)
         i_mask = glit_image(pic, out_size, tile_info, overlap)
         #print(result_class.shape)
         masks.append(i_mask)
@@ -53,16 +53,17 @@ def glit_mask(tiled_masks, num_class, out_size, tile_info, overlap = 64):
 
     return np.reshape(union_arr, (1,) + union_arr.shape)
 
-def saveResultMask(save_path, npyfile, namelist, num_class = 2 , classnames = ['0', '1', '2', '3', '4', '5', '6']):
+def saveResultMask(save_path, npyfile, namelist, num_class = 2 , classnames=None):
     for i,item in enumerate(npyfile):
         for class_index in range(num_class):
-            out_dir = os.path.join(save_path, classnames[class_index])
+            out_dir = os.path.join(save_path, classnames[class_index] if classnames is not None else str(class_index))
             if not os.path.isdir(out_dir):
                 print("создаю out_dir:" + out_dir)
                 os.makedirs(out_dir)
 
             if (os.path.isfile(os.path.join(out_dir, "predict_" + namelist[i]))):
                 os.remove(os.path.join(out_dir, "predict_" + namelist[i]))
+
             io.imsave(os.path.join(out_dir, "predict_" + namelist[i]), item[:,:,class_index], check_contrast=False)
 
 def predictModel(model, data, device, last_activation, eps = EPSILON):
@@ -80,12 +81,14 @@ def predictModel(model, data, device, last_activation, eps = EPSILON):
             result.append(outputs.cpu().permute(0, 2, 3, 1).numpy()[0])
     return np.array(result)
 
-
-def test_tiled(model_path, num_class, save_mask_dir, last_activation = None, dataset={'filenames': None, "filepath": "data/test", "classnames": ['0', '1', '2', '3', '4', '5', '6']},
+def test_tiled(model_path, num_class, save_mask_dir, last_activation = None, dataset={'filenames': None, "filepath": "data/test", "classnames": None},
                tiled_data={"size":256, "overlap":64, "unique_area":0}, save_dir = None):
     filenames = dataset["filenames"]
     filepath = dataset["filepath"]
     classnames = dataset["classnames"]
+
+    if len(filenames) == 0:
+        raise Exception(f"No image to predict")
 
     size = tiled_data["size"]
     overlap = tiled_data["overlap"]
@@ -101,6 +104,7 @@ def test_tiled(model_path, num_class, save_mask_dir, last_activation = None, dat
     ret_images = []
     print(last_activation)
     time.sleep(0.2)
+
     slices_tqdm = tqdm.tqdm(filenames, file=sys.stdout, desc="Test")
     for img_name in slices_tqdm:
         ##########################################################
@@ -108,6 +112,9 @@ def test_tiled(model_path, num_class, save_mask_dir, last_activation = None, dat
         # io открывает с альфа каналом, поэтому всего может быть и 2 и 4 канала (1, 2, 3 ,4)
         # поэтому пока что открываю всё в сером !
         img = cv2.imread(os.path.join(filepath, img_name), cv2.IMREAD_GRAYSCALE)
+
+        if img is None:
+            raise Exception(f"No open predict image '{img_name}'")
 
         if len(img.shape) == 3:
             img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
@@ -121,12 +128,13 @@ def test_tiled(model_path, num_class, save_mask_dir, last_activation = None, dat
         img_generator = tiledGen(tiled_arr)
 
         results = predictModel(model, img_generator, device, last_activation)
-        #print("results", results.shape)
 
         res_img = glit_mask(results, num_class, img.shape, tile_info, overlap)
         # print("glit_mask", res_img.shape)
 
-        ret_images.append(res_img)
+        ################################################################################################################ вспомнить почему нужна единичная ось в начале
+        ################################### нужно для корректной работы универсальной функции сохранения (подумать нужно ли это вообще)
+        ret_images.append((img_name, res_img[0]))
         if save_mask_dir is not None:
             saveResultMask(save_mask_dir, res_img, [img_name], num_class=num_class, classnames=classnames)
 

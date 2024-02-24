@@ -1,10 +1,9 @@
 from src.test import *
 from src.npMetrics import *
 import os
+import json
 
-################################################ сделать с конфиг файлом
 ################################################ доделать test.py
-################################################ сделать тестирование без сохранения картинок
 ################################################ разобраться с двойным прогресс баром
 
 def test_models_all_dir(str_data,
@@ -13,10 +12,13 @@ def test_models_all_dir(str_data,
                         CNN_name,
                         overlap_list,
                         file_test_path,
+                        etal_path="segmentation/data/original data/testing",
                         last_activations=None,
                         save_report_path="data/report/",
                         using_metrics=[Jaccard, Dice],
-                        only_excel_file=True):
+                        only_excel_file=True,
+                        use_no_merge_data_for_mertic=False,
+                        is_save_result=True):
 
     list_CNN_name = []
     for name in CNN_name:
@@ -24,11 +26,14 @@ def test_models_all_dir(str_data,
         change_name = str_data + "/" + name + ".pt"
         list_CNN_name.append(change_name)
 
-    result_CNN_dir = []
+    if is_save_result:
+        result_CNN_dirs = []
+        for i in range(len(CNN_name)):
+            save_name = "data/result/" + str_data + "/" + str(list_CNN_num_class[i]) + "_class/" + CNN_name[i]
+            result_CNN_dirs.append(save_name)
+    else:
+        result_CNN_dirs = None
 
-    for i in range(len(CNN_name)):
-        save_name = "data/result/" + str_data + "/" + str(list_CNN_num_class[i]) + "_class/" + CNN_name[i]
-        result_CNN_dir.append(save_name)
 
     list_test_img_dir = os.listdir(os.path.join(file_test_path))
     list_test_img_dir = [name for name in list_test_img_dir if name.endswith((".png", ".jpg"))]
@@ -49,44 +54,60 @@ def test_models_all_dir(str_data,
             tiled_data = {"size": 256, "overlap": overlap, "unique_area": 0}
             last_activation = last_activations[i] if type(last_activations) is list else last_activations
 
-            test_tiled(model_path=list_CNN_name[i],
-                       num_class=list_CNN_num_class[i],
-                       save_mask_dir=result_CNN_dir[i] + "_" + str(overlap),
-                       last_activation=last_activation,
-                       dataset = dataset,
-                       tiled_data=tiled_data,
-                       )  # , save_dir= "data/split test/")
+            result_CNN_dir = result_CNN_dirs[i] + "_" + str(overlap) if is_save_result else None
+
+            model_predicts = test_tiled(model_path=list_CNN_name[i],
+                                        num_class=list_CNN_num_class[i],
+                                        save_mask_dir=result_CNN_dir,
+                                        last_activation=last_activation,
+                                        dataset = dataset,
+                                        tiled_data=tiled_data,
+                                       )  # , save_dir= "data/split test/")
 
             result_metrics_merge,\
             text_result_merge,\
-            text_result_merge_all = CalulateMetricsDir(CNN_name[i],
-                                                       list_CNN_num_class[i],
-                                                       path_train = result_CNN_dir[i] + "_" + str(overlap),
-                                                       using_metrics=using_metrics,
-                                                       merge_images=True
-                                                      )
+            text_result_merge_all = CalulateMetricsFromModelPredict(model_predicts,
+                                                                    CNN_name[i],
+                                                                    list_CNN_num_class[i],
+                                                                    etal_path=etal_path,
+                                                                    class_names=classnames,
+                                                                    using_metrics=using_metrics,
+                                                                    merge_images=True
+                                                                    )
 
             all_text_results_merge += text_result_merge
             all_text_results_merge_all += text_result_merge_all
             all_results_metrics_merge[CNN_name[i]] = result_metrics_merge
 
-            result_metrics,\
-            text_result,\
-            text_result_all = CalulateMetricsDir(CNN_name[i],
-                                                 list_CNN_num_class[i],
-                                                 path_train = result_CNN_dir[i] + "_" + str(overlap),
-                                                 using_metrics=using_metrics,
-                                                 merge_images=False
-                                                )
+            if use_no_merge_data_for_mertic:
+                result_metrics,\
+                text_result,\
+                text_result_all = CalulateMetricsFromModelPredict(model_predicts,
+                                                                  CNN_name[i],
+                                                                  list_CNN_num_class[i],
+                                                                  etal_path=etal_path,
+                                                                  class_names=classnames,
+                                                                  using_metrics=using_metrics,
+                                                                  merge_images=True
+                                                                  )
 
-            all_text_results += text_result
-            all_text_results_all += text_result_all
-            all_results_metrics[CNN_name[i]] = result_metrics
+                all_text_results += text_result
+                all_text_results_all += text_result_all
+                all_results_metrics[CNN_name[i]] = result_metrics
 
+    #print("str_data before :", str_data)
+    if "/" in str_data:
+        str_data = str_data.split('/')[-1]
+    if '\\' in str_data:
+        str_data = str_data.split('\\')[-1]
+
+    save_report_path = os.path.join(save_report_path, str_data)
     # save all reports
     if not os.path.isdir(save_report_path):
         print(f"create dir:'{save_report_path}'")
         os.makedirs(save_report_path)
+
+    #print("str_data is :", str_data)
 
     if not only_excel_file:
         with open(os.path.join(save_report_path, f'{str_data}_test_models_merge_mean.txt'),'w') as file_mean:
@@ -95,22 +116,23 @@ def test_models_all_dir(str_data,
         with open(os.path.join(save_report_path, f'{str_data}_test_models_merge_all.txt'),'w') as file_all:
             file_all.write(all_text_results_merge_all)
 
-        with open(os.path.join(save_report_path, f'{str_data}_test_models_mean.txt'),
-                  'w') as file_mean:
-            file_mean.write(all_text_results)
+        if use_no_merge_data_for_mertic:
+            with open(os.path.join(save_report_path, f'{str_data}_test_models_mean.txt'),
+                      'w') as file_mean:
+                file_mean.write(all_text_results)
 
-        with open(os.path.join(save_report_path, f'{str_data}_test_models_all.txt'),
-                  'w') as file_all:
-            file_all.write(all_text_results_all)
+            with open(os.path.join(save_report_path, f'{str_data}_test_models_all.txt'),
+                      'w') as file_all:
+                file_all.write(all_text_results_all)
 
     test_for_excel_merge = GetFinalTestMetricForExcel(all_results_metrics_merge, using_metrics, classnames)
-    test_for_excel =       GetFinalTestMetricForExcel(all_results_metrics, using_metrics, classnames)
-
     with open(os.path.join(save_report_path, f'excel_{str_data}_test_models_merge.txt'),'w') as file_for_excel_merge:
         file_for_excel_merge.write(test_for_excel_merge)
 
-    with open(os.path.join(save_report_path, f'excel_{str_data}_test_models.txt'),'w') as file_for_excel:
-        file_for_excel.write(test_for_excel)
+    if use_no_merge_data_for_mertic:
+        test_for_excel =       GetFinalTestMetricForExcel(all_results_metrics, using_metrics, classnames)
+        with open(os.path.join(save_report_path, f'excel_{str_data}_test_models.txt'), 'w') as file_for_excel:
+            file_for_excel.write(test_for_excel)
 
     print(f"{str_data} test was saved to path '{save_report_path}'")
 
@@ -124,7 +146,9 @@ def test_models_only_all_mito(str_data,
                               last_activations=None,
                               save_report_path="data/report_mito/",
                               using_metrics=[Jaccard, Dice],
-                              only_excel_file=True):
+                              only_excel_file=True,
+                              use_no_merge_data_for_mertic=False,
+                              is_save_result=True):
 
     list_CNN_name = []
     for name in CNN_name:
@@ -132,10 +156,13 @@ def test_models_only_all_mito(str_data,
         change_name = str_data + "/" + name + ".pt"
         list_CNN_name.append(change_name)
 
-    result_CNN_dir = []
-    for i in range(len(CNN_name)):
-        save_name = "data/result_mito/" + str_data + "/" + str(list_CNN_num_class[i]) + "_class/" + CNN_name[i]
-        result_CNN_dir.append(save_name)
+    if is_save_result:
+        result_CNN_dirs = []
+        for i in range(len(CNN_name)):
+            save_name = "data/result_mito/" + str_data + "/" + str(list_CNN_num_class[i]) + "_class/" + CNN_name[i]
+            result_CNN_dirs.append(save_name)
+    else:
+        result_CNN_dirs = None
 
     list_test_img_dir = os.listdir(os.path.join(file_test_path))
     list_test_img_dir = [name for name in list_test_img_dir if name.endswith((".png", ".jpg"))]
@@ -156,44 +183,54 @@ def test_models_only_all_mito(str_data,
             tiled_data = {"size": 256, "overlap": overlap, "unique_area": 0}
             last_activation = last_activations[i] if type(last_activations) is list else last_activations
 
-            test_tiled(model_path=list_CNN_name[i],
-                       num_class=list_CNN_num_class[i],
-                       save_mask_dir=result_CNN_dir[i] + "_" + str(overlap),
-                       last_activation=last_activation,
-                       dataset = dataset,
-                       tiled_data=tiled_data,
-                       )  # , save_dir= "data/split test/")
+            result_CNN_dir = result_CNN_dirs[i] + "_" + str(overlap) if is_save_result else None
+
+            model_predicts=test_tiled(model_path=list_CNN_name[i],
+                                      num_class=list_CNN_num_class[i],
+                                      save_mask_dir=result_CNN_dir,
+                                      last_activation=last_activation,
+                                      dataset = dataset,
+                                      tiled_data=tiled_data,
+                                      )  # , save_dir= "data/split test/")
 
             result_metrics_merge,\
             text_result_merge,\
-            text_result_merge_all = CalulateMetricsDir(CNN_name[i],
-                                                       1,
-                                                       etal_path = etal_path,
-                                                       path_train = result_CNN_dir[i] + "_" + str(overlap),
-                                                       using_metrics=using_metrics,
-                                                       class_names = classnames,
-                                                       merge_images=True
-                                                      )
+            text_result_merge_all = CalulateMetricsFromModelPredict(model_predicts,
+                                                                    CNN_name[i],
+                                                                    1,
+                                                                    etal_path = etal_path,
+                                                                    class_names = classnames,
+                                                                    using_metrics=using_metrics,
+                                                                    merge_images=True
+                                                                   )
 
             all_text_results_merge += text_result_merge
             all_text_results_merge_all += text_result_merge_all
             all_results_metrics_merge[CNN_name[i]] = result_metrics_merge
 
-            result_metrics,\
-            text_result,\
-            text_result_all = CalulateMetricsDir(CNN_name[i],
-                                                 1,
-                                                 etal_path = etal_path,
-                                                 path_train = result_CNN_dir[i] + "_" + str(overlap),
-                                                 using_metrics=using_metrics,
-                                                 class_names = classnames,
-                                                 merge_images=False
-                                                 )
+            if use_no_merge_data_for_mertic:
+                result_metrics,\
+                text_result,\
+                text_result_all = CalulateMetricsFromModelPredict(model_predicts,
+                                                                  CNN_name[i],
+                                                                  1,
+                                                                  etal_path = etal_path,
+                                                                  class_names = classnames,
+                                                                  using_metrics=using_metrics,
+                                                                  merge_images=False
+                                                                  )
 
-            all_text_results += text_result
-            all_text_results_all += text_result_all
-            all_results_metrics[CNN_name[i]] = result_metrics
+                all_text_results += text_result
+                all_text_results_all += text_result_all
+                all_results_metrics[CNN_name[i]] = result_metrics
 
+    #print("str_data before :", str_data)
+    if "/" in str_data:
+        str_data = str_data.split('/')[-1]
+    if '\\' in str_data:
+        str_data = str_data.split('\\')[-1]
+
+    save_report_path = os.path.join(save_report_path, str_data)
     # save all reports
     if not os.path.isdir(save_report_path):
         print(f"create dir:'{save_report_path}'")
@@ -206,223 +243,67 @@ def test_models_only_all_mito(str_data,
         with open(os.path.join(save_report_path, f'{str_data}_test_models_merge_all.txt'),'w') as file_all:
             file_all.write(all_text_results_merge_all)
 
-        with open(os.path.join(save_report_path, f'{str_data}_test_models_mean.txt'),
-                  'w') as file_mean:
-            file_mean.write(all_text_results)
+        if use_no_merge_data_for_mertic:
+            with open(os.path.join(save_report_path, f'{str_data}_test_models_mean.txt'),
+                      'w') as file_mean:
+                file_mean.write(all_text_results)
 
-        with open(os.path.join(save_report_path, f'{str_data}_test_models_all.txt'),
-                  'w') as file_all:
-            file_all.write(all_text_results_all)
+            with open(os.path.join(save_report_path, f'{str_data}_test_models_all.txt'),
+                      'w') as file_all:
+                file_all.write(all_text_results_all)
 
     test_for_excel_merge = GetFinalTestMetricForExcel(all_results_metrics_merge, using_metrics, classnames)
-    test_for_excel =       GetFinalTestMetricForExcel(all_results_metrics, using_metrics, classnames)
-
     with open(os.path.join(save_report_path, f'excel_{str_data}_test_models_merge.txt'),'w') as file_for_excel_merge:
         file_for_excel_merge.write(test_for_excel_merge)
 
-    with open(os.path.join(save_report_path, f'excel_{str_data}_test_models.txt'),'w') as file_for_excel:
-        file_for_excel.write(test_for_excel)
+    if use_no_merge_data_for_mertic:
+        test_for_excel =       GetFinalTestMetricForExcel(all_results_metrics, using_metrics, classnames)
+        with open(os.path.join(save_report_path, f'excel_{str_data}_test_models.txt'),'w') as file_for_excel:
+            file_for_excel.write(test_for_excel)
+
+
     print(f"{str_data} test was saved to path '{save_report_path}'")
 
-def standart_test(calculate_all_mito = True, calculate_our_markup=True):
-    using_metrics = [Dice]
 
-    models = ["unet",
-              #"tiny_unet",
-              "tiny_unet_v3",
-              "mobile_unet",
-              "Lars76_unet"]
+def test_by_using_config_in_dir(path_to_models, calculate_our_markup=True, calculate_all_mito = True, calculate_all_Lucchipp_mito=True):
 
-    num_classes = [1, 5, 6]
-
-    types_datasets = ["real",
-                      "mix",
-                      "sint",
-                      #"sint_v2"
-                      ]
-    for type_dataset in types_datasets:
-        CNN_names = []
-        list_CNN_num_class = []
-        path_models = f"Models_and_classes_multiclass_BCG_{type_dataset}_2023_05_21"
-
-        for num_class in num_classes:
-            for model_name in models:
-                CNN_name = f"model_by_config_multiclass_{type_dataset}_{num_class}_classes_{model_name}"
-                CNN_names.append(CNN_name)
-                list_CNN_num_class.append(num_class)
-
-        overlap_list = [128]
-        last_activation = None
-
-        classnames = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"]
-
-        if calculate_our_markup:
-            # путь до картинок для теста
-            file_test_path = "G:/Data/Unet_multiclass/data/test"
-            save_report_path = "data/report/BCG/" + type_dataset
-
-            test_models_all_dir(path_models,
-                                classnames,
-                                list_CNN_num_class,
-                                CNN_names,
-                                overlap_list,
-                                file_test_path,
-                                last_activations=last_activation,
-                                save_report_path=save_report_path,
-                                using_metrics=using_metrics)
-
-        if calculate_all_mito:
-            # путь до картинок для теста
-            file_test_path = "G:/Data/Unet_multiclass/data/orig_EPFL_data/original"
-            etal_path = "G:/Data/Unet_multiclass/data/orig_EPFL_data"
-            save_report_path = "data/report_epfl_mito/BCG" + type_dataset
-
-            test_models_only_all_mito(path_models,
-                                      classnames,
-                                      list_CNN_num_class,
-                                      CNN_names,
-                                      overlap_list,
-                                      file_test_path,
-                                      etal_path,
-                                      last_activations=last_activation,
-                                      save_report_path=save_report_path,
-                                      using_metrics = using_metrics)
-
-def activation_test(calculate_all_mito = False):
-    str_data1 = "Lars_test"
-    str_data2 = "2023_05_20"
-
-    using_metrics = [Dice]
-
-    last_activations = ["arctan_activation",
-                        "softsign_activation",
-                        "sigmoid_activation",
-                        "linear_activation",
-                        "inv_square_root_activation",
-                        "cdf_activation",
-                        "hardtanh_activation"]
-
-    types_datasets = ["real", "mix", "sint"]
-
-    losses = ["BCELoss",
-              "MSELoss",
-              "DiceLoss",
-              'DiceLossMulticlass',
-              'BCELossMulticlass',
-              'MSELossMulticlass']
-
-    for type_dataset in types_datasets:
-        CNN_names = []
-        list_CNN_num_class = []
-        all_last_activations = []
-
-        str_data = "_".join([str_data1, type_dataset, str_data2])
-
-        for last_activation in last_activations:
-            for loss in losses:
-                list_CNN_num_class.append(6)
-                CNN_name = "_".join(["model_by_config", type_dataset, last_activation, loss, "Lars76_unet"])
-                CNN_names.append(CNN_name)
-                all_last_activations.append(last_activation)
-
-        overlap_list = [128]
-        classnames = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"]
-
-        save_report_path = "data/report_Lars/" + type_dataset
-        # путь до картинок для теста
-        file_test_path = "G:/Data/Unet_multiclass/data/test"
-
-        test_models_all_dir(str_data,
-                            classnames,
-                            list_CNN_num_class,
-                            CNN_names,
-                            overlap_list,
-                            file_test_path,
-                            last_activations = all_last_activations,
-                            save_report_path=save_report_path,
-                            using_metrics = using_metrics)
-
-        if calculate_all_mito:
-            save_report_path_mito = "data/report_Lars_mito/" + type_dataset
-            # путь до картинок для теста
-            file_test_path_mito = "G:/Data/Unet_multiclass/data/EPFL_test/original"
-            etal_path_mito = "G:/Data/Unet_multiclass/data/EPFL_test"
-
-            test_models_only_all_mito(str_data,
-                                      classnames,
-                                      list_CNN_num_class,
-                                      CNN_names,
-                                      overlap_list,
-                                      file_test_path_mito,
-                                      etal_path_mito,
-                                      last_activations = all_last_activations,
-                                      save_report_path=save_report_path_mito,
-                                      using_metrics = using_metrics)
-
-def test_test_config():
-    str_data = "2023_05_01"
-
-    CNN_names = [
-        "model_by_config_test_tiny_unet_v3_move"
-    ]
-
-    list_CNN_num_class = [
-        6
-    ]
+    config_file_names = [name for name in os.listdir(path_to_models) if name.endswith(".json") and name.startswith("config_")]
     overlap_list = [128]
-
-    classnames = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"]
-    # путь до картинок для теста
-    file_test_path = "G:/Data/Unet_multiclass/data/test"
-
-    test_models_all_dir(str_data=str_data,
-                        classnames=classnames,
-                        list_CNN_num_class=list_CNN_num_class,
-                        CNN_name=CNN_names,
-                        overlap_list=overlap_list,
-                        file_test_path=file_test_path,
-                        last_activations="sigmoid_activation",
-                        using_metrics = [Jaccard, Dice])
-
-def experiments_test(calculate_all_mito = False, calculate_our_markup=True):
     using_metrics = [Dice]
-    str_data = "Test_real_v2_dataset"
+    CNN_names = []
+    list_CNN_num_class = []
+    last_activations = []
 
-    CNN_names = [
-        "model_by_config_multiclass_real_v2_1_classes_DiceLossMulticlass_Lars76_unet",
-        "model_by_config_multiclass_real_v2_1_classes_DiceLossMulticlass_tiny_unet_v3",
-        "model_by_config_multiclass_real_v2_5_classes_DiceLossMulticlass_Lars76_unet",
-        "model_by_config_multiclass_real_v2_5_classes_DiceLossMulticlass_tiny_unet_v3",
-        "model_by_config_multiclass_real_v2_6_classes_DiceLossMulticlass_Lars76_unet",
-        "model_by_config_multiclass_real_v2_6_classes_DiceLossMulticlass_tiny_unet_v3",
-    ]
+    for config_file_name in config_file_names:
+        with open(os.path.join(path_to_models, config_file_name)) as config_buffer:
+            config_file = json.load(config_buffer)
+        num_classes = config_file["train"]["num_class"]
+        list_CNN_num_class.append(num_classes)
 
-    list_CNN_num_class = [
-        1,
-        1,
-        5,
-        5,
-        6,
-        6,
-    ]
-    overlap_list = [128]
+        last_activation = config_file["model"]["last_activation"]
+        last_activations.append(last_activation)
+        ############################################################################################################### Обратная совместимость со старыми файлами
+        if "mask_name_label_list" in config_file.keys():
+            classnames = config_file["mask_name_label_list"]
+        else:
+            classnames = config_file["train"]["mask_name_label_list"]
 
-    last_activation = None
-
-    classnames = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"]
+        CNN_name = "model_by_" + config_file_name[:-5]
+        CNN_names.append(CNN_name)
 
     if calculate_our_markup:
         # путь до картинок для теста
+        etal_path = "segmentation/data/original data/testing"
         file_test_path = "G:/Data/Unet_multiclass/data/test"
-        save_report_path = "data/report/dataset_real_v2"
+        save_report_path = "data/report/"
 
-        test_models_all_dir(str_data,
+        test_models_all_dir(path_to_models,
                             classnames,
                             list_CNN_num_class,
                             CNN_names,
                             overlap_list,
                             file_test_path,
-                            last_activations=last_activation,
+                            last_activations=last_activations,
                             save_report_path=save_report_path,
                             using_metrics=using_metrics)
 
@@ -430,35 +311,54 @@ def experiments_test(calculate_all_mito = False, calculate_our_markup=True):
         # путь до картинок для теста
         file_test_path = "G:/Data/Unet_multiclass/data/orig_EPFL_data/original"
         etal_path = "G:/Data/Unet_multiclass/data/orig_EPFL_data"
-        save_report_path = "data/report_epfl_mito/dataset_real_v2/"
+        save_report_path = "data/report_epfl_mito/"
 
-        test_models_only_all_mito(str_data,
+        test_models_only_all_mito(path_to_models,
                                   classnames,
                                   list_CNN_num_class,
                                   CNN_names,
                                   overlap_list,
                                   file_test_path,
                                   etal_path,
-                                  last_activations=last_activation,
+                                  last_activations=last_activations,
                                   save_report_path=save_report_path,
                                   using_metrics=using_metrics)
 
-def datasets_test(calculate_all_mito = False, calculate_our_markup=True, calculate_all_Lucchipp_mito=False):
+    if calculate_all_Lucchipp_mito:
+        # путь до картинок для теста
+        file_test_path = "G:/Data/Unet_multiclass/data/Luchi_pp_EPFL_test/original"
+        etal_path = "G:/Data/Unet_multiclass/data/Luchi_pp_EPFL_test"
+        save_report_path = "data/report_lucchipp_mito/"
+
+        test_models_only_all_mito(path_to_models,
+                                  classnames,
+                                  list_CNN_num_class,
+                                  CNN_names,
+                                  overlap_list,
+                                  file_test_path,
+                                  etal_path,
+                                  last_activations=last_activations,
+                                  save_report_path=save_report_path,
+                                  using_metrics = using_metrics)
+
+def datasets_test(calculate_our_markup=True, calculate_all_mito = True, calculate_all_Lucchipp_mito=True):
     using_metrics = [Dice]
 
     models = [
-              "unet",
+              #"unet",
               "tiny_unet_v3",
-              "mobile_unet",
-              "Lars76_unet"
+              #"mobile_unet",
+              #"Lars76_unet"
              ]
 
-    num_classes = [1, 5, 6]
+    num_classes = [6]
 
     types_datasets = [
-                      "real_v2",
-                      "sint_v10",
-                      "mix_v2"
+                      #"real_v2",
+                      #"sint_v10",
+                      #"mix_v2"
+                      "2023_12_20",
+                      "2023_12_15"
                       ]
 
     losses = [
@@ -472,12 +372,12 @@ def datasets_test(calculate_all_mito = False, calculate_our_markup=True, calcula
     for type_dataset in types_datasets:
         CNN_names = []
         list_CNN_num_class = []
-        path_models = f"Test_{type_dataset}_dataset"
+        path_models = f"segmentation/{type_dataset}"
 
         for num_class in num_classes:
             for model_name in models:
                 for loss in losses:
-                    CNN_name = f"model_by_config_multiclass_{type_dataset}_{num_class}_classes_{loss}_{model_name}"
+                    CNN_name = f"model_by_config_proportion_{model_name}"
                     CNN_names.append(CNN_name)
                     list_CNN_num_class.append(num_class)
 
@@ -488,8 +388,9 @@ def datasets_test(calculate_all_mito = False, calculate_our_markup=True, calcula
 
         if calculate_our_markup:
             # путь до картинок для теста
-            file_test_path = "G:/Data/Unet_multiclass/data/test"
+            file_test_path = "segmentation/data/original data/testing/original"
             save_report_path = f"data/report/dataset_{type_dataset}"
+            etal_path = "segmentation/data/original data/testing/"
 
             test_models_all_dir(path_models,
                                 classnames,
@@ -497,6 +398,7 @@ def datasets_test(calculate_all_mito = False, calculate_our_markup=True, calcula
                                 CNN_names,
                                 overlap_list,
                                 file_test_path,
+                                etal_path,
                                 last_activations=last_activation,
                                 save_report_path=save_report_path,
                                 using_metrics=using_metrics)
@@ -505,7 +407,7 @@ def datasets_test(calculate_all_mito = False, calculate_our_markup=True, calcula
             # путь до картинок для теста
             file_test_path = "G:/Data/Unet_multiclass/data/orig_EPFL_data/original"
             etal_path = "G:/Data/Unet_multiclass/data/orig_EPFL_data"
-            save_report_path = f"data/report_epfl_mito/dataset_{type_dataset}"
+            save_report_path = f"data/report_epfl_mito/dataset_{type_dataset}_no_boarder_mode"
 
             test_models_only_all_mito(path_models,
                                       classnames,
@@ -536,10 +438,9 @@ def datasets_test(calculate_all_mito = False, calculate_our_markup=True, calcula
                                       using_metrics = using_metrics)
 
 if __name__ == "__main__":
-    #test_test_config
-    #experiments_test(calculate_all_mito = True)
-    #standart_test(calculate_all_mito=True, calculate_our_markup=True)
-    activation_test(calculate_all_mito=False)
-    #datasets_test(calculate_all_mito=False)
-    datasets_test(calculate_our_markup=False, calculate_all_mito=True)
-    datasets_test(calculate_our_markup=False, calculate_all_Lucchipp_mito=True)
+    #datasets_test(True, False, False)
+    #datasets_test(False, True, True)
+
+    experiment_path = "segmentation/Multiple_test"
+
+    test_by_using_config_in_dir(experiment_path, True, False, False)
