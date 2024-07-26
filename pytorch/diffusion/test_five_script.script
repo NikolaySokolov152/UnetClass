@@ -1,0 +1,88 @@
+#!/bin/bash
+#SBATCH --job-name=segmentation
+#SBATCH --ntasks=5
+#SBATCH --gres=gpu:5
+#SBATCH --time=4320
+
+/bin/hostname
+
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_30_slices_6_classes_only_real.json -s > five_script_output1.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_30_slices_6_classes_only_dif.json  -s > five_script_output2.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_30_slices_6_classes.json           -s > five_script_output3.txt |
+
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_30_slices_5_classes_only_real.json -s > five_script_output4.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_30_slices_5_classes_only_dif.json  -s > five_script_output5.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_30_slices_5_classes.json           -s > five_script_output6.txt |
+
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_30_slices_1_classes_only_real.json -s > five_script_output7.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_30_slices_1_classes_only_dif.json  -s > five_script_output8.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_30_slices_1_classes.json           -s > five_script_output9.txt |
+
+
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_20_slices_6_classes_only_real.json -s > five_script_output1_2.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_20_slices_6_classes_only_dif.json  -s > five_script_output2_2.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_20_slices_6_classes.json           -s > five_script_output3_2.txt |
+
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_20_slices_5_classes_only_real.json -s > five_script_output4_2.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_20_slices_5_classes_only_dif.json  -s > five_script_output5_2.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_20_slices_5_classes.json           -s > five_script_output6_2.txt |
+
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_20_slices_1_classes_only_real.json -s > five_script_output7_2.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_20_slices_1_classes_only_dif.json  -s > five_script_output8_2.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_20_slices_1_classes.json           -s > five_script_output9_2.txt |
+
+
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_15_slices_6_classes_only_real.json -s > five_script_output1_3.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_15_slices_6_classes_only_dif.json  -s > five_script_output2_3.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_15_slices_6_classes.json           -s > five_script_output3_3.txt |
+
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_15_slices_5_classes_only_real.json -s > five_script_output4_3.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_15_slices_5_classes_only_dif.json  -s > five_script_output5_3.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_15_slices_5_classes.json           -s > five_script_output6_3.txt |
+
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_15_slices_1_classes_only_real.json -s > five_script_output7_3.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_15_slices_1_classes_only_dif.json  -s > five_script_output8_3.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_15_slices_1_classes.json           -s > five_script_output9_3.txt |
+
+
+
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_10_slices_6_classes_only_real.json -s > five_script_output1_4.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_10_slices_6_classes_only_dif.json  -s > five_script_output2_4.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_10_slices_6_classes.json           -s > five_script_output3_4.txt |
+
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_10_slices_5_classes_only_real.json -s > five_script_output4_4.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_10_slices_5_classes_only_dif.json  -s > five_script_output5_4.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_10_slices_5_classes.json           -s > five_script_output6_4.txt |
+
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_10_slices_1_classes_only_real.json -s > five_script_output7_4.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_10_slices_1_classes_only_dif.json  -s > five_script_output8_4.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_10_slices_1_classes.json           -s > five_script_output9_4.txt |
+
+
+
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_5_slices_6_classes_only_real.json -s > five_script_output1_5.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_5_slices_6_classes_only_dif.json  -s > five_script_output2_5.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_5_slices_6_classes.json           -s > five_script_output3_5.txt |
+
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_5_slices_5_classes_only_real.json -s > five_script_output4_5.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_5_slices_5_classes_only_dif.json  -s > five_script_output5_5.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_5_slices_5_classes.json           -s > five_script_output6_5.txt |
+
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_5_slices_1_classes_only_real.json -s > five_script_output7_5.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_5_slices_1_classes_only_dif.json  -s > five_script_output8_5.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_5_slices_1_classes.json           -s > five_script_output9_5.txt
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

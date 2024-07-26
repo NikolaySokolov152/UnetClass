@@ -157,10 +157,7 @@ def weak_test_gen_DataGeneratorReaderAll():
 
     num_class = 2
 
-    data_gen_args = dict(rotation_range=10,
-                         width_shift_range=0.05,
-                         height_shift_range=0.05,
-                         zoom_range=0.2,
+    data_gen_args = dict(zoom_range=0.2,
                          brightness_shift_range=0.2,
                          contrast_shift_range=0.2,
                          horizontal_flip=True,
@@ -174,13 +171,13 @@ def weak_test_gen_DataGeneratorReaderAll():
     mask_name_label_list = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"]
     #mask_name_label_list = ["output"]
 
-    dir_data = [InfoDirData(dir_img_name="C:/Users/Sokol-PC/Synthetics/dataset/synthetic_dataset10/original",
-                           dir_mask_name="C:/Users/Sokol-PC/Synthetics/dataset/synthetic_dataset10/",
+    dir_data = [InfoDirData(dir_img_name="D:/Projects/Synthetics/dataset/synthetic_dataset10/original",
+                           dir_mask_name="D:/Projects/Synthetics/dataset/synthetic_dataset10/",
                            add_mask_prefix='',
                            proportion_of_dataset=0.2),
 
-               InfoDirData(dir_img_name = "G:/Data/Unet_multiclass/data/cutting data/original",
-                           dir_mask_name ="G:/Data/Unet_multiclass/data/cutting data/",
+               InfoDirData(dir_img_name = "D:/Data/Unet_multiclass/data/cutting data/original",
+                           dir_mask_name ="D:/Data/Unet_multiclass/data/cutting data/",
                            add_mask_prefix = '',
                            proportion_of_dataset=0.2)]
 
@@ -190,13 +187,10 @@ def weak_test_gen_DataGeneratorReaderAll():
     #                       dir_mask_name="data/zip_data_train/mask.npy",
     #                       add_mask_prefix='')
 
-    #dir_data = InfoDirData(dir_img_name="C:/Users/Sokol-PC/bachelor_diploma/train/original",
-    #                      dir_mask_name="C:/Users/Sokol-PC/bachelor_diploma/train/",
-    #                       add_mask_prefix='')
+    dir_data = InfoDirData(common_dir_path="D:/Data/Unet_multiclass/data/original data/",
+                           dir_img_name="original",
+                           add_mask_prefix='')
 
-    #dir_data = InfoDirData(dir_img_name="C:/Users/Sokol-PC/UnetClass/pytorch/unet_standart/img2img/data/cutting data/low_quality",
-    #                       dir_mask_name="C:/Users/Sokol-PC/UnetClass/pytorch/unet_standart/img2img/data/cutting data/",
-    #                       add_mask_prefix='')
 
     transform_data = TransformData(color_mode_img='gray',
                                    mode_mask='separated',
@@ -215,10 +209,11 @@ def weak_test_gen_DataGeneratorReaderAll():
                                    aug_dict=data_gen_args,
                                    list_class_name=mask_name_label_list,
                                    augment=True,
-                                   tailing=False,
+                                   tailing=True,
                                    shuffle=True,
                                    type_load_data="img",
                                    seed=1,
+                                   num_gen_repetitions=10,
                                    subsampling="random",
                                    transform_data=transform_data,
                                    save_inform=save_inform,
@@ -336,8 +331,8 @@ def weak_test_gen_DataGenerator():
     #                       dir_mask_name = "G:/Data/Unet_multiclass/data/cutting data/",
     #                       add_mask_prefix = '')
 
-    dir_data = InfoDirData(dir_img_name="C:/Users/Sokol-PC/UnetClass/pytorch/unet_standart/img2img/data/cutting data/low_quality",
-                           dir_mask_name="C:/Users/Sokol-PC/UnetClass/pytorch/unet_standart/img2img/data/cutting data/",
+    dir_data = InfoDirData(dir_img_name="D:/Projects/UnetClass/pytorch/unet_standart/img2img/data/cutting data/low_quality",
+                           dir_mask_name="D:/Projects/UnetClass/pytorch/unet_standart/img2img/data/cutting data/",
                            add_mask_prefix='')
 
     transform_data = TransformData(color_mode_img='gray',

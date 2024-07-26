@@ -33,7 +33,7 @@
 
     "model" : {
         "experiment_type": "segmentation",
-        "type_model": "Lars76_unet",
+        "type_model": "tiny_unet_v3",
         "last_activation": "sigmoid_activation"
     },
 

@@ -1,6 +1,8 @@
 import os.path
 
+###############################################################################################################################
 from src.train import *
+#from src.diffusion_train import *
 from src.dataGenerator import *
 from src.models import *
 from src.metrics import *
@@ -21,6 +23,7 @@ import numpy as np
 import shutil
 import gc
 
+
 ########################################################## добавить метрики по классам
 
 ########################################################## доделать чтение дифузионных конфигов
@@ -38,7 +41,7 @@ def seed_all(seed):
 
 def build_argparser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--config', type=str, default="diffusion/config_test.json")
+    parser.add_argument('-c', '--config', type=str, default="img2img/config_test.json")
     #parser.add_argument('-c', '--config', type=str, default = "segmentation/config_test.json")
     #parser.add_argument('-c', '--config', type=str, default = None)
     parser.add_argument('-s', '--silence_mode', action='store_true')
@@ -105,6 +108,10 @@ def build_argparser():
     args = parser.parse_args()
     return args
 
+
+def type_experiment_parcer(dict_config):
+    return dict_config["model"]["experiment_type"]
+
 def activation_parcer(dict_config):
     # GET LAST ACTIVATION
     if not "last_activation" in dict_config["model"].keys():
@@ -133,61 +140,29 @@ def generator_parcer(dict_config, device, silence_mode=False):
     # GET DATA FOR GENERATOR
     augmentation = dict_config["augmentation"]
 
-    ####################################################################################################################### gthtltkfnmn
-    '''
-    if not augmentation["rotation_range"]:
-        augmentation["rotation_range"] = 0
-    if not augmentation["width_shift_range"]:
-        augmentation["width_shift_range"] = 0
-    if not augmentation["height_shift_range"]:
-        augmentation["height_shift_range"] = 0
-    if not augmentation["zoom_range"]:
-        augmentation["zoom_range"] = 0
-    if not augmentation["horizontal_flip"]:
-        augmentation["horizontal_flip"] = False
-    if not augmentation["vertical_flip"]:
-        augmentation["vertical_flip"] = False
-    if not augmentation["noise_limit"]:
-        augmentation["noise_limit"] = 0
-    if not augmentation["fill_mode"]:
-        augmentation["fill_mode"] = 0
-    '''
-
     if type(dict_config["data_info"]) is dict:
-        if not "proportion_of_dataset" in dict_config["data_info"].keys() or\
-                dict_config["data_info"]["proportion_of_dataset"] is None:
-            dict_config["data_info"]["proportion_of_dataset"] = 1
-        dir_data = InfoDirData(dir_img_name         =dict_config["data_info"]["dir_img_path"],
-                               dir_mask_name        =dict_config["data_info"]["dir_mask_path_without_name"],
-                               add_mask_prefix      =dict_config["data_info"]["add_mask_prefix"],
-                               proportion_of_dataset=dict_config["data_info"]["proportion_of_dataset"])
+        dir_data = InfoDirData(**dict_config["data_info"])
     elif type(dict_config["data_info"]) is list:
         dir_data = []
         for dataset_info in dict_config["data_info"]:
-            if not "proportion_of_dataset" in dataset_info.keys() or\
-                    dataset_info["proportion_of_dataset"] is None:
-                dataset_info["proportion_of_dataset"] = 1
-            dir_data.append(InfoDirData(dir_img_name         =dataset_info["dir_img_path"],
-                                        dir_mask_name        =dataset_info["dir_mask_path_without_name"],
-                                        add_mask_prefix      =dataset_info["add_mask_prefix"],
-                                        proportion_of_dataset=dataset_info["proportion_of_dataset"]))
+            dir_data.append(InfoDirData(**dataset_info))
     else:
         raise Exception(f"ERROR don't know data type 'data_info':  {type(dict_config['data_info'])}")
 
+    transform_data = TransformData(**dict_config["img_transform_data"])
+    # для чтения старых конфигов
+    if not "batch_size" in dict_config["img_transform_data"].keys():
+        transform_data.batch_size = dict_config["train"]["batch_size"]
+    # для перестраховки
+    if dict_config["img_transform_data"]["mode_mask"] == "image":
+        transform_data.binary_mask=False
 
-    transform_data = TransformData(color_mode_img = dict_config["img_transform_data"]["color_mode_img"],
-                                   mode_mask      = dict_config["img_transform_data"]["mode_mask"],
-                                   target_size    = dict_config["img_transform_data"]["target_size"],
-                                   batch_size     = dict_config["train"]["batch_size"])
-
-    save_inform = SaveData(save_to_dir       = dict_config["save_inform"]["save_to_dir"],
-                           save_prefix_image = dict_config["save_inform"]["save_prefix_image"],
-                           save_prefix_mask  = dict_config["save_inform"]["save_prefix_mask"])
+    save_inform = SaveData(**dict_config["save_inform"])
 
     if not "type_load_data" in dict_config["generator_config"].keys():
         dict_config["generator_config"]['type_load_data'] = 'img'
 
-    ############################################################################################################### Обратная совместимость со старыми файлами
+    # для чтения старых конфигов
     if "mask_name_label_list" in dict_config.keys():
         classnames = dict_config["mask_name_label_list"]
     else:
@@ -238,8 +213,13 @@ def divece_model_optimizer_parcer(dict_config):
 
     # GET MODEL
     num_channel = 1 if dict_config["img_transform_data"]["color_mode_img"] == 'gray' else 3
-
     n_classes = num_channel if dict_config["img_transform_data"]["mode_mask"] == "image" else dict_config["train"]["num_class"]
+    # Для диффузионки кол-во каналов для входа и выхода одинаковое
+    if type_experiment_parcer(dict_config)=="diffusion":
+        if dict_config["img_transform_data"]["mode_mask"] == "no_mask":
+            n_classes=0
+        num_channel=num_channel+n_classes
+        n_classes=num_channel
 
     if "pretrained_weights" in dict_config["train"] and dict_config["train"]["pretrained_weights"] is not None:
         model = torch.load(dict_config["train"]["pretrained_weights"])
@@ -291,7 +271,7 @@ def divece_model_optimizer_parcer(dict_config):
 
 def losses_parcer(dict_config):
     # GET LOSSES
-    using_loss = ['DiceLoss', 'BCELoss', 'MSELoss', 'DiceLossMulticlass', 'BCELossMulticlass', 'MSELossMulticlass', 'LossDistance2Nearest']
+    using_loss = ['DiceLoss', 'BCELoss', 'MSELoss', 'DiceLossMulticlass', 'BCELossMulticlass', 'MSELossMulticlass', 'LossDistance2Nearest', "HuberLoss"]
 
     losses = []
     if not "loss" in dict_config["train"].keys():
@@ -319,29 +299,26 @@ def losses_parcer(dict_config):
     return losses
 
 def metrics_parcer(dict_config):
-    # GET METRICS
-    metrics = [Dice(), DiceMultilabel(dict_config["train"]["num_class"])]
+    # GET METRICS ###################################################################################################################
+    if type_experiment_parcer(dict_config)=="diffusion":
+        num_channel = 1 if dict_config["img_transform_data"]["color_mode_img"] == 'gray' else 3
+        n_classes = num_channel if dict_config["img_transform_data"]["mode_mask"] == "image" else\
+                              0 if dict_config["img_transform_data"]["mode_mask"] == "no_mask" else\
+                    dict_config["train"]["num_class"]
+        num_class=num_channel+n_classes
+    else:
+        num_class = dict_config["train"]["num_class"]
+
+    metrics=[
+            #Dice(),
+            DiceMultilabel(num_class)
+            ]
     return metrics
 
 def num_epochs_parcer(dict_config):
     # GET NUM EPOCHS
     num_epochs = dict_config["train"]["num_epochs"]
     return num_epochs
-
-def lr_scheduler_parcer(dict_config):
-    # GET SHEDULER
-    if (not "lr_scheduler" in dict_config["train"].keys()) or dict_config["train"]["lr_scheduler"] == "standart":
-        lr_scheduler = standart_lr_scheduler
-    elif dict_config["train"]["lr_scheduler"] == "lr_scheduler_loss_mix":
-        lr_scheduler = loss_mix_lr_scheduler
-    elif dict_config["train"]["lr_scheduler"] == "lr_scheduler_loss":
-        lr_scheduler = loss_lr_scheduler
-    elif dict_config["train"]["lr_scheduler"] == "lr_scheduler_hard":
-        lr_scheduler = lr_scheduler_hard
-    else:
-        print(f'no find "{dict_config["train"]["lr_scheduler"]}", I am use standart_lr_scheduler')
-        lr_scheduler = standart_lr_scheduler
-    return lr_scheduler
 
 def model_name_parcer(dict_config):
     # GET SAVE MODEL NAME
@@ -360,8 +337,6 @@ def model_name_parcer(dict_config):
 
     return modelName
 
-def type_experiment_parcer(dict_config):
-    return dict_config["model"]["experiment_type"]
 
  ################################################################################################################### Доделать
 def diffusion_config_parcer(dict_config):
@@ -400,7 +375,9 @@ def config_parcer(dict_config):
                ", mode_mask", myGen.transform_data.mode_mask,
                ", target_size", myGen.transform_data.target_size,
                ", batch_size",  myGen.transform_data.batch_size,
-               ", mask_binary_mode", myGen.transform_data.binary_mask)
+               ", mask_binary_mode", myGen.transform_data.binary_mask,
+               ", normalization_img_fun", myGen.transform_data.normalization_img_fun,
+               ", normalization_mask_fun", myGen.transform_data.normalization_mask_fun)
         print ("\taug_dict:", myGen.aug_dict)
         print ("\tmode:", myGen.mode)
         print ("\tsubsampling:", myGen.subsampling)
@@ -488,6 +465,7 @@ def trainByConfig(config_file, path_config, retrain = False):
     type_task_train,\
     train_args=config_parcer(config_file)
 
+    #history = fit_diffusion_Model(myGen,
     history = fitModel(myGen,
                        model,
                        last_activation,
@@ -548,6 +526,7 @@ if __name__ == '__main__':
                 print(f"\t\tuse console seed: {args.seed}")
                 config["train"]["seed"] = args.seed
                 config["generator_config"]["seed"] = args.seed
+                path = os.path.basename(path)[:-5] + f"_seed_{args.seed}.json"
 
             if args.optimizer is not None:
                 print(f"\t\tuse console optimizer: {args.optimizer}")

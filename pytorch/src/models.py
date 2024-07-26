@@ -37,6 +37,10 @@ def cdf_activation(x : torch.Tensor, epsilon : float) -> torch.Tensor:
 def hardtanh_activation(x : torch.Tensor, epsilon : float) -> torch.Tensor:
     return F.hardtanh(x, epsilon, 1.0 - epsilon)
 
+@torch.jit.script
+def no_activation(x : torch.Tensor, epsilon : float) -> torch.Tensor:
+    return x
+
 class UNet(nn.Module):
     def __init__(self, n_channels, n_classes, bilinear=False):
         super(UNet, self).__init__()

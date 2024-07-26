@@ -1,0 +1,73 @@
+{
+    "experiment_data": null,
+    "device": "cuda",
+
+    "augmentation":{
+        "horizontal_flip": true,
+        "vertical_flip": true,
+        "p_rotate_90": 0.5,
+        "fill_mode": 0
+    },
+
+    "data_info": [
+            {
+                "dir_img_path":              "diffusion/data/train/mito/original",
+                "dir_mask_path_without_name":"diffusion/data/train/mito/",
+                "add_mask_prefix": "",
+                "proportion_of_dataset": 1
+            }
+    ],
+
+    "save_inform": {
+        "save_to_dir":       null,
+        "save_prefix_image": "image_",
+        "save_prefix_mask":  "mask_",
+        "save_prefix_model": "",
+        "save_suffix_model": "MSELoss_100_slices_mean_std"
+    },
+
+    "model" : {
+        "experiment_type": "diffusion",
+        "type_model": "tiny_unet_v3",
+        "last_activation": "no_activation",
+        "diffusion_config": {
+            "beta_start": 0.0001,
+            "beta_end": 0.02,
+            "steps_denoise": 700
+        }
+    },
+
+    "train": {
+        "mask_name_label_list": ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"],
+        "num_class": 1,
+        "batch_size": 12,
+        "num_epochs": 100,
+        "optimizer": "Adam",
+        "loss": "MSELoss",
+        "lr_scheduler": "standart",
+        "seed": 42
+    },
+
+    "img_transform_data": {
+        "color_mode_img": "gray",
+        "mode_mask": "separated",
+        "target_size": [256, 256],
+        "normalization_img_fun": "mean std",
+        "normalization_mask_fun": "dev 255",
+        "binary_mask": true
+    },
+
+    "generator_config": {
+        "type_gen": "all_reader",
+        "augment": true,
+        "tailing": false,
+        "shuffle": true,
+        "mode": "train",
+        "seed": 42,
+        "subsampling": "random",
+        "share_validat": 0.2
+    },
+
+    "debug_mode": true,
+    "move_to_date_folder": true
+}

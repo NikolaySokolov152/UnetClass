@@ -124,6 +124,10 @@ class LossDistance2Nearest:
         map_distanse -= map_inv_distanse
         return map_distanse
 
+@torch.jit.script
+def huber(y_pred : torch.Tensor, y_true : torch.Tensor) -> torch.Tensor:
+    return F.smooth_l1_loss(y_pred, y_true)
+
 def getLossByName(name_loss, num_classes = 1, last_activation = "sigmoid_activation"):
     calculate_stable_loss = False
     if name_loss == "BCELoss":
@@ -170,7 +174,32 @@ def getLossByName(name_loss, num_classes = 1, last_activation = "sigmoid_activat
         loss_func = LossMulticlass(num_classes, MSELoss())
     elif name_loss == "LossDistance2Nearest":
         loss_func = LossDistance2Nearest(num_classes)
+    elif name_loss == "HuberLoss":
+        loss_func = huber
     else:
         raise Exception(f"LOSS NAME ERROR ! I NO LOSS FUNCTION {name_loss}")
 
     return loss_func, calculate_stable_loss
+
+def get_work_loss(losses, eps, last_fun_activation_name, num_classes, weights=None):
+    num_losses = len(losses)
+    if weights is None:
+        weights = torch.full(torch.Size([num_losses]), 1/num_losses)
+
+    last_activation_fun = globals()[last_fun_activation_name]
+
+    losses_list = []
+    for loss_name in losses:
+        losses_list.append(getLossByName(loss_name, num_classes=num_classes, last_activation=last_fun_activation_name))
+
+    def calculate_losses (outputs, targets):
+        loss_result = torch.zeros(num_losses)
+        for i, (loss_func, calculate_stable_loss) in enumerate(losses_list):
+            if calculate_stable_loss:
+                loss_result[i] = loss_func(outputs, targets, eps)
+            else:
+                outputs =last_activation_fun(outputs, eps)
+                loss_result[i] = loss_func(outputs, targets)
+        return torch.matmul(loss_result, weights)
+
+    return calculate_losses

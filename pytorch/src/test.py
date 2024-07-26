@@ -1,7 +1,6 @@
 import sys
 if not __name__ == "__main__":
     sys.path.append("src/")
-
 from splitImages import *
 from models import *
 import torch
@@ -27,8 +26,8 @@ def to_0_1_format_img(in_img):
 class tiledGen():
     def __init__(self, data):
         self.data = data
-    def __getitem__(self, item):
-        item = self.data[item]
+    def __getitem__(self, index):
+        item = self.data[index]
         img = np.reshape(item, (1,) + item.shape + (1,))
         torch_img = torch.from_numpy(np.array(img)).type(torch.FloatTensor).permute(0, 3, 1, 2)
 
@@ -58,7 +57,7 @@ def saveResultMask(save_path, npyfile, namelist, num_class = 2 , classnames=None
         for class_index in range(num_class):
             out_dir = os.path.join(save_path, classnames[class_index] if classnames is not None else str(class_index))
             if not os.path.isdir(out_dir):
-                print("создаю out_dir:" + out_dir)
+                print("создаю out_dir:" + out_dir.replace(u"\\\\?\\"+os.getcwd()+"\\", ""))
                 os.makedirs(out_dir)
 
             if (os.path.isfile(os.path.join(out_dir, "predict_" + namelist[i]))):
@@ -78,7 +77,7 @@ def predictModel(model, data, device, last_activation, eps = EPSILON):
             # ADD LAST ACTIVATION
             outputs = globals()[last_activation](outputs, eps)
 
-            result.append(outputs.cpu().permute(0, 2, 3, 1).numpy()[0])
+            result.append(outputs.detach().cpu().permute(0, 2, 3, 1).numpy()[0])
     return np.array(result)
 
 def test_tiled(model_path, num_class, save_mask_dir, last_activation = None, dataset={'filenames': None, "filepath": "data/test", "classnames": None},
@@ -104,6 +103,13 @@ def test_tiled(model_path, num_class, save_mask_dir, last_activation = None, dat
     ret_images = []
     print(last_activation)
     time.sleep(0.2)
+
+    if save_mask_dir is not None:
+        save_mask_dir = os.path.abspath(save_mask_dir)
+        if save_mask_dir.startswith(u"\\\\"):
+            save_mask_dir = u"\\\\?\\UNC\\" + save_mask_dir[2:]
+        else:
+            save_mask_dir = u"\\\\?\\" + save_mask_dir
 
     slices_tqdm = tqdm.tqdm(filenames, file=sys.stdout, desc="Test")
     for img_name in slices_tqdm:

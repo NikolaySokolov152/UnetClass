@@ -1,0 +1,28 @@
+#!/bin/bash
+#SBATCH --job-name=3segmentation
+#SBATCH --ntasks=3
+#SBATCH --gres=gpu:3
+#SBATCH --time=4320
+#SBATCH --output test_three_for_output.txt
+/bin/hostname
+
+
+for classes in 1
+do
+for slices in 30 20 15 10 5 42
+do
+while [ "$(jobs -p | wc -l)" -ge "$SLURM_NTASKS" ]; do
+    sleep 60
+done
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c "segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_${slices}_slices_${classes}_classes.json" -s > "three_script_output_${slices}_slices_${classes}_classes.txt" &
+done
+done
+wait
+
+
+
+
+
+
+
+

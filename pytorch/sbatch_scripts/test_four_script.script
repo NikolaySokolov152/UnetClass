@@ -1,0 +1,13 @@
+#!/bin/bash
+#SBATCH --job-name=4segmentation
+#SBATCH --ntasks=4
+#SBATCH --gres=gpu:4
+#SBATCH --time=4320
+#SBATCH --output test_four_output.txt
+
+/bin/hostname
+
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c "segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_100_slices_1_classes_mod.json" -s > "four_script_output_1.txt" |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c "segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_165_slices_1_classes_mod.json" -s > "four_script_output_2.txt" |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c "segmentation/configs/syntetic_diffusion/multi_config_test_synt_and_diffusion_6_classes.json"            -s > "four_script_output_3.txt" |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c "segmentation/configs/syntetic_diffusion/multi_config_test_all_and_synt_and_diffusion_6_classes.json"    -s > "four_script_output_4.txt" 

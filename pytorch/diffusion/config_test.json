@@ -5,18 +5,17 @@
     "augmentation":{
         "horizontal_flip": true,
         "vertical_flip": true,
-        "noise_limit": 3,
         "p_rotate_90": 0.5,
         "fill_mode": 0
     },
 
     "data_info": [
             {
-                "dir_img_path":              "G:/Data/Unet_multiclass/data/cutting data/original",
-                "dir_mask_path_without_name":"G:/Data/Unet_multiclass/data/cutting data/",
+                "dir_img_path":              "F:G/Data/Unet_multiclass/data/cutting data/original",
+                "dir_mask_path_without_name":"F:G/Data/Unet_multiclass/data/cutting data/",
 
                 "add_mask_prefix": "",
-                "proportion_of_dataset": 0.4
+                "proportion_of_dataset": 0.007
             }
     ],
 
@@ -31,27 +30,28 @@
     "model" : {
         "experiment_type": "diffusion",
         "type_model": "tiny_unet_v3",
-        "last_activation": "sigmoid_activation",
+        "last_activation": "no_activation",
         "diffusion_config": {
-            "alpha": 0.0001,
-            "steps_denoise": 700
+            "beta_start": 0.0001,
+            "beta_end": 0.02,
+            "steps_denoise": 800
         }
     },
 
     "train": {
         "mask_name_label_list": ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"],
         "num_class": 1,
-        "batch_size": 8,
+        "batch_size": 1,
         "num_epochs": 100,
         "optimizer": "Adam",
-        "loss": "MSELoss",
+        "loss": "HuberLoss",
         "lr_scheduler": "standart",
         "seed": 42
     },
 
     "img_transform_data": {
         "color_mode_img": "gray",
-        "mode_mask": "no_mask",
+        "mode_mask": "separated",
         "target_size": [256, 256]
     },
 

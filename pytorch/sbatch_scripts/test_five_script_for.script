@@ -1,0 +1,103 @@
+#!/bin/bash
+#SBATCH --job-name=segmentation
+#SBATCH --ntasks=5
+#SBATCH --gres=gpu:5
+#SBATCH --time=4320
+#SBATCH --output test_five_for_output.txt
+/bin/hostname
+
+datasets=(s s_only_real s_only_dif)
+
+
+for dat_index in "${!datasets[@]}"
+do
+while [ "$(jobs -p | wc -l)" -ge "$SLURM_NTASKS" ]; do
+    sleep 150
+done
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c "segmentation/configs/syntetic_diffusion/multi_config_test_synt_and_diffusion_6_classe${datasets[$dat_index]}.json" -s > "five_script_output_sd_6_classe${datasets[$dat_index]}.txt" &
+done
+wait
+
+
+
+for dat_index in "${!datasets[@]}"
+do
+while [ "$(jobs -p | wc -l)" -ge "$SLURM_NTASKS" ]; do
+    sleep 150
+done
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c "segmentation/configs/syntetic_diffusion_no_augment/multi_config_test_synt_and_diffusion_6_classe${datasets[$dat_index]}_no_augment.json" -s > "five_script_output_sd_6_classe${datasets[$dat_index]}_no_augment.txt" &
+done
+wait
+
+
+for n in 42 
+do
+for numclass in 6 5 1
+do
+for dat_index in "${!datasets[@]}"
+do
+while [ "$(jobs -p | wc -l)" -ge "$SLURM_NTASKS" ]; do
+    sleep 150
+done
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c "segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_${n}_slices_${numclass}_classe${datasets[$dat_index]}.json" -s > "five_script_output_${n}_slices_${numclass}_classe${datasets[$dat_index]}.txt" &
+done
+done
+done
+wait
+
+for n in 42
+do
+for numclass in 6 5 1
+do
+for dat_index in "${!datasets[@]}"
+do
+while [ "$(jobs -p | wc -l)" -ge "$SLURM_NTASKS" ]; do
+    sleep 150
+done
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c "segmentation/configs/diffusion_n_slices_data_no_augment/multi_config_test_diffusion_${n}_slices_${numclass}_classe${datasets[$dat_index]}_no_augment.json" -s > "five_script_output_${n}_slices_${numclass}_classe${datasets[$dat_index]}_no_augment.txt" &
+done
+done
+done
+wait
+
+for n in 30 20 15 10 5
+do
+for numclass in 6 5 1
+do
+for dat_index in "${!datasets[@]}"
+do
+while [ "$(jobs -p | wc -l)" -ge "$SLURM_NTASKS" ]; do
+    sleep 150
+done
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c "segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_${n}_slices_${numclass}_classe${datasets[$dat_index]}.json" -s > "five_script_output_${n}_slices_${numclass}_classe${datasets[$dat_index]}.txt" &
+done
+done
+done
+wait
+
+for n in 30 20 15 10 5
+do
+for numclass in 6 5 1
+do
+for dat_index in "${!datasets[@]}"
+do
+while [ "$(jobs -p | wc -l)" -ge "$SLURM_NTASKS" ]; do
+    sleep 150
+done
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c "segmentation/configs/diffusion_n_slices_data_no_augment/multi_config_test_diffusion_${n}_slices_${numclass}_classe${datasets[$dat_index]}_no_augment.json" -s > "five_script_output_${n}_slices_${numclass}_classe${datasets[$dat_index]}_no_augment.txt" &
+done
+done
+done
+wait
+
+
+
+
+
+
+
+
+
+
+
+

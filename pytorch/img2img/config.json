@@ -3,13 +3,14 @@
     "device": "cuda",
 
     "augmentation":{
-        "rotation_range": 10,
-        "width_shift_range": 0.075,
-        "height_shift_range": 0.075,
-        "zoom_range": 0.2,
+        "rotation_range": 7,
+        "width_shift_range": 0.05,
+        "height_shift_range": 0.05,
+        "zoom_range": 0.1,
         "horizontal_flip": true,
         "vertical_flip": true,
         "noise_limit": 3,
+        "rotate_90": 0.5,
         "fill_mode": 0
     },
 
@@ -18,18 +19,19 @@
         "save_prefix_image": "image_",
         "save_prefix_mask":  "mask_",
         "save_prefix_model": "",
-        "save_suffix_model": "v2"
+        "save_suffix_model": ""
     },
 
     "data_info": {
-        "dir_img_path":              "img2img/data/cutting data/low_quality",
-        "dir_mask_path_without_name":"img2img/data/cutting data/",
+		"common_dir_path": "img2img/data/cutting data/",
+        "dir_img_name":     "low_quality",
         "add_mask_prefix": "",
         "proportion_of_dataset": 1
     },
 
     "model" : {
-        "type_model": "Lars76_unet",
+		"experiment_type": "img2img",
+        "type_model": "tiny_unet_v3",
         "last_activation": "sigmoid_activation"
     },
 
@@ -40,7 +42,7 @@
         "num_epochs": 100,
         "optimizer": "Adam",
         "loss": "MSELoss",
-        "lr_scheduler": "lr_scheduler_hard",
+        "lr_scheduler": "standart",
         "seed": 42
     },
 

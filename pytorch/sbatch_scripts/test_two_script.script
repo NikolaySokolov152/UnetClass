@@ -1,0 +1,9 @@
+#!/bin/bash
+#SBATCH --job-name=2segmentation
+#SBATCH --ntasks=2
+#SBATCH --gres=gpu:2
+#SBATCH --time=4320
+
+/bin/hostname
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_100_slices_1_classes.json -s > two_script_output1.txt |
+srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_165_slices_1_classes.json -s > two_script_output2.txt

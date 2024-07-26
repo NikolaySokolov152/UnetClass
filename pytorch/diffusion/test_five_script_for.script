@@ -1,0 +1,31 @@
+#!/bin/bash
+#SBATCH --job-name=segmentation
+#SBATCH --ntasks=5
+#SBATCH --gres=gpu:5
+#SBATCH --time=4320
+
+/bin/hostname
+
+for n in 30 20 15 10 5
+{
+    for dataset in s s_only_real s_only_dif
+    {
+        for class in 6 5 1
+        do
+            srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts.py -c segmentation/configs/diffusion_n_slices_data/multi_config_test_diffusion_$n_slices_$class_classe&dataset.json -s > five_script_output_$n_slices_$class_classe&dataset.txt |
+    done
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

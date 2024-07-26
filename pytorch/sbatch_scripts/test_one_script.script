@@ -1,0 +1,10 @@
+#!/bin/bash
+#SBATCH --job-name=diffusion
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --time=4320
+
+/bin/hostname
+srun -N 1 -n 1 -t 4320 -p a100 --gres=gpu:1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/tester.py > one_script_output.txt
+
+##srun -n 1 --time=4320 --gres=gpu:1 --ntasks=1 python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorchv3/trainSeriesExpts_dif.py -c diffusion/configs/multi_config_diffusion_100_slices.json -s > one_script_output.txt

@@ -1,0 +1,9 @@
+{
+  "experiment_data": "Multiple_diffusion_30_slices_5_classes_only_dif",
+  "config_path": "segmentation/configs/diffusion_n_slices_data/config_diffusion_data_30_slices_5_classes_only_dif.json",
+  "list_experiments": ["trainMultipleModels", "trainMultipleClasses"],
+  "list_arguments": [
+                     ["tiny_unet_v3"],
+                     [5,1]
+                    ]
+}

@@ -353,9 +353,9 @@ def GetTestMetric(model_name, result_mertic_data, using_metrics, is_print = True
 
 def GetFinalTestMetricForExcel(dict_results_mertics_data, using_metrics, class_names, is_print = True):
 
-    text_metrics = "Model "
+    text_metrics = "Model;Metric"
     for class_name in class_names:
-        text_metrics += f" {class_name.replace(' ', '_')}"
+        text_metrics += f";{class_name.replace(' ', '_')}"
     text_metrics += '\n'
 
     for model_name in dict_results_mertics_data.keys():
@@ -377,11 +377,11 @@ def GetFinalTestMetricForExcel(dict_results_mertics_data, using_metrics, class_n
                         dict_metrics[metric_name][class_name].append(metric)
 
         for metric_name, classes_data in dict_metrics.items():
-            text_metrics += f"{model_name} {metric_name}"
+            text_metrics += f"{model_name};{metric_name}"
             for class_name, metrics in classes_data.items():
                 mean_metric = sum(metrics)/len(metrics)
 
-                text_metrics+=f" {mean_metric:.3f}"
+                text_metrics+=f";{mean_metric:.3f}"
             text_metrics+='\n'
 
     text_metrics = text_metrics.replace(".", ",")
