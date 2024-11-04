@@ -1,0 +1,92 @@
+{
+    "experiment_data": "balancing_class",
+    "device": "cuda",
+
+    "augmentation":{
+        "rotation_range": 7,
+        "width_shift_range": 0.05,
+        "height_shift_range": 0.05,
+        "zoom_range": 0.1,
+        "horizontal_flip": true,
+        "vertical_flip": true,
+        "noise_limit": 3,
+        "p_rotate_90": 0.5,
+        "fill_mode": 0
+    },
+
+    "data_info": [
+        {
+			"common_dir_path":            "segmentation/cutting data",
+			"dir_img_name":               "original",
+			"add_mask_prefix": ""
+		},
+		{
+			"common_dir_path":            "segmentation/data/original data/training/",
+			"dir_img_name":               "original",
+			"add_mask_prefix": "",
+            "tiling_data": true,
+			"num_gen_repetitions": 40
+		},
+		{
+			"common_dir_path":            "segmentation/data/synthetic_dataset10",
+			"dir_img_name":               "original",
+			"add_mask_prefix": ""
+		}
+    ],
+
+    "save_inform": {
+        "save_to_dir":       null,
+        "save_prefix_image": "image_",
+        "save_prefix_mask":  "mask_",
+        "save_prefix_model": "",
+        "save_suffix_model": "",
+		"save_model_path":   null
+    },
+
+    "model" : {
+        "experiment_type": "segmentation",
+        "type_model": "tiny_unet_v3",
+        "last_activation": "sigmoid_activation"
+    },
+
+    "train": {
+        "mask_name_label_list": ["mitochondria",
+                                 "PSD",
+                                 "vesicles",
+                                 "axon",
+                                 "boundaries",
+                                 "mitochondrial boundaries"],
+        "num_class": 6,
+        "batch_size": 7,
+        "num_epochs": 100,
+        "optimizer": "Adam",
+        "loss": "DiceLossMulticlass",
+        "lr_scheduler": "lr_scheduler_100",
+        "seed": 42
+    },
+
+    "img_transform_data": {
+        "color_mode_img": "gray",
+        "mode_mask": "separated",
+        "target_size": [256, 256]
+    },
+
+    "generator_config": {
+        "type_gen": "all_reader",
+        "mode": "train",
+        "seed": 42,
+        "augment": true,
+        "shuffle": true,
+        "subsampling": "random",
+        "share_validat": 0.2
+    },
+
+	"balancing_parameters": {
+		"calculate_statistic": true,
+		"use_p_class_balance": true,
+		"use_count_pixel_balance": true
+	},
+
+    "debug_mode": false,
+    "move_to_date_folder": true
+}

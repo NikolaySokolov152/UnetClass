@@ -185,7 +185,7 @@ def EvaluateSingleImageModelResultsFromPredict(etal_path,
         if (etal is None):
             print("error etal")
 
-        pred_img = model_predict[1]
+        pred_img = model_predict[1] ######################################################################################### [:,:,i]
         pred_img = to_0_255_format_img(pred_img)
         if (pred_img is None):
             print("error predict img")

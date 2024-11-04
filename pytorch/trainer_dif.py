@@ -182,10 +182,10 @@ def generator_parcer(dict_config, device, silence_mode=False):
         raise Exception(f"ERROR don't know data type 'data_info':  {type(dict_config['data_info'])}")
 
 
-    transform_data = TransformData(color_mode_img = dict_config["img_transform_data"]["color_mode_img"],
-                                   mode_mask      = dict_config["img_transform_data"]["mode_mask"],
-                                   target_size    = dict_config["img_transform_data"]["target_size"],
-                                   batch_size     = dict_config["train"]["batch_size"])
+    transform_data = CommonTransformData(color_mode_img = dict_config["img_transform_data"]["color_mode_img"],
+                                         mode_mask      = dict_config["img_transform_data"]["mode_mask"],
+                                         target_size    = dict_config["img_transform_data"]["target_size"],
+                                         batch_size     = dict_config["train"]["batch_size"])
 
     if "normalization_img_fun" in dict_config["img_transform_data"].keys():
         transform_data.normalization_img_fun=dict_config["img_transform_data"]["normalization_img_fun"]
@@ -194,9 +194,9 @@ def generator_parcer(dict_config, device, silence_mode=False):
     if "binary_mask" in dict_config["img_transform_data"].keys():
         transform_data.binary_mask=dict_config["img_transform_data"]["binary_mask"]
 
-    save_inform = SaveData(save_to_dir       = dict_config["save_inform"]["save_to_dir"],
-                           save_prefix_image = dict_config["save_inform"]["save_prefix_image"],
-                           save_prefix_mask  = dict_config["save_inform"]["save_prefix_mask"])
+    save_inform = SaveGeneratorData(save_to_dir       = dict_config["save_inform"]["save_to_dir"],
+                                    save_prefix_image = dict_config["save_inform"]["save_prefix_image"],
+                                    save_prefix_mask  = dict_config["save_inform"]["save_prefix_mask"])
 
     if not "type_load_data" in dict_config["generator_config"].keys():
         dict_config["generator_config"]['type_load_data'] = 'img'
@@ -216,16 +216,16 @@ def generator_parcer(dict_config, device, silence_mode=False):
                                            mode            = dict_config["generator_config"]["mode"],
                                            aug_dict        = augmentation,
                                            list_class_name = classnames,
-                                           augment         = dict_config["generator_config"]["augment"],
+                                           is_augment= dict_config["generator_config"]["augment"],
                                            tailing         = dict_config["generator_config"]["tailing"],
-                                           shuffle         = dict_config["generator_config"]["shuffle"],
+                                           is_shuffle= dict_config["generator_config"]["shuffle"],
                                            seed            = dict_config["generator_config"]["seed"],
                                            subsampling     = dict_config["generator_config"]["subsampling"],
                                            transform_data  = transform_data,
                                            save_inform     = save_inform,
                                            share_validat   = dict_config["generator_config"]["share_validat"],
                                            type_load_data  = dict_config["generator_config"]['type_load_data'],
-                                           silence_mode    = silence_mode,
+                                           is_silence_mode= silence_mode,
                                            device          = device)
     else:
         print("GEN CHOISE ERROR: now you can only choose: 'default' ('all_reader') generator")
@@ -440,8 +440,8 @@ def config_parcer(dict_config):
                " save_prefix_image ", myGen.save_inform.save_prefix_image,
                " save_prefix_mask ", myGen.save_inform.save_prefix_mask)
         print ("\tshare_validat:", myGen.share_val)
-        print ("\taugment:", myGen.augment)
-        print ("\tshuffle:", myGen.shuffle)
+        print ("\taugment:", myGen.is_augment)
+        print ("\tshuffle:", myGen.is_shuffle)
         print ("\tseed:", myGen.seed)
         print ("\ttailing:", myGen.tailing)
         print ("\tlen list_img_name:", len(myGen.list_img_name))

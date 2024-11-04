@@ -20,7 +20,10 @@
         "dir_img_path":              "G:/Data/Unet_multiclass/data/cutting data/original",
         "dir_mask_path_without_name":"G:/Data/Unet_multiclass/data/cutting data/",
         "add_mask_prefix": "",
-        "proportion_of_dataset": 1
+        "proportion_of_dataset": 1,
+        "tiling_data": false,
+        "type_load_data": "img",
+        "num_gen_repetitions": 0
     },
 
     "save_inform": {
@@ -56,13 +59,18 @@
     "generator_config": {
         "type_gen": "all_reader",
         "augment": true,
-        "tailing": false,
-        "shuffle": true,
         "mode": "train",
         "seed": 1,
+        "shuffle": true,
         "subsampling": "random",
         "share_validat": 0.2
     },
+
+	"balancing_parameters": {
+		"calculate_statistic": true,
+		"use_p_class_balance": true,
+		"use_count_pixel_balance": true
+	},
 
     "debug_mode": false,
     "move_to_date_folder": true

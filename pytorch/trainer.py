@@ -1,8 +1,6 @@
 import os.path
 
-###############################################################################################################################
 from src.train import *
-#from src.diffusion_train import *
 from src.dataGenerator import *
 from src.models import *
 from src.metrics import *
@@ -41,7 +39,7 @@ def seed_all(seed):
 
 def build_argparser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--config', type=str, default="img2img/config_test.json")
+    parser.add_argument('-c', '--config', type=str, default="segmentation/config_test.json")
     #parser.add_argument('-c', '--config', type=str, default = "segmentation/config_test.json")
     #parser.add_argument('-c', '--config', type=str, default = None)
     parser.add_argument('-s', '--silence_mode', action='store_true')
@@ -136,7 +134,24 @@ def set_cofig_seed(dict_config):
         seed_all(42)
         dict_config["train"]["seed"] = 42
 
-def generator_parcer(dict_config, device, silence_mode=False):
+def generator_parcer(dict_config, silence_mode=False):
+    # GET WORKING DEVICE
+    if not dict_config["device"]:
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    else:
+        if dict_config["device"].lower() == 'cuda':
+            if torch.cuda.is_available():
+                device = 'cuda'
+            else:
+                raise Exception("ERROR! Cuda device no working !")
+
+        elif dict_config["device"].lower() == 'cpu':
+            device = 'cpu'
+        else:
+            print("WARNING! I don't know what is using device, I will use the device as I see fit")
+            device = 'cuda' if torch.cuda.is_available() else 'cpu'
+            print("Using device:", device)
+
     # GET DATA FOR GENERATOR
     augmentation = dict_config["augmentation"]
 
@@ -149,7 +164,7 @@ def generator_parcer(dict_config, device, silence_mode=False):
     else:
         raise Exception(f"ERROR don't know data type 'data_info':  {type(dict_config['data_info'])}")
 
-    transform_data = TransformData(**dict_config["img_transform_data"])
+    transform_data = CommonTransformData(**dict_config["img_transform_data"])
     # для чтения старых конфигов
     if not "batch_size" in dict_config["img_transform_data"].keys():
         transform_data.batch_size = dict_config["train"]["batch_size"]
@@ -157,7 +172,7 @@ def generator_parcer(dict_config, device, silence_mode=False):
     if dict_config["img_transform_data"]["mode_mask"] == "image":
         transform_data.binary_mask=False
 
-    save_inform = SaveData(**dict_config["save_inform"])
+    save_inform = SaveGeneratorData(**dict_config["save_inform"])
 
     if not "type_load_data" in dict_config["generator_config"].keys():
         dict_config["generator_config"]['type_load_data'] = 'img'
@@ -177,40 +192,22 @@ def generator_parcer(dict_config, device, silence_mode=False):
                                            mode            = dict_config["generator_config"]["mode"],
                                            aug_dict        = augmentation,
                                            list_class_name = classnames,
-                                           augment         = dict_config["generator_config"]["augment"],
-                                           tailing         = dict_config["generator_config"]["tailing"],
-                                           shuffle         = dict_config["generator_config"]["shuffle"],
-                                           seed            = dict_config["generator_config"]["seed"],
+                                           is_augment= dict_config["generator_config"]["augment"],
+                                           is_shuffle= dict_config["generator_config"]["shuffle"],
+                                           #seed            = dict_config["generator_config"]["seed"],
                                            subsampling     = dict_config["generator_config"]["subsampling"],
                                            transform_data  = transform_data,
                                            save_inform     = save_inform,
                                            share_validat   = dict_config["generator_config"]["share_validat"],
-                                           type_load_data  = dict_config["generator_config"]['type_load_data'],
-                                           silence_mode    = silence_mode,
+                                           is_silence_mode= silence_mode,
+                                           is_calculate_statistic= dict_config["balancing_parameters"]["calculate_statistic"] if "balancing_parameters" in dict_config.keys() else False,
                                            device          = device)
     else:
         print("GEN CHOISE ERROR: now you can only choose: 'default' ('all_reader') generator")
         raise AttributeError("GEN CHOISE ERROR: now you can only choose: 'default' ('all_reader') generator")
     return myGen
 
-def divece_model_optimizer_parcer(dict_config):
-    # GET WORKING DEVICE
-    if not dict_config["device"]:
-        device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    else:
-        if dict_config["device"].lower() == 'cuda':
-            if torch.cuda.is_available():
-                device = 'cuda'
-            else:
-                raise Exception("ERROR! Cuda device no working !")
-
-        elif dict_config["device"].lower() == 'cpu':
-            device = 'cpu'
-        else:
-            print("WARNING! I don't know what is using device, I will use the device as I see fit")
-            device = 'cuda' if torch.cuda.is_available() else 'cpu'
-            print("Using device:", device)
-
+def model_optimizer_parcer(dict_config):
     # GET MODEL
     num_channel = 1 if dict_config["img_transform_data"]["color_mode_img"] == 'gray' else 3
     n_classes = num_channel if dict_config["img_transform_data"]["mode_mask"] == "image" else dict_config["train"]["num_class"]
@@ -250,7 +247,6 @@ def divece_model_optimizer_parcer(dict_config):
             print(f"MODEL CHOICE ERROR: now you can only choose: '{str_using_model}' model")
             raise AttributeError(f"MODEL CHOICE ERROR: now you can only choose: '{str_using_model}' model")
 
-    model.to(device)
     # GET OPTIMIZER
     using_optimizer = ['Adam', 'AdamW', 'RMSprop', 'NovoGrad']
 
@@ -267,7 +263,7 @@ def divece_model_optimizer_parcer(dict_config):
         print(f"OPTIMIZER CHOICE ERROR: now you can only choose: '{str_using_optimizer}' optimizer")
         raise AttributeError(
             f"OPTIMIZER CHOICE ERROR: now you can only choose: '{str_using_optimizer}' optimizer")
-    return device, model, optimizer
+    return model, optimizer
 
 def losses_parcer(dict_config):
     # GET LOSSES
@@ -299,7 +295,7 @@ def losses_parcer(dict_config):
     return losses
 
 def metrics_parcer(dict_config):
-    # GET METRICS ###################################################################################################################
+    # GET METRICS ################################################################################################################################################################
     if type_experiment_parcer(dict_config)=="diffusion":
         num_channel = 1 if dict_config["img_transform_data"]["color_mode_img"] == 'gray' else 3
         n_classes = num_channel if dict_config["img_transform_data"]["mode_mask"] == "image" else\
@@ -310,10 +306,19 @@ def metrics_parcer(dict_config):
         num_class = dict_config["train"]["num_class"]
 
     metrics=[
-            #Dice(),
+            Dice(),
             DiceMultilabel(num_class)
             ]
-    return metrics
+    metrics_names=[
+        "Dice",
+        "DiceMultilabel",
+    ]
+
+    metrics.extend(DiceMultilabelClasses(num_class))
+    for metric in DiceMultilabelClasses(num_class):
+        metrics_names.append(metric.__name__)
+
+    return metrics, metrics_names
 
 def num_epochs_parcer(dict_config):
     # GET NUM EPOCHS
@@ -343,22 +348,27 @@ def diffusion_config_parcer(dict_config):
     diffusion_config = dict_config["model"]["diffusion_config"]
     return diffusion_config
 
+def statistics_params_parser(dict_config):
+    if "balancing_parameters" in dict_config.keys():
+        return {"balancing_parameters": dict_config["balancing_parameters"]}
+    else:
+        return {}
+
 def config_parcer(dict_config):
-    device, model, optimizer = divece_model_optimizer_parcer(dict_config)
     set_cofig_seed(dict_config)
+    model, optimizer = model_optimizer_parcer(dict_config)
     last_activation = activation_parcer(dict_config)
     silence_mode = silence_mode_parcer(dict_config)
-    myGen = generator_parcer(dict_config, device, silence_mode)
+    myGen = generator_parcer(dict_config, silence_mode)
     num_epochs = num_epochs_parcer(dict_config)
     lr_scheduler = lr_scheduler_parcer(dict_config)
     losses = losses_parcer(dict_config)
-    metrics = metrics_parcer(dict_config)
+    metrics_data = metrics_parcer(dict_config)
 
     type_task_train = type_experiment_parcer(dict_config)
-    train_args = None
+    train_args = statistics_params_parser(dict_config)
     if type_task_train == "diffusion":
-        train_args=diffusion_config_parcer(dict_config)
-
+        train_args |= diffusion_config_parcer(dict_config)
     # DEBUGGING TRAIN LOADER
     if dict_config["debug_mode"]:
         model_name = model_name_parcer(dict_config)
@@ -386,14 +396,13 @@ def config_parcer(dict_config):
                " save_prefix_image ", myGen.save_inform.save_prefix_image,
                " save_prefix_mask ", myGen.save_inform.save_prefix_mask)
         print ("\tshare_validat:", myGen.share_val)
-        print ("\taugment:", myGen.augment)
-        print ("\tshuffle:", myGen.shuffle)
-        print ("\tseed:", myGen.seed)
-        print ("\ttailing:", myGen.tailing)
+        print ("\taugment:", myGen.is_augment)
+        print ("\tshuffle:", myGen.is_shuffle)
+        #print ("\tseed:", myGen.seed)
         print ("\tlen list_img_name:", len(myGen.list_img_name))
         print("\tlr_scheduler:", lr_scheduler.__name__)
-        print()
 
+        print()
         print ("print Model:")
         print ("\tnum_epochs:", num_epochs)
         print("\tmodel:", model.__class__.__name__)
@@ -401,8 +410,9 @@ def config_parcer(dict_config):
         print ("\toptimizer:", optimizer)
         print ("\tModelSize:", sum(p.numel() for p in model.parameters()))
         print("losses:", losses)
-        print("using device:", device)
+        print("using device:", myGen.device)
         print("last_activation:", last_activation)
+        print("\tadd_train_args:", train_args)
         print()
 
         print("Silence_mode", silence_mode)
@@ -411,9 +421,8 @@ def config_parcer(dict_config):
            model,\
            last_activation,\
            num_epochs,\
-           device,\
            optimizer,\
-           metrics,\
+           metrics_data,\
            losses,\
            lr_scheduler,\
            silence_mode,\
@@ -441,10 +450,9 @@ def trainByConfig(config_file, path_config, retrain = False):
         print(f"create dir:'{type_task_train}'")
         os.mkdir(type_task_train)
     type_with_data_save = os.path.join(type_task_train, data_save)
-
+    #print(f"type_task_train: {type_task_train}")
     if (not retrain) and os.path.isdir(type_with_data_save) and os.path.isfile(os.path.join(type_with_data_save, modelName + '.pt')):
         return f"{modelName} already trained"
-
     print(f"start train model '{modelName}' and save in '{type_with_data_save}'")
 
     # при запуске нескольких экспериментов забивается память
@@ -456,10 +464,9 @@ def trainByConfig(config_file, path_config, retrain = False):
     model,\
     last_activation,\
     num_epochs,\
-    device,\
     optimizer,\
     losses,\
-    metrics,\
+    metrics_data,\
     lr_scheduler,\
     silence_mode,\
     type_task_train,\
@@ -470,10 +477,9 @@ def trainByConfig(config_file, path_config, retrain = False):
                        model,
                        last_activation,
                        num_epochs,
-                       device,
                        optimizer,
                        losses,
-                       metrics,
+                       metrics_data,
                        modelName,
                        lr_scheduler=lr_scheduler,
                        silence_mode=silence_mode,

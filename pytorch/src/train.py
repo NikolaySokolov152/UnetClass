@@ -183,9 +183,8 @@ def fitModel(my_data_generator,
              model,
              last_activation,
              num_epoch,
-             device,
              optimizer,
-             metrics,
+             metrics_data,
              losses,
              modelName,
              lr_scheduler = None,
@@ -195,21 +194,44 @@ def fitModel(my_data_generator,
              train_mode="segmentation",
              train_args=None):
 
-    history = History(metrics)
+    metrics_funs, metrics_names = metrics_data
+    history = History(metrics_names)
 
-    ##################################################################################################################### запихать параметры генератора в историю тренировки
-    history.history["num_images"] = len(my_data_generator.list_img_name)
-    history.history["num_gen_repetitions"] = my_data_generator.num_gen_repetitions
+    device = my_data_generator.device
+    model.to(device)
+
+    ##################################################################################################################### запихать параметры генератора в историю тренировки (все ли нужно ?)
+    dataset_info = my_data_generator.get_dataset_info()
+    history.history["generator info"] = {
+                                          "number of images": dataset_info["number of images"],
+                                          "number of titles": dataset_info["number of titles"]
+                                        }
 
     minimum_validation_error = np.finfo(np.float32).max
 
-    PrepereFunction=getPrepareDataFunction(train_mode, train_args)
 
     num_classes=1+my_data_generator.num_classes if train_mode=="diffusion" else my_data_generator.num_classes
 
     last_activation_fun = globals()[last_activation]
 
-    CalculateLosses = get_work_loss(losses, EPSILON, last_activation, num_classes)
+    ####################################################################################################################### ПЕРВАЯ ВЕРСИЯ БАЛАНСИРОВКИ
+    use_count_pixel_balance = False
+    p_weights = None
+    if my_data_generator.class_statistic is not None:
+        if train_args["balancing_parameters"]['use_p_class_balance']:
+            history.history["class_statistic"] = history.numpy_dic_to_dic_list(my_data_generator.class_statistic)
+            p_weights = []
+            for statistic_weights in my_data_generator.class_statistic["p_classes"]:
+                p_weights.append(1 - statistic_weights)
+            p_weights = np.array(p_weights)
+            history.history["class_statistic"]["work_p_classes_weights"] = p_weights.tolist()
+
+        if train_args["balancing_parameters"]["use_count_pixel_balance"]:
+            use_count_pixel_balance = True
+
+    CalculateLosses = get_work_loss(losses, EPSILON, last_activation, num_classes, device, weights=p_weights)
+
+    PrepereFunction = getPrepareDataFunction(train_mode, train_args)
 
     print("Start train model", flush=True)
 
@@ -229,7 +251,7 @@ def fitModel(my_data_generator,
             cmd_size = 200
 
         model.train()
-        train_metric = torch.zeros(len(metrics))
+        train_metric = torch.zeros(len(metrics_names))
         loss_val = 0.0
         # Train loop
         if not silence_mode:
@@ -245,7 +267,7 @@ def fitModel(my_data_generator,
         # desc изменен,чтобы не было 0% в начале
 
         start_train_time = time.time()
-        for epoch_train_iteration, (inputs, targets) in enumerate(tqdm_train_loop):
+        for epoch_train_iteration, (inputs, targets, batch_statistic) in enumerate(tqdm_train_loop):
             #print(inputs.shape, targets.shape)
             ############################################################################################################ костыль
             if my_data_generator.transform_data.mode_mask == "no_mask":
@@ -256,7 +278,7 @@ def fitModel(my_data_generator,
 
             # PREDICT WITHOUT ACTIVATION !!!!
             outputs = model(inputs)
-            loss = CalculateLosses(outputs, targets)
+            loss = CalculateLosses(outputs, targets, batch_statistic if use_count_pixel_balance else None)
 
             optimizer.zero_grad()
             loss.backward()
@@ -271,13 +293,13 @@ def fitModel(my_data_generator,
                 if use_train_metric:
                     # ADD LAST ACTIVATION
                     outputs = last_activation_fun(outputs, EPSILON)
-                    outputs = outputs.to(device)
-                    now_iteration_metric = calculate_metrics(metrics, outputs, targets)
+                    #outputs = outputs.to(device)
+                    now_iteration_metric = calculate_metrics(metrics_funs, outputs, targets)
                     train_metric = train_metric.add(now_iteration_metric)
                     #print(calculate_metrics(metrics, outputs, targets))
                     metrics_view = {}
-                    for i, metric in enumerate(metrics):
-                        metrics_view[metric.__class__.__name__] = now_iteration_metric[i].numpy()
+                    for i, metric_name in enumerate(metrics_names):
+                        metrics_view[metric_name] = now_iteration_metric[i].numpy()
 
                     str_metrics_view = ', '.join([f'{k} : {v:.4f}' for k,v in metrics_view.items()])
                 else:
@@ -293,9 +315,9 @@ def fitModel(my_data_generator,
         # Save epoch train inform
         metrics_view_epoch = {}
         if use_train_metric:
-            for i, metric in enumerate(metrics):
-                metrics_view_epoch[metric.__class__.__name__] = np.round(train_metric[i].numpy() / len(my_data_generator.gen_train), 4)
-                history.update_train_metric(metric.__class__.__name__, metrics_view_epoch[metric.__class__.__name__])
+            for i, metric_name in enumerate(metrics_names):
+                metrics_view_epoch[metric_name] = np.round(train_metric[i].numpy() / len(my_data_generator.gen_train), 4)
+                history.update_train_metric(metric_name, metrics_view_epoch[metric_name])
 
             str_mean_train_metrics_view = ', '.join([f'{k} : {v:.4f}' for k, v in metrics_view_epoch.items()])
         else:
@@ -309,7 +331,7 @@ def fitModel(my_data_generator,
         if use_validation and len(my_data_generator.gen_valid) > 0:
             model.eval()
             with torch.no_grad():
-                val_metric = torch.zeros(len(metrics))
+                val_metric = torch.zeros(len(metrics_names))
                 val_loss_val = 0.0
                 if not silence_mode:
                     time.sleep(0.2)  # чтобы tqdm не печатал вперед print
@@ -321,20 +343,20 @@ def fitModel(my_data_generator,
                                        disable=silence_mode)
 
                 start_valid_time = time.time()
-                for epoch_valid_iteration, (inputs, targets) in enumerate(tqdm_valid_loop):
+                for epoch_valid_iteration, (inputs, targets, batch_statistic) in enumerate(tqdm_valid_loop):
                     inputs, targets = PrepereFunction(inputs, targets) #inputs.to(device), targets.to(device)
 
                     outputs = model(inputs)
-                    outputs = outputs.to(device)
+                    #outputs = outputs.to(device)
                     loss = CalculateLosses(outputs, targets)
                     # ADD LAST ACTIVATION
                     outputs = last_activation_fun(outputs, EPSILON)
                     val_loss_val += loss.item()
 
-                    val_metric = val_metric.add(calculate_metrics(metrics, outputs, targets))
+                    val_metric = val_metric.add(calculate_metrics(metrics_funs, outputs, targets))
                     val_metrics_view = {}
-                    for i, metric in enumerate(metrics):
-                        val_metrics_view[metric.__class__.__name__] = np.round(val_metric[i].numpy() /(epoch_valid_iteration + 1), 4)
+                    for i, metric_name in enumerate(metrics_names):
+                        val_metrics_view[metric_name] = np.round(val_metric[i].numpy() /(epoch_valid_iteration + 1), 4)
 
                     str_val_metrics_view = ', '.join([f'{k} : {v:.4f}' for k, v in val_metrics_view.items()])
                     tqdm_valid_loop.set_description(f"\tValidation metric: {str_val_metrics_view}, loss= {(val_loss_val / (epoch_valid_iteration + 1)):.4f}")
@@ -343,9 +365,9 @@ def fitModel(my_data_generator,
 
                 # Save epoch validation inform
                 metrics_view_epoch_val = {}
-                for i, metric in enumerate(metrics):
-                    metrics_view_epoch_val[metric.__class__.__name__] = np.round(val_metric[i].numpy() / len(my_data_generator.gen_valid), 4)
-                    history.update_val_metric(metric.__class__.__name__, metrics_view_epoch_val[metric.__class__.__name__])
+                for i, metric_name in enumerate(metrics_names):
+                    metrics_view_epoch_val[metric_name] = np.round(val_metric[i].numpy() / len(my_data_generator.gen_valid), 4)
+                    history.update_val_metric(metric_name, metrics_view_epoch_val[metric_name])
 
                 last_validation_loss = val_loss_val / len(my_data_generator.gen_valid)
                 history.update_validation_loss(last_validation_loss)
@@ -408,9 +430,9 @@ class History:
         def __call__(self, value):
             self.work_fun(value)
 
-    def __init__(self, metrics=None):
-        if metrics is not None:
-            self.init_metrics_history(metrics)
+    def __init__(self, metric_names=None):
+        if metric_names is not None:
+            self.init_metrics_history(metric_names)
         self.update_train_work_time      = self.Update_after_init("train_work_time", "work_time")
         self.update_validation_work_time = self.Update_after_init("validation_work_time", "work_time")
 
@@ -420,27 +442,32 @@ class History:
         self.update_val_lr               = self.Update_after_init("lr")
         self.update_model_saving_epoch   = self.Update_after_init("model_saving_epoch")
 
-    def init_metrics_history(self, metrics):
+    def init_metrics_history(self, metrics_name):
         self.history["metrics"] = {}
         self.history["metrics"]["train_metrics"] = {}
         self.history["metrics"]["val_metrics"] = {}
 
-        for i, metric in enumerate(metrics):
-            self.history["metrics"]["train_metrics"][metric.__class__.__name__] = []
-            self.history["metrics"]["val_metrics"][metric.__class__.__name__] = []
+        for i, metric_name in enumerate(metrics_name):
+            self.history["metrics"]["train_metrics"][metric_name] = []
+            self.history["metrics"]["val_metrics"][metric_name] = []
 
-    def update_train_metrics(self, metrics, value_metrics):
-        for i, metric in enumerate(metrics):
-            self.history["metrics"]["train_metrics"][metric.__class__.__name__].append(value_metrics[i])
-    def update_val_metrics(self, metrics, value_metrics):
-        for i, metric in enumerate(metrics):
-            self.history["metrics"]["val_metrics"][metric.__class__.__name__].append(value_metrics[i])
+    def update_train_metrics(self, metric_names, value_metrics):
+        for i, metric in enumerate(metric_names):
+            self.history["metrics"]["train_metrics"][metric].append(value_metrics[i])
+    def update_val_metrics(self, metric_names, value_metrics):
+        for i, metric in enumerate(metric_names):
+            self.history["metrics"]["val_metrics"][metric].append(value_metrics[i])
 
     def update_train_metric(self, metric_name, value_metric):
         self.history["metrics"]["train_metrics"][metric_name].append(value_metric)
     def update_val_metric(self, metric_name, value_metric):
         self.history["metrics"]["val_metrics"][metric_name].append(value_metric)
 
+    def numpy_dic_to_dic_list(self, dic):
+        return_dic={}
+        for key in dic.keys():
+            return_dic[key] = dic[key].tolist()
+        return return_dic
 '''
 #Перенос функции в класс
 class ModelTrainer:
@@ -471,7 +498,7 @@ class ModelTrainer:
         self.train_mode=train_mode
         self.model=model
         self.last_activation=last_activation
-        self.device = device
+        self.device = generator.device
         self.optimizer= optimizer
         self.losses=losses
         self.generator=generator
@@ -482,7 +509,8 @@ class ModelTrainer:
         self.history = History(metrics)
         self.minimum_validation_error = np.finfo(np.float32).max
         self.PrepereFunction=self.getPrepareDataFunction()
-
+        
+        self.model.to(device)
 
     def getPrepareDataFunction(self):
         if self.train_mode == "segmentation":

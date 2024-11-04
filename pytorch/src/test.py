@@ -20,7 +20,7 @@ def to_0_1_format_img(in_img):
     if max_val <= 1:
         return in_img
     else:
-        out_img = in_img / 255
+        out_img = in_img.astype(np.float32) / 255
         return out_img
 
 class tiledGen():

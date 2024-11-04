@@ -1,9 +1,9 @@
 {
   "experiment_data": null,
   "config_path": "segmentation/config_test.json",
-  "list_experiments": ["trainDataset", "trainSeries"],
+  "list_experiments": ["trainBalance", "trainSeries"],
   "list_arguments": [
-						[["mix",[0,1]], ["real",[0]], ["diff",[1]]],
-						20
+						null,
+						1
                     ]
 }

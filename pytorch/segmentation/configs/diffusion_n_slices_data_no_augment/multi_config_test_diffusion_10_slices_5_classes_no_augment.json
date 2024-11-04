@@ -1,9 +1,0 @@
-{
-  "experiment_data": "Multiple_diffusion_10_slices_5_classes_no_augment",
-  "config_path": "segmentation/configs/diffusion_n_slices_data_no_augment/config_diffusion_data_10_slices_5_classes.json",
-  "list_experiments": ["trainMultipleModels", "trainMultipleClasses"],
-  "list_arguments": [
-                     ["tiny_unet_v3"],
-                     [5,1]
-                    ]
-}

@@ -1,5 +1,8 @@
 
-class Dice():
+class Dice:
+    def __name__(self):
+        return "Dice"
+
     def __init__(self):
         self.smooth = 0.00001
     def __call__(self, y_pred, y_true):
@@ -7,7 +10,10 @@ class Dice():
         denominator = y_pred.sum() + y_true.sum()
         return (2 * numerator + self.smooth) / (denominator + self.smooth)
 
-class DiceMultilabel():
+class DiceMultilabel:
+    #def __name__(self):
+    #    return "DiceMultilabel"
+
     def __init__(self, num_classes = 2):
         self.num_classes = num_classes
         self.d1metric = Dice()
@@ -17,41 +23,32 @@ class DiceMultilabel():
             dice += self.d1metric(y_true[:, index, :, :], y_pred[:, index, :, :])
         return dice / self.num_classes  # taking average
 
+def DiceMultilabelClasses (num_classes = 2):
+    d1metric = Dice()
 
+    def dc_0(y_true, y_pred):
+        return d1metric(y_true[:, 0, :, :], y_pred[:, 0, :, :])
 
+    def dc_1(y_true, y_pred):
+        return d1metric(y_true[:, 1, :, :], y_pred[:, 1, :, :])
 
+    def dc_2(y_true, y_pred):
+        return d1metric(y_true[:, 2, :, :], y_pred[:, 2, :, :])
 
-'''
-def universal_dice_coef_multilabel(numLabels):
-    def dice_coef(y_true, y_pred):
-        dice = 0
-        for index in range(numLabels):
-            dice += dice_coef_calcucate(y_true[:, :, :, index], y_pred[:, :, :, index])
-        return dice / numLabels  # taking average
+    def dc_3(y_true, y_pred):
+        return d1metric(y_true[:, 3, :, :], y_pred[:, 3, :, :])
 
-    return dice_coef
+    def dc_4(y_true, y_pred):
+        return d1metric(y_true[:, 4, :, :], y_pred[:, 4, :, :])
 
-def dice_coef_calcucate(y_true, y_pred):
-    smooth = 0.000001
-    y_true_f = K.flatten(y_true)  # (K.mean(y_true, axis = 0))
-    y_pred_f = K.flatten(y_pred)  # (K.mean(y_pred, axis = 0))
-    intersection = K.sum(y_true_f * y_pred_f)
-    return (2. * intersection + smooth) / (K.sum(y_true_f) + K.sum(y_pred_f) + smooth)
+    def dc_5(y_true, y_pred):
+        return d1metric(y_true[:, 5, :, :], y_pred[:, 5, :, :])
 
-def dc_0(y_true, y_pred):
-    return dice_coef_calcucate(y_true[:, :, :, 0], y_pred[:, :, :, 0])
-def dc_1(y_true, y_pred):
-    return dice_coef_calcucate(y_true[:, :, :, 1], y_pred[:, :, :, 1])
-def dc_2(y_true, y_pred):
-    return dice_coef_calcucate(y_true[:, :, :, 2], y_pred[:, :, :, 2])
-def dc_3(y_true, y_pred):
-    return dice_coef_calcucate(y_true[:, :, :, 3], y_pred[:, :, :, 3])
-def dc_4(y_true, y_pred):
-    return dice_coef_calcucate(y_true[:, :, :, 4], y_pred[:, :, :, 4])
-def dc_5(y_true, y_pred):
-    return dice_coef_calcucate(y_true[:, :, :, 5], y_pred[:, :, :, 5])
+    view_classes = [dc_0,
+                    dc_1,
+                    dc_2,
+                    dc_3,
+                    dc_4,
+                    dc_5]
 
-def universal_dice_coef_multilabel_arr(numLabels):
-    view_classes = [dc_0, dc_1, dc_2, dc_3, dc_4, dc_5]
-    return view_classes[:numLabels]
-'''
+    return view_classes[:num_classes]

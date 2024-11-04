@@ -1,0 +1,15 @@
+{
+  "experiment_data": "Multiple_segmentation_stability_ballancy_and_dataset",
+  "config_path": "segmentation/configs/test_balance/config_test_balancing.json",
+  "list_experiments": ["trainMultipleClasses", "trainSeries", "trainDataset", "trainBalance"],
+  "list_arguments": [
+                     [6,5,1],
+                     5,
+                     [["real1",[0]],
+                      ["real2",[1]],
+                      ["mix_geom1",[0,2]],
+                      ["mix_geom2",[1,2]],
+                      ["geom",[2]]],
+                     null
+                    ]
+}

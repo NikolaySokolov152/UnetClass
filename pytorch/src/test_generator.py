@@ -29,7 +29,7 @@ def printGenerator(gen, isPrintInput = True, isPrintLen = True):
         print('\tmode:', gen.mode)
         print('\tsave_inform:', gen.save_inform)
         print('\ttailing:', gen.tailing)
-        print('\taugment:', gen.augment)
+        print('\taugment:', gen.is_augment)
         print('\tbatch_size:', gen.batch_size)
         print('\tsmall_list_img_name:', gen.small_list_img_name)
         print('\taug_dict:', gen.composition)
@@ -52,8 +52,8 @@ def printDataGenerator(gen, isPrintInput = True, isPrintLen = True):
         print('\tsubsampling:', gen.subsampling)
         print('\tsave_inform:', gen.save_inform)
         print('\tshare_val:', gen.share_val)
-        print('\taugment:', gen.augment)
-        print('\tshuffle:', gen.shuffle)
+        print('\taugment:', gen.is_augment)
+        print('\tshuffle:', gen.is_shuffle)
         print('\tseed:', gen.seed)
         print('\ttailing:', gen.tailing)
         print('\tlist_img_name:', gen.list_img_name)
@@ -70,9 +70,8 @@ def printAugmentGenerator(gen, isPrintInput = True, isPrintLen = True):
         print('\ttransform_data:', gen.transform_data)
         print('\tmode:', gen.mode)
         print('\tsave_inform:', gen.save_inform)
-        print('\ttailing:', gen.tailing)
-        print('\taugment:', gen.augment)
-        print('\tbatch_size:', gen.batch_size)
+        print('\taugment:', gen.is_augment)
+        print('\tbatch_size:', gen.transform_data.batch_size)
         print('\tlen_img:', len(gen.images))
         print('\tlen_mask:', len(gen.masks))
         print('\tindexes:', gen.indexes)
@@ -96,12 +95,12 @@ def printDataGeneratorReaderAll(gen, isPrintInput = True, isPrintLen = True):
         print('\tsubsampling:', gen.subsampling)
         print('\tsave_inform:', gen.save_inform)
         print('\tshare_val:', gen.share_val)
-        print('\taugment:', gen.augment)
-        print('\tshuffle:', gen.shuffle)
+        print('\taugment:', gen.is_augment)
+        print('\tshuffle:', gen.is_shuffle)
         print('\tseed:', gen.seed)
-        print('\ttailing:', gen.tailing)
         print('\tlist_img_name:', gen.list_img_name)
         print('\tindexes:', gen.indexes)
+        print('\tclass_statistic:', gen.class_statistic)
 
     if isPrintLen:
         print('DEBUG_LEN_GEN')
@@ -155,7 +154,7 @@ def viewDataBatch(x, y, isFast = True):
 
 def weak_test_gen_DataGeneratorReaderAll():
 
-    num_class = 2
+    num_class = 3
 
     data_gen_args = dict(zoom_range=0.2,
                          brightness_shift_range=0.2,
@@ -172,13 +171,14 @@ def weak_test_gen_DataGeneratorReaderAll():
     #mask_name_label_list = ["output"]
 
     dir_data = [InfoDirData(dir_img_name="D:/Projects/Synthetics/dataset/synthetic_dataset10/original",
-                           dir_mask_name="D:/Projects/Synthetics/dataset/synthetic_dataset10/",
+                           dir_mask_path_without_name="D:/Projects/Synthetics/dataset/synthetic_dataset10/",
                            add_mask_prefix='',
                            proportion_of_dataset=0.2),
 
                InfoDirData(dir_img_name = "D:/Data/Unet_multiclass/data/cutting data/original",
-                           dir_mask_name ="D:/Data/Unet_multiclass/data/cutting data/",
+                           dir_mask_path_without_name ="D:/Data/Unet_multiclass/data/cutting data/",
                            add_mask_prefix = '',
+                           tiling_data = True,
                            proportion_of_dataset=0.2)]
 
     dir_data = [dir_data[1], dir_data[0]]
@@ -187,19 +187,21 @@ def weak_test_gen_DataGeneratorReaderAll():
     #                       dir_mask_name="data/zip_data_train/mask.npy",
     #                       add_mask_prefix='')
 
-    dir_data = InfoDirData(common_dir_path="D:/Data/Unet_multiclass/data/original data/",
+    dir_data = InfoDirData(common_dir_path="D:/Data/Unet_multiclass/data/original data/testing",
                            dir_img_name="original",
+                           tiling_data=True,
+                           num_gen_repetitions = 3,
                            add_mask_prefix='')
 
 
-    transform_data = TransformData(color_mode_img='gray',
-                                   mode_mask='separated',
-                                   target_size=(256, 256),
-                                   batch_size=3)
+    transform_data = CommonTransformData(color_mode_img='gray',
+                                         mode_mask='separated',
+                                         target_size=(256, 256),
+                                         batch_size=3)
 
-    save_inform = SaveData(save_to_dir=None,
-                           save_prefix_image="image_",
-                           save_prefix_mask="mask_")
+    save_inform = SaveGeneratorData(save_to_dir=None,
+                                    save_prefix_image="image_",
+                                    save_prefix_mask="mask_")
 
     # try:
     # myGen = DataGenerator(dir_data = dir_data,
@@ -208,15 +210,13 @@ def weak_test_gen_DataGeneratorReaderAll():
                                    mode="train",
                                    aug_dict=data_gen_args,
                                    list_class_name=mask_name_label_list,
-                                   augment=True,
-                                   tailing=True,
-                                   shuffle=True,
-                                   type_load_data="img",
+                                   is_augment=True,
+                                   is_shuffle=True,
                                    seed=1,
-                                   num_gen_repetitions=10,
                                    subsampling="random",
                                    transform_data=transform_data,
                                    save_inform=save_inform,
+                                   #is_calculate_statistic=True,
                                    share_validat=0.2)
     # except Exception as e: print(e)
 
@@ -225,7 +225,7 @@ def weak_test_gen_DataGeneratorReaderAll():
     printAugmentGenerator(myGen.gen_valid)
 
     #myGen.saveNpyData()
-
+    print(myGen.indexes)
 
     count = 0
 
@@ -236,20 +236,23 @@ def weak_test_gen_DataGeneratorReaderAll():
     size_train = len(myGen.gen_train)
 
     #gen_train = myGen.gen_train
-    gen_train = myGen
+    gen_train = myGen.gen_train
 
     print(type(myGen.gen_train))
 
     print("\ntrain\n")
 
     #for x, y in (gen_train):
-    for x,y in tqdm(myGen.gen_train,
+    for x,y, batch_stat in tqdm(myGen.gen_train,
                    desc="\t",
                    file=sys.stdout,
                    colour="GREEN",
                    disable=False):
         x = to_numpy_from_torch(x)
         y = to_numpy_from_torch(y)
+
+        print("\nbatch_stat", batch_stat)
+        print("gen_stat", myGen.class_statistic)
 
         y_no_1 = y[y!=1.0]
         y_no_01 = y_no_1[y_no_1!=0.0]
@@ -265,10 +268,13 @@ def weak_test_gen_DataGeneratorReaderAll():
 
     print("\nvalid\n")
 
-    for i in range(2 * len(myGen.gen_valid)):
-        x, y = myGen.gen_valid[i]
+    for i in range(len(myGen.gen_valid)):
+        x, y, batch_stat = myGen.gen_valid[i]
         x = to_numpy_from_torch(x)
         y = to_numpy_from_torch(y)
+
+        print("\nbatch_stat", batch_stat)
+        print("gen_stat", myGen.class_statistic)
         print(x.shape, " ", y.shape)
 
         viewDataBatch(x, y)
@@ -278,22 +284,25 @@ def weak_test_gen_DataGeneratorReaderAll():
 
     print("\ntrain\n")
 
-    for i in range(2 * size_train):
-        x, y = gen_train[i]
+    for i in range(size_train):
+        x, y, batch_stat = gen_train[i]
         x = to_numpy_from_torch(x)
         y = to_numpy_from_torch(y)
         print(x.shape, " ", y.shape)
-
+        print("\nbatch_stat", batch_stat)
+        print("gen_stat", myGen.class_statistic)
 
         viewDataBatch(x, y)
         count += 1
 
     print("\nvalid\n")
-    for i in range(2 * len(myGen.gen_valid)):
-        x, y = myGen.gen_valid[i]
+    for i in range(len(myGen.gen_valid)):
+        x, y, batch_stat = myGen.gen_valid[i]
         x = to_numpy_from_torch(x)
         y = to_numpy_from_torch(y)
         print(x.shape, " ", y.shape)
+        print("\nbatch_stat", batch_stat)
+        print("gen_stat", myGen.class_statistic)
 
 
         viewDataBatch(x, y)
@@ -335,14 +344,14 @@ def weak_test_gen_DataGenerator():
                            dir_mask_name="D:/Projects/UnetClass/pytorch/unet_standart/img2img/data/cutting data/",
                            add_mask_prefix='')
 
-    transform_data = TransformData(color_mode_img='gray',
-                                   mode_mask='image',
-                                   target_size=(256, 256),
-                                   batch_size=3)
+    transform_data = CommonTransformData(color_mode_img='gray',
+                                         mode_mask='image',
+                                         target_size=(256, 256),
+                                         batch_size=3)
 
-    save_inform = SaveData(save_to_dir=None,
-                           save_prefix_image="image_",
-                           save_prefix_mask="mask_")
+    save_inform = SaveGeneratorData(save_to_dir=None,
+                                    save_prefix_image="image_",
+                                    save_prefix_mask="mask_")
 
     # try:
     # myGen = DataGenerator(dir_data = dir_data,
@@ -409,7 +418,6 @@ def weak_test_gen_DataGenerator():
         x = to_numpy_from_torch(x)
         y = to_numpy_from_torch(y)
         print(x.shape, " ", y.shape)
-
 
         viewDataBatch(x, y)
         count += 1

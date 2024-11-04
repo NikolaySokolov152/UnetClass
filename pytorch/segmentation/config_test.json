@@ -16,16 +16,19 @@
 
     "data_info": [
 		{
-			"dir_img_path":              "D:/Data/Unet_multiclass/data/cutting data/original",
-			"dir_mask_name":             "D:/Data/Unet_multiclass/data/cutting data/",
+			"dir_img_path":               "D:/Data/Unet_multiclass/data/cutting data/original",
+			"dir_mask_path_without_name": "D:/Data/Unet_multiclass/data/cutting data/",
 			"add_mask_prefix": "",
 			"proportion_of_dataset": 0.1
 		},
 		{
-			"dir_img_path":              "D:/Data/Unet_multiclass/data/cutting data/original",
-			"dir_mask_name":             "D:/Data/Unet_multiclass/data/cutting data/",
+			"common_dir_path":            "D:/Data/Unet_multiclass/data/original data/training",
+			"dir_img_name":               "original",
 			"add_mask_prefix": "",
-			"proportion_of_dataset": 0.05
+            "proportion_of_dataset": 0.2,
+            "tiling_data": true,
+            "type_load_data": "img",
+            "num_gen_repetitions": 3
 		}
     ],
 
@@ -34,7 +37,8 @@
         "save_prefix_image": "image_",
         "save_prefix_mask":  "mask_",
         "save_prefix_model": "&",
-        "save_suffix_model": "!"
+        "save_suffix_model": "!",
+		"save_model_path":   null
     },
 
     "model" : {
@@ -45,9 +49,9 @@
 
     "train": {
         "mask_name_label_list": ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"],
-        "num_class": 1,
+        "num_class": 2,
         "batch_size": 2,
-        "num_epochs": 10,
+        "num_epochs": 5,
         "optimizer": "Adam",
         "loss": "DiceLossMulticlass",
         "lr_scheduler": "standart",
@@ -63,13 +67,18 @@
     "generator_config": {
         "type_gen": "all_reader",
         "augment": true,
-        "tailing": false,
-        "shuffle": true,
         "mode": "train",
         "seed": 42,
+        "shuffle": true,
         "subsampling": "random",
         "share_validat": 0.2
     },
+
+	"balancing_parameters": {
+		"calculate_statistic": true,
+		"use_p_class_balance": true,
+		"use_count_pixel_balance": true
+	},
 
     "debug_mode": true,
     "move_to_date_folder": true

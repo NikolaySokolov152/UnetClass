@@ -92,7 +92,7 @@ def test_models_all_dir(str_data,
                                                                   etal_path=etal_path,
                                                                   class_names=classnames,
                                                                   using_metrics=using_metrics,
-                                                                  merge_images=True
+                                                                  merge_images=False
                                                                   )
 
                 all_text_results += text_result
@@ -135,7 +135,7 @@ def test_models_all_dir(str_data,
             file_for_excel_merge.write(test_for_excel_merge)
 
         if use_no_merge_data_for_mertic:
-            test_for_excel =       GetFinalTestMetricForExcel(all_results_metrics, using_metrics, classnames)
+            test_for_excel =   GetFinalTestMetricForExcel(all_results_metrics, using_metrics, classnames)
             with open(os.path.join(save_report_path, f'excel_{str_data}_test_models.txt'), 'w') as file_for_excel:
                 file_for_excel.write(test_for_excel)
 

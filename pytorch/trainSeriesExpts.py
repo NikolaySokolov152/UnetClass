@@ -22,7 +22,9 @@ def printSeriesFunction():
           "'trainMultipleOptimazer' - choice optimazers\n"
           "'trainMultipleActivation' - choice fun last activations\n",
           "'trainMultipleLoss' - choice losses\n",
-          "'trainMultipleClasses' - change number classes"
+          "'trainMultipleClasses' - change number classes\n",
+          "'trainDataset' - set dataset indices and their names\n",
+          "'trainBalance' - set balance mode test flag (has't params, you can set any value, for example, such as 'null')"
           )
 
 def trainMultipleModels(config_file,
@@ -267,6 +269,85 @@ def trainDataset(config_file,
             print(trainByConfig(config_file, new_path))
 
     config_file["data_info"] = datasets_all
+
+
+# Аргумент None, так как этот тип эксперимента игнорирует конфиг файл по балансировке
+def trainBalance(config_file,
+                 config_path,
+                 void_arg=None,
+                 funs = [],
+                 args_exp=None,
+                 tabs=""):
+    # change_save_suffix = config["save_inform"]["save_suffix_model"]
+    # config["move_to_date_folder"] = False
+
+    if "balancing_parameters" in config_file.keys():
+        print("'balancing_parameters' in config file is ignoring !")
+    else:
+        print("'balancing_parameters' is't in config file !")
+
+###########################################################################################################
+    print(f"\n{tabs}Learning model with use_p_class_balance and  use_count_pixel_balance\n")
+
+    config_file["balancing_parameters"] = {"calculate_statistic": True,
+                                           "use_p_class_balance": True,
+                                           "use_count_pixel_balance": True}
+
+    new_path = os.path.basename(config_path)[:-5] + f"_use_p_class_balance&use_count_pixel_balance.json"
+    if len(funs) > 0:
+        if args_exp is None:
+            funs[0](config_file, new_path, funs=funs[1:], args_exp=args_exp, tabs=tabs+"\t")
+        else:
+            funs[0](config_file, new_path, args_exp[0], funs=funs[1:], args_exp=args_exp[1:], tabs=tabs+"\t")
+    else:
+        print(trainByConfig(config_file, new_path))
+
+#########################################################################################################
+    print(f"\n{tabs}Learning model with use_p_class_balance\n")
+
+    config_file["balancing_parameters"] = {"calculate_statistic": True,
+                                           "use_p_class_balance": True,
+                                           "use_count_pixel_balance": False}
+
+    new_path = os.path.basename(config_path)[:-5] + f"_use_p_class_balance.json"
+    if len(funs) > 0:
+        if args_exp is None:
+            funs[0](config_file, new_path, funs=funs[1:], args_exp=args_exp, tabs=tabs+"\t")
+        else:
+            funs[0](config_file, new_path, args_exp[0], funs=funs[1:], args_exp=args_exp[1:], tabs=tabs+"\t")
+    else:
+        print(trainByConfig(config_file, new_path))
+###########################################################################################################
+    print(f"\n{tabs}Learning model with use_count_pixel_balance\n")
+
+    config_file["balancing_parameters"] = {"calculate_statistic": True,
+                                           "use_p_class_balance": False,
+                                           "use_count_pixel_balance": True}
+
+    new_path = os.path.basename(config_path)[:-5] + f"_use_count_pixel_balance.json"
+    if len(funs) > 0:
+        if args_exp is None:
+            funs[0](config_file, new_path, funs=funs[1:], args_exp=args_exp, tabs=tabs+"\t")
+        else:
+            funs[0](config_file, new_path, args_exp[0], funs=funs[1:], args_exp=args_exp[1:], tabs=tabs+"\t")
+    else:
+        print(trainByConfig(config_file, new_path))
+
+###########################################################################################################
+    print(f"\n{tabs}Learning model with no balance\n")
+
+    config_file["balancing_parameters"] = {"calculate_statistic": False,
+                                           "use_p_class_balance": False,
+                                           "use_count_pixel_balance": False}
+
+    new_path = os.path.basename(config_path)[:-5] + f"_no_use_balance.json"
+    if len(funs) > 0:
+        if args_exp is None:
+            funs[0](config_file, new_path, funs=funs[1:], args_exp=args_exp, tabs=tabs+"\t")
+        else:
+            funs[0](config_file, new_path, args_exp[0], funs=funs[1:], args_exp=args_exp[1:], tabs=tabs+"\t")
+    else:
+        print(trainByConfig(config_file, new_path))
 
 def trainMultiple(config_file, config_path, funs=[], args_exp=None, tabs=""):
     if len(funs) > 0:

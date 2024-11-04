@@ -3,8 +3,10 @@
 ########## функция выбора lr scheduler
 def lr_scheduler_parcer(dict_config):
     # GET SHEDULER
-    if (not "lr_scheduler" in dict_config["train"].keys()) or dict_config["train"]["lr_scheduler"] == "standart":
-        lr_scheduler = standart_lr_scheduler
+    if (not "lr_scheduler" in dict_config["train"].keys()) or\
+            dict_config["train"]["lr_scheduler"] == "standart" or\
+            dict_config["train"]["lr_scheduler"] == "lr_scheduler_100":
+        lr_scheduler = lr_scheduler_100
     elif dict_config["train"]["lr_scheduler"] == "lr_scheduler_loss_mix":
         lr_scheduler = loss_mix_lr_scheduler
     elif dict_config["train"]["lr_scheduler"] == "lr_scheduler_loss":
@@ -14,8 +16,8 @@ def lr_scheduler_parcer(dict_config):
     elif dict_config["train"]["lr_scheduler"] == "lr_scheduler_200":
         lr_scheduler = lr_scheduler_200
     else:
-        print(f'no find "{dict_config["train"]["lr_scheduler"]}", I am use standart_lr_scheduler')
-        lr_scheduler = standart_lr_scheduler
+        print(f'no find "{dict_config["train"]["lr_scheduler"]}", I am use default lr scheduler "lr_scheduler_100"')
+        lr_scheduler = lr_scheduler_100
     return lr_scheduler
 
 ########## функции изменения lr
@@ -30,7 +32,7 @@ def lr_scheduler_parcer(dict_config):
 #        return 0.000005
 #    return 0.0000001
 
-def standart_lr_scheduler(epoch):
+def lr_scheduler_100(epoch):
     if epoch < 20:
         return 0.0001
     elif epoch < 40:

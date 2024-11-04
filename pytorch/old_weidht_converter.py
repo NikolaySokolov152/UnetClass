@@ -3,7 +3,7 @@ import os
 import sys
 sys.path.append("src/")
 
-path_dir = "segmentation/Multiple_diffusion_42_slices_6_classes/"
+path_dir = "segmentation/Multiple_only_synt_6_classes_stability/"
 
 def recursive_open(path, tabs=""):
     if tabs=="":
