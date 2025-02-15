@@ -57,7 +57,10 @@ def saveResultMask(save_path, npyfile, namelist, num_class = 2 , classnames=None
         for class_index in range(num_class):
             out_dir = os.path.join(save_path, classnames[class_index] if classnames is not None else str(class_index))
             if not os.path.isdir(out_dir):
-                print("создаю out_dir:" + out_dir.replace(u"\\\\?\\"+os.getcwd()+"\\", ""))
+                if os.name == 'nt':  # for Windows
+                    print("создаю out_dir:" + out_dir.replace(u"\\\\?\\"+os.getcwd()+"\\", ""))
+                else:
+                    print("создаю out_dir:" + out_dir.replace(os.getcwd() + "\\", ""))
                 os.makedirs(out_dir)
 
             if (os.path.isfile(os.path.join(out_dir, "predict_" + namelist[i]))):
@@ -106,10 +109,12 @@ def test_tiled(model_path, num_class, save_mask_dir, last_activation = None, dat
 
     if save_mask_dir is not None:
         save_mask_dir = os.path.abspath(save_mask_dir)
-        if save_mask_dir.startswith(u"\\\\"):
-            save_mask_dir = u"\\\\?\\UNC\\" + save_mask_dir[2:]
-        else:
-            save_mask_dir = u"\\\\?\\" + save_mask_dir
+
+        if os.name == 'nt': # for Windows
+            if save_mask_dir.startswith(u"\\\\"):
+                save_mask_dir = u"\\\\?\\UNC\\" + save_mask_dir[2:]
+            else:
+                save_mask_dir = u"\\\\?\\" + save_mask_dir
 
     slices_tqdm = tqdm.tqdm(filenames, file=sys.stdout, desc="Test")
     for img_name in slices_tqdm:

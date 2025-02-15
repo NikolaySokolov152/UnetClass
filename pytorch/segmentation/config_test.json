@@ -16,13 +16,13 @@
 
     "data_info": [
 		{
-			"dir_img_path":               "D:/Data/Unet_multiclass/data/cutting data/original",
-			"dir_mask_path_without_name": "D:/Data/Unet_multiclass/data/cutting data/",
+			"dir_img_path":               "segmentation/data/cutting data/original",
+			"dir_mask_path_without_name": "segmentation/data/cutting data/",
 			"add_mask_prefix": "",
 			"proportion_of_dataset": 0.1
 		},
 		{
-			"common_dir_path":            "D:/Data/Unet_multiclass/data/original data/training",
+			"common_dir_path":            "segmentation/data/original data/training",
 			"dir_img_name":               "original",
 			"add_mask_prefix": "",
             "proportion_of_dataset": 0.2,

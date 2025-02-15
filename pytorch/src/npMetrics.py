@@ -452,10 +452,11 @@ def CalulateMetricsDir(CNN_name,
 
         # для длинных путей
         save_report_path = os.path.abspath(save_report_path)
-        if save_report_path.startswith(u"\\\\"):
-            save_report_path = u"\\\\?\\UNC\\" + save_report_path[2:]
-        else:
-            save_report_path = u"\\\\?\\" + save_report_path
+        if os.name == 'nt':  # for Windows
+            if save_report_path.startswith(u"\\\\"):
+                save_report_path = u"\\\\?\\UNC\\" + save_report_path[2:]
+            else:
+                save_report_path = u"\\\\?\\" + save_report_path
 
         with open(os.path.join(save_report_path, f'{CNN_name}{"_merge" if merge_images else ""}_mean.txt'),'w') as file_mean:
             file_mean.write(text_result)
@@ -573,11 +574,12 @@ def CalulateMetricsFromModelPredict(model_predicts,
             os.makedirs(save_report_path)
 
         # для длинных путей
-        save_report_path = os.path.abspath(save_report_path)
-        if save_report_path.startswith(u"\\\\"):
-            save_report_path = u"\\\\?\\UNC\\" + save_report_path[2:]
-        else:
-            save_report_path = u"\\\\?\\" + save_report_path
+        if os.name == 'nt':  # for Windows
+            save_report_path = os.path.abspath(save_report_path)
+            if save_report_path.startswith(u"\\\\"):
+                save_report_path = u"\\\\?\\UNC\\" + save_report_path[2:]
+            else:
+                save_report_path = u"\\\\?\\" + save_report_path
 
         with open(os.path.join(save_report_path, f'{CNN_name}{"_merge" if merge_images else ""}_mean.txt'),'w') as file_mean:
             file_mean.write(text_result)

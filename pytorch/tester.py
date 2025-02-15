@@ -361,7 +361,7 @@ def datasets_test(calculate_our_markup=True, calculate_all_mito = True, calculat
                                       save_report_path=save_report_path,
                                       using_metrics = using_metrics)
 
-def main(str_data, experiment_paths):
+def main(str_data, experiment_paths, save_mask=True):
 
     all_results_metrics_merge_our={}
     all_results_metrics_our={}
@@ -369,7 +369,7 @@ def main(str_data, experiment_paths):
     classnames_our=None
 
     for experiment_path in experiment_paths:
-       our, epfl, lucchipp = test_by_using_config_in_dir(experiment_path, True, False, False)
+       our, epfl, lucchipp = test_by_using_config_in_dir(experiment_path, True, False, False, save_mask="data/result/" if save_mask else None)
        one_our, two_our, tree_our, four_our = our
 
        all_results_metrics_merge_our |= one_our
@@ -394,7 +394,7 @@ def main(str_data, experiment_paths):
     classnames_epfl=None
 
     for experiment_path in experiment_paths:
-       our, epfl, lucchipp = test_by_using_config_in_dir(experiment_path, False, True, False)
+       our, epfl, lucchipp = test_by_using_config_in_dir(experiment_path, False, True, False, save_mask="data/result_mito/" if save_mask else None)
        one_epfl, two_epfl, tree_epfl, four_epfl = epfl
 
        all_results_metrics_merge_epfl |= one_epfl
@@ -507,11 +507,13 @@ if __name__ == "__main__":
     main(str_data, experiment_paths)
     '''
 
-    experiment_paths = [f"segmentation/Multiple_all_datasets_and_synt_and_diffusion_6_classes_stability",
-                        f"segmentation/Multiple_diffusion_100_slices_1_classes_mod",
-                        f"segmentation/Multiple_diffusion_165_slices_1_classes_mod",
-                        f"segmentation/Multiple_only_synt_6_classes_stability",
-                        f"segmentation/Multiple_synt_and_diffusion_6_classes_stability"]
+    #experiment_paths = [f"segmentation/Multiple_segmentation_stability_ballancy_and_dataset_100",
+    #                    f"segmentation/Multiple_segmentation_stability_ballancy_and_dataset_200",]
 
-    str_data = "18_06_2024_our_stability_experiment"
+    #str_data = "10_12_2024_balance_experiment"
+    #main(str_data, experiment_paths)
+
+    experiment_paths = [f"segmentation/2025_02_15"]
+
+    str_data = "test_experiment"
     main(str_data, experiment_paths)
