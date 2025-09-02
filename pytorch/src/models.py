@@ -1,45 +1,13 @@
-from model_block import *
-
 import segmentation_models_pytorch as smp
 import torch
 import torch.nn as nn
-from torch.nn import functional as F
-import numpy as np
 
-@torch.jit.script
-def arctan_activation(x : torch.Tensor, epsilon : float) -> torch.Tensor:
-    return epsilon + (1 - 2 * epsilon) * (0.5 + torch.arctan(x)/torch.tensor(np.pi))
+from model_block import *
 
-@torch.jit.script
-def softsign_activation(x : torch.Tensor, epsilon : float) -> torch.Tensor:
-    return (0.5 - epsilon) * F.softsign(x) + 0.5
 
-@torch.jit.script
-def sigmoid_activation(x : torch.Tensor, epsilon : float) -> torch.Tensor:
-    return torch.sigmoid(x)
+AVAILABLE_MODELS = ["unet", "tiny_unet", "tiny_unet_v3", "mobile_unet", "Lars76_unet",
+                    "UNet", "Tiny_unet", "Tiny_unet_v3", "MobileUNet"]
 
-@torch.jit.script
-def linear_activation(x : torch.Tensor, epsilon : float) -> torch.Tensor:
-    return epsilon + (1 - 2 * epsilon) * (x - x.min())/(x.max() - x.min())
-
-@torch.jit.script
-def inv_square_root_activation(x : torch.Tensor, epsilon : float) -> torch.Tensor:
-    return (0.5 - epsilon) * x * torch.rsqrt(1 + x ** 2) + 0.5
-
-@torch.jit.script
-def cdf_activation(x : torch.Tensor, epsilon : float) -> torch.Tensor:
-    # https://github.com/IraKorshunova/pytorch/blob/master/torch/autograd/_functions/pointwise.py#L274
-    # https://github.com/IraKorshunova/pytorch/blob/master/torch/lib/THC/THCNumerics.cuh#L441
-    # https://docs.nvidia.com/cuda/cuda-math-api/group__CUDA__MATH__SINGLE.html#group__CUDA__MATH__SINGLE_1g3b8115ff34a107f4608152fd943dbf81
-    return (0.5 - epsilon) * torch.erf(x/torch.sqrt(torch.tensor(2))) + 0.5
-
-@torch.jit.script
-def hardtanh_activation(x : torch.Tensor, epsilon : float) -> torch.Tensor:
-    return F.hardtanh(x, epsilon, 1.0 - epsilon)
-
-@torch.jit.script
-def no_activation(x : torch.Tensor, epsilon : float) -> torch.Tensor:
-    return x
 
 class UNet(nn.Module):
     def __init__(self, n_channels, n_classes, bilinear=False):
@@ -267,6 +235,33 @@ def Lars76_unet(n_channels, n_classes):
         return smp.Unet("resnet34", classes=n_classes, encoder_weights="imagenet", in_channels=n_channels)
     else:
         return smp.Unet("resnet34", classes=n_classes, encoder_weights=None, in_channels=n_channels)
+
+
+
+def getModelClassByName(model_name):
+    if model_name in AVAILABLE_MODELS:
+
+        # GET MODEL
+        # 2 вариант имени - имя класса
+        if model_name == "tiny_unet_v3" or model_name == "Tiny_unet_v3":
+            return Tiny_unet_v3
+        elif model_name == "unet" or model_name == "UNet":
+            return UNet
+        elif model_name == "tiny_unet" or model_name == "Tiny_unet":
+            return Tiny_unet
+        elif model_name == "mobile_unet" or model_name == "MobileUNet":
+            return MobileUNet
+        elif model_name == "Lars76_unet":
+            # из статьи "Effect of the output activation function on the probabilities and errors in medical image segmentation"
+            # https://arxiv.org/pdf/2109.00903.pdf
+            return Lars76_unet
+    else:
+        str_using_model = "' ,'".join(AVAILABLE_MODELS)
+        msg = f"MODEL CHOICE ERROR!!! Model name '{model_name}' is not recognized! " +\
+              f"Now you can only choose: '{str_using_model}' model."
+        print(msg)
+        raise AttributeError(msg)
+
 
 
 if __name__ == "__main__":

@@ -11,8 +11,8 @@
 
     "data_info": [
             {
-                "dir_img_path":              "diffusion/data/train/cutting data 15 slices/original",
-                "dir_mask_path_without_name":"diffusion/data/train/cutting data 15 slices/",
+                "common_dir_path":          "diffusion/data/train/cutting data 15 slices/",
+                "dir_img_name":             "original",
                 "add_mask_prefix": "",
                 "proportion_of_dataset": 1
             }

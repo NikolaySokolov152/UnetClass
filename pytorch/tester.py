@@ -1,107 +1,141 @@
-from src.test import *
-from src.npMetrics import *
-import os
+#import os
 import json
+import os
+import datetime
+import time
 
-################################################ доделать test.py
-################################################ разобраться с двойным прогресс баром
+from src.comparison import CalulateMetricsFromModelPredict, GetFinalTestMetricForExcel
+from src.test_metric import METRIC_NAMES
+from src.prepare_data import plug_old_connect_res_test_data, extract_channels_by_indexes_from_img_list
+from src.test import readPredictDataset, getPipliner, test_data
+
+################# для корректного отображения в пайчарме необходимо включить имитацию консоли
 
 our_marking_test_path = "segmentation/data/original data/testing/"
 epfl_marking_test_path = "D:/Data/Unet_multiclass/data/orig_EPFL_data"
 lucchipp_marking_test_path = "D:/Data/Unet_multiclass/data/Luchi_pp_EPFL_test"
 
-def test_models_all_dir(str_data,
-                        classnames,
+
+Kasthuri_test_path = "D:/Data/mito_data/Kasthuri++/"
+UroCell_test_path = "D:/Data/mito_data/UroCell-master/"
+MouseNucleusAccumbens_test_path = "D:/Data/mito_data/Mouse nucleus accumbens jrc_mus-nacc-1/recon-1/"
+
+
+
+def test_models_all_dir(path_to_model_data,
+                        class_check_names,
                         list_CNN_num_class,
-                        CNN_name,
+                        CNN_config_name_list,
                         overlap_list,
-                        file_test_path,
-                        etal_path="segmentation/data/original data/testing",
-                        last_activations=None,
-                        save_dir_path="data/result/",
+                        test_input_file_path,
+                        etal_mask_path="segmentation/data/original data/testing",
+                        tiling_mode=True,
+                        mask_save_dir_path="data/result/",
                         save_report_path="data/report/",
-                        using_metrics=[Jaccard, Dice],
+                        using_metric_names=["Jaccard", "Dice"],
                         only_excel_file=True,
                         use_no_merge_data_for_mertic=False,
-                        test_only_first_class=False):
-
-    list_CNN_name = []
-    for name in CNN_name:
-        #change_name = "обучение " + str_data + "/" + name + ".pt"
-        change_name = str_data + "/" + name + ".pt"
-        list_CNN_name.append(change_name)
-
-    if save_dir_path is None:
-        result_CNN_dirs = None
-    else:
-        result_CNN_dirs = []
-        for i in range(len(CNN_name)):
-            save_name = os.path.join(save_dir_path, str_data, f"{list_CNN_num_class[i]}_class", CNN_name[i])
-            result_CNN_dirs.append(save_name)
-
-    list_test_img_dir = os.listdir(os.path.join(file_test_path))
-    list_test_img_dir = [name for name in list_test_img_dir if name.endswith((".png", ".jpg"))]
+                        silence_mode=False,
+                        selected_class_indexes=None
+                        ):
 
     all_text_results_merge = ""
     all_text_results_merge_all = ""
-    all_results_metrics_merge = {}
+    all_results_metrics_merge = []
     all_text_results = ""
     all_text_results_all = ""
-    all_results_metrics = {}
+    all_results_metrics = []
+
+    dataset_for_predict = readPredictDataset(test_input_file_path, as_gray=True)
 
     for i in range(len(list_CNN_num_class)):
-        print(f"predict model '{list_CNN_name[i]}'")
+        all_path_to_model = os.path.join(path_to_model_data, "model_to_" + CNN_config_name_list[i])
+
+        print(f"predict model '{all_path_to_model}'")
         for overlap in overlap_list:
             print("     predict tiled with overlap: ", overlap)
 
-            dataset = {'filenames': list_test_img_dir, "filepath": file_test_path, "classnames": classnames}
-            tiled_data = {"size": 256, "overlap": overlap, "unique_area": 0}
-            last_activation = last_activations[i] if type(last_activations) is list else last_activations
+            model, name_model = getPipliner(path_to_model_data, CNN_config_name_list[i])
+            model.silence_mode = silence_mode
+            #model.silence_mode = True
 
-            result_CNN_dir = None if save_dir_path is None else result_CNN_dirs[i] + "_" + str(overlap)
+            if mask_save_dir_path is None:
+                result_CNN_dir = None
+            else:
+                if os.path.isabs(path_to_model_data):
+                    drive, work_path_to_model_data = os.path.splitdrive(path_to_model_data)
+                else:
+                    work_path_to_model_data = path_to_model_data
 
-            model_predicts = test_tiled(model_path=list_CNN_name[i],
-                                        num_class=list_CNN_num_class[i],
-                                        save_mask_dir=result_CNN_dir,
-                                        last_activation=last_activation,
-                                        dataset = dataset,
-                                        tiled_data=tiled_data,
-                                       )  # , save_dir= "data/split test/")
+                result_CNN_dir = os.path.join(mask_save_dir_path,
+                                              work_path_to_model_data[1:],
+                                              f"{list_CNN_num_class[i]}_class",
+                                              name_model) + "_" + str(overlap)
 
-            result_metrics_merge,\
-            text_result_merge,\
-            text_result_merge_all = CalulateMetricsFromModelPredict(model_predicts,
-                                                                    CNN_name[i],
-                                                                    list_CNN_num_class[i] if not test_only_first_class else 1,
-                                                                    etal_path=etal_path,
-                                                                    class_names=classnames,
-                                                                    using_metrics=using_metrics,
-                                                                    merge_images=True
-                                                                    )
+            tiled_data = {"size": 256, "overlap": overlap, "unique_area": 0} if tiling_mode else None
 
-            all_text_results_merge += text_result_merge
-            all_text_results_merge_all += text_result_merge_all
-            all_results_metrics_merge[CNN_name[i]] = result_metrics_merge
+            predict_img_list, predict_name_list = test_data(model,
+                                                            dataset_for_predict,
+                                                            save_mask_dir=result_CNN_dir,
+                                                            tiled_data=tiled_data,
+                                                            # save_spliting_dir="data/split test/"
+                                                            )
+
+            if model.num_classes < (list_CNN_num_class[i] if selected_class_indexes is None else max(selected_class_indexes)+1):
+                if selected_class_indexes is None:
+                    num_check_classes = model.num_classes
+                else:
+                    change_selected_class_indexes = []
+                    for index in selected_class_indexes:
+                        if index < model.num_classes:
+                            change_selected_class_indexes.append(index)
+                    selected_class_indexes = change_selected_class_indexes
+                    num_check_classes = len(selected_class_indexes)
+
+                print(f"Warning! The model contains fewer classes than used in testing! I use the maximum number of classes {num_check_classes} out of possible.")
+            else:
+                num_check_classes = list_CNN_num_class[i] if selected_class_indexes is None else len(selected_class_indexes)
+
+            model_predicts_list = predict_img_list if selected_class_indexes is None else extract_channels_by_indexes_from_img_list(predict_img_list, selected_class_indexes)
+
+            predict_for_check = plug_old_connect_res_test_data(model_predicts_list, predict_name_list)
 
             if use_no_merge_data_for_mertic:
                 result_metrics,\
                 text_result,\
-                text_result_all = CalulateMetricsFromModelPredict(model_predicts,
-                                                                  CNN_name[i],
-                                                                  list_CNN_num_class[i] if not test_only_first_class else 1,
-                                                                  etal_path=etal_path,
-                                                                  class_names=classnames,
-                                                                  using_metrics=using_metrics,
-                                                                  merge_images=False
+                text_result_all = CalulateMetricsFromModelPredict(predict_for_check,
+                                                                  name_model,
+                                                                  num_check_classes,
+                                                                  etal_path=etal_mask_path,
+                                                                  class_names=class_check_names,
+                                                                  using_metric_names=using_metric_names,
+                                                                  merge_images=False,
+                                                                  is_print_metric=False
                                                                   )
 
                 all_text_results += text_result
                 all_text_results_all += text_result_all
-                all_results_metrics[CNN_name[i]] = result_metrics
+                all_results_metrics.append(result_metrics)
+
+            result_metrics_merge,\
+            text_result_merge,\
+            text_result_merge_all = CalulateMetricsFromModelPredict(predict_for_check,
+                                                                    name_model,
+                                                                    num_check_classes,
+                                                                    etal_path=etal_mask_path,
+                                                                    class_names=class_check_names,
+                                                                    using_metric_names=using_metric_names,
+                                                                    merge_images=True,
+                                                                    is_print_metric=False
+                                                                    )
+
+            all_text_results_merge += text_result_merge
+            all_text_results_merge_all += text_result_merge_all
+            all_results_metrics_merge.append(result_metrics_merge)
 
     #print("str_data before :", str_data)
-    if "/" in str_data:
-        str_data = str_data.split('/')[-1]
+    if "/" in path_to_model_data:
+        str_data = path_to_model_data.split('/')[-1]
     if '\\' in str_data:
         str_data = str_data.split('\\')[-1]
 
@@ -130,313 +164,253 @@ def test_models_all_dir(str_data,
                           'w') as file_all:
                     file_all.write(all_text_results_all)
 
-        test_for_excel_merge = GetFinalTestMetricForExcel(all_results_metrics_merge, using_metrics, classnames)
-        with open(os.path.join(save_report_path, f'excel_{str_data}_test_models_merge.txt'),'w') as file_for_excel_merge:
+        test_for_excel_merge = GetFinalTestMetricForExcel(all_results_metrics_merge, using_metric_names, class_check_names)
+        with open(os.path.join(save_report_path, f'excel_{str_data}_test_models_merge.csv'),'w') as file_for_excel_merge:
             file_for_excel_merge.write(test_for_excel_merge)
 
         if use_no_merge_data_for_mertic:
-            test_for_excel =   GetFinalTestMetricForExcel(all_results_metrics, using_metrics, classnames)
-            with open(os.path.join(save_report_path, f'excel_{str_data}_test_models.txt'), 'w') as file_for_excel:
+            test_for_excel =   GetFinalTestMetricForExcel(all_results_metrics, using_metric_names, class_check_names)
+            with open(os.path.join(save_report_path, f'excel_{str_data}_test_models.csv'), 'w') as file_for_excel:
                 file_for_excel.write(test_for_excel)
 
         print(f"{str_data} test was saved to path '{save_report_path}'")
 
-    return all_results_metrics_merge, all_results_metrics if use_no_merge_data_for_mertic else None, using_metrics, classnames
+    return (all_results_metrics_merge,
+            all_results_metrics if use_no_merge_data_for_mertic else None,
+            using_metric_names,
+            class_check_names)
 
-# Заменяет некоторые значения по умолчанию основной функции test_models_all_dir и поднимает флаг test_only_first_class
-def test_models_only_all_mito(str_data,
-                              classnames,
-                              list_CNN_num_class,
-                              CNN_name,
-                              overlap_list,
-                              file_test_path,
-                              etal_path,
-                              last_activations=None,
-                              save_dir_path="data/result_mito/",
-                              save_report_path="data/report_mito/",
-                              using_metrics=[Jaccard, Dice],
-                              only_excel_file=True,
-                              use_no_merge_data_for_mertic=False):
+def sort_list_by_name_list(path_list, name_list):
+    res_list = []
+    for search_name in name_list:
+        res_list += [name for name in path_list if search_name in name]
+        print(f"sorting by {search_name}, len of list {len(res_list)}")
+    return res_list
 
-    return test_models_all_dir(str_data=str_data,
-                               classnames=classnames,
-                               list_CNN_num_class=list_CNN_num_class,
-                               CNN_name=CNN_name,
-                               overlap_list=overlap_list,
-                               file_test_path=file_test_path,
-                               etal_path=etal_path,
-                               last_activations=last_activations,
-                               save_dir_path=save_dir_path,
-                               save_report_path=save_report_path,
-                               using_metrics=using_metrics,
-                               only_excel_file=only_excel_file,
-                               use_no_merge_data_for_mertic=use_no_merge_data_for_mertic,
-                               test_only_first_class=True)
 
-def test_by_using_config_in_dir(path_to_models, calculate_our_markup=True, calculate_all_mito = True, calculate_all_Lucchipp_mito=True, save_mask="data/result"):
+def sorting_names(names_list):
+    names_list = sort_list_by_name_list(names_list, ["1_classes_dataset_",
+                                                                   "5_classes_dataset_",
+                                                                   "6_classes_dataset_"])
+    names_list = sort_list_by_name_list(names_list, ["mix_", "diff_"])
+    return names_list
+def test_by_using_config_in_dir(path_to_models, list_of_description_test_dataset):
 
-    config_file_names = [name for name in os.listdir(path_to_models) if name.endswith(".json") and name.startswith("config_")]
+    if isinstance(path_to_models, str) and path_to_models.endswith(".json"):
+        path_to_dir, file_name = os.path.split(path_to_models)
+        config_file_names = [file_name]
+        work_path = path_to_dir
+    else:
+        config_file_names = [name for name in os.listdir(path_to_models) if name.endswith(".json") and name.startswith("config_")]
+        work_path = path_to_models
+
     overlap_list = [128]
-    using_metrics = [Dice]
-    CNN_names = []
+    using_metric_names = ["Dice"]
+    CNN_config_name_list = []
     list_CNN_num_class = []
-    last_activations = []
+
+    for name in config_file_names:
+        print(name)
+
+    classnames = None
 
     for config_file_name in config_file_names:
-        with open(os.path.join(path_to_models, config_file_name)) as config_buffer:
+        with open(os.path.join(work_path, config_file_name)) as config_buffer:
             config_file = json.load(config_buffer)
         num_classes = config_file["train"]["num_class"]
         list_CNN_num_class.append(num_classes)
 
-        last_activation = config_file["model"]["last_activation"]
-        last_activations.append(last_activation)
         ############################################################################################################### Обратная совместимость со старыми файлами
         if "mask_name_label_list" in config_file.keys():
-            classnames = config_file["mask_name_label_list"]
+            model_classnames = config_file["mask_name_label_list"]
         else:
-            classnames = config_file["train"]["mask_name_label_list"]
+            model_classnames = config_file["train"]["mask_name_label_list"]
 
-        CNN_name = "model_by_" + config_file_name[:-5]
-        CNN_names.append(CNN_name)
+        if classnames is None:
+            classnames = model_classnames
+        else:
+            for class_name in model_classnames:
+                if not class_name in classnames:
+                    print(f'WARNING!!! Additional class {class_name} found!!! All list is {len(model_classnames)} classes with name "{", ".join(classnames)}"!')
+                model_classnames.append(class_name)
 
-    our_result=None
-    epfl_result=None
-    lucchipp_result=None
+        CNN_config_name_list.append(config_file_name[:-5])
 
-    if calculate_our_markup:
-        # путь до картинок для теста
-        etal_path = our_marking_test_path
-        file_test_path = os.path.join(etal_path, "original")
-        #save_report_path = "data/report/"
-        save_report_path = None
+    result = []
+    for deck_of_dataset in list_of_description_test_dataset:
+        test_input_file_path = deck_of_dataset["test_input_file_path"]
+        etal_mask_path = deck_of_dataset["etal_mask_path"]
+        class_names_list = deck_of_dataset["class_names_list"] if "class_names_list" in deck_of_dataset.keys() else classnames
+        dataset_name = deck_of_dataset["dataset_name"]
+        #save_report_path = deck_of_dataset["save_report_path"]
+        save_split_report_path = deck_of_dataset["save_split_report_path"] if "save_split_report_path" in deck_of_dataset.keys() else None
+        mask_save_dir_path = deck_of_dataset["mask_save_dir_path"] if "mask_save_dir_path" in deck_of_dataset.keys() else "data/result"
+        selected_class_indexes = deck_of_dataset["selected_class_indexes"] if "selected_class_indexes" in deck_of_dataset.keys() else None
 
-        our_result=test_models_all_dir(path_to_models,
-                                       classnames,
-                                       list_CNN_num_class,
-                                       CNN_names,
-                                       overlap_list,
-                                       file_test_path,
-                                       etal_path=etal_path,
-                                       last_activations=last_activations,
-                                       save_report_path=save_report_path,
-                                       using_metrics=using_metrics,
-                                       save_dir_path=save_mask)
+        dataset_result=test_models_all_dir(work_path,
+                                           class_names_list,
+                                           list_CNN_num_class,
+                                           CNN_config_name_list,
+                                           overlap_list,
+                                           test_input_file_path=test_input_file_path,
+                                           etal_mask_path=etal_mask_path,
+                                           save_report_path=save_split_report_path,
+                                           using_metric_names=using_metric_names,
+                                           mask_save_dir_path=mask_save_dir_path,
+                                           selected_class_indexes=selected_class_indexes)
 
-    if calculate_all_mito:
-        # путь до картинок для теста
-        etal_path = epfl_marking_test_path
-        file_test_path = os.path.join(etal_path, "original")
-        #save_report_path = "data/report_epfl_mito/"
-        save_report_path = None
+        result.append((dataset_name, dataset_result))
 
-        epfl_result=test_models_only_all_mito(path_to_models,
-                                              classnames,
-                                              list_CNN_num_class,
-                                              CNN_names,
-                                              overlap_list,
-                                              file_test_path,
-                                              etal_path,
-                                              last_activations=last_activations,
-                                              save_report_path=save_report_path,
-                                              using_metrics=using_metrics,
-                                              save_dir_path=save_mask+"_mito" if save_mask is not None else save_mask)
+    return result
 
-    if calculate_all_Lucchipp_mito:
-        # путь до картинок для теста
-        etal_path = lucchipp_marking_test_path
-        file_test_path = os.path.join(etal_path, "original")
-        #save_report_path = "data/report_lucchipp_mito/"
-        save_report_path = None
+def checking_models_list_on_one_dataset (str_data,
+                                         experiment_paths,
+                                         list_of_description_test_dataset,
+                                         save_report_path="data/report/"):
 
-        lucchipp_result=test_models_only_all_mito(path_to_models,
-                                                  classnames,
-                                                  list_CNN_num_class,
-                                                  CNN_names,
-                                                  overlap_list,
-                                                  file_test_path,
-                                                  etal_path,
-                                                  last_activations=last_activations,
-                                                  save_report_path=save_report_path,
-                                                  using_metrics=using_metrics,
-                                                  save_dir_path=save_mask)
-
-    return our_result, epfl_result, lucchipp_result
-
-def datasets_test(calculate_our_markup=True, calculate_all_mito = True, calculate_all_Lucchipp_mito=True):
-    using_metrics = [Dice]
-
-    models = [
-              #"unet",
-              "tiny_unet_v3",
-              #"mobile_unet",
-              #"Lars76_unet"
-             ]
-
-    num_classes = [6]
-
-    types_datasets = [
-                      #"real_v2",
-                      #"sint_v10",
-                      #"mix_v2"
-                      "2023_12_20",
-                      "2023_12_15"
-                      ]
-
-    losses = [
-              #"BCELossMulticlass",
-              #"MSELossMulticlass",
-              "DiceLossMulticlass",
-              #"LossDistance2Nearest",
-              #"LossDistance2Nearest_DiceLossMulticlass"
-              ]
-
-    for type_dataset in types_datasets:
-        CNN_names = []
-        list_CNN_num_class = []
-        path_models = f"segmentation/{type_dataset}"
-
-        for num_class in num_classes:
-            for model_name in models:
-                for loss in losses:
-                    CNN_name = f"model_by_config_proportion_{model_name}"
-                    CNN_names.append(CNN_name)
-                    list_CNN_num_class.append(num_class)
-
-        overlap_list = [128]
-        last_activation = None
-
-        classnames = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"]
-
-        if calculate_our_markup:
-            # путь до картинок для теста
-            etal_path = our_marking_test_path
-            file_test_path = os.path.join(etal_path, "original")
-
-            save_report_path = f"data/report/dataset_{type_dataset}"
-
-            test_models_all_dir(path_models,
-                                classnames,
-                                list_CNN_num_class,
-                                CNN_names,
-                                overlap_list,
-                                file_test_path,
-                                etal_path,
-                                last_activations=last_activation,
-                                save_report_path=save_report_path,
-                                using_metrics=using_metrics)
-
-        if calculate_all_mito:
-            # путь до картинок для теста
-            etal_path = epfl_marking_test_path
-            file_test_path = os.path.join(etal_path, "original")
-
-            save_report_path = f"data/report_epfl_mito/dataset_{type_dataset}_no_boarder_mode"
-
-            test_models_only_all_mito(path_models,
-                                      classnames,
-                                      list_CNN_num_class,
-                                      CNN_names,
-                                      overlap_list,
-                                      file_test_path,
-                                      etal_path,
-                                      last_activations=last_activation,
-                                      save_report_path=save_report_path,
-                                      using_metrics = using_metrics)
-
-        if calculate_all_Lucchipp_mito:
-            # путь до картинок для теста
-            etal_path = lucchipp_marking_test_path
-            file_test_path = os.path.join(etal_path, "original")
-
-            save_report_path = f"data/report_lucchipp_mito/dataset_{type_dataset}"
-
-            test_models_only_all_mito(path_models,
-                                      classnames,
-                                      list_CNN_num_class,
-                                      CNN_names,
-                                      overlap_list,
-                                      file_test_path,
-                                      etal_path,
-                                      last_activations=last_activation,
-                                      save_report_path=save_report_path,
-                                      using_metrics = using_metrics)
-
-def main(str_data, experiment_paths, save_mask=True):
-
-    all_results_metrics_merge_our={}
-    all_results_metrics_our={}
-    using_metrics_our=None
-    classnames_our=None
+    all_results_metrics_merge=[]
+    all_results_metrics=[]
+    using_metrics=None
+    classnames=None
 
     for experiment_path in experiment_paths:
-       our, epfl, lucchipp = test_by_using_config_in_dir(experiment_path, True, False, False, save_mask="data/result/" if save_mask else None)
-       one_our, two_our, tree_our, four_our = our
+       dirs_result = test_by_using_config_in_dir(experiment_path,
+                                                 list_of_description_test_dataset
+                                                 )
 
-       all_results_metrics_merge_our |= one_our
+       name_dataset, result = dirs_result[0]
+
+       one_our, two_our, tree_our, four_our = result
+
+       all_results_metrics_merge += one_our
        if two_our is not None:
-           all_results_metrics_our |= two_our
-       using_metrics_our = tree_our
-       classnames_our = four_our
+           all_results_metrics += two_our
+       using_metrics = tree_our
+       classnames = four_our
 
-    save_report_path = "data/report/"
     save_report_path = os.path.join(save_report_path, str_data)
     if not os.path.isdir(save_report_path):
        print(f"create dir:'{save_report_path}'")
        os.makedirs(save_report_path)
 
-    test_for_excel_merge = GetFinalTestMetricForExcel(all_results_metrics_merge_our, using_metrics_our, classnames_our)
-    with open(os.path.join(save_report_path, f'excel_{str_data}_test_models_merge.txt'),'w') as file_for_excel_merge:
+    test_for_excel_merge = GetFinalTestMetricForExcel(all_results_metrics_merge, using_metrics, classnames)
+    with open(os.path.join(save_report_path, f'excel_{str_data}_test_models_merge.csv'),'w') as file_for_excel_merge:
        file_for_excel_merge.write(test_for_excel_merge)
 
-    all_results_metrics_merge_epfl={}
-    all_results_metrics_epfl={}
-    using_metrics_epfl=None
-    classnames_epfl=None
+    return test_for_excel_merge
 
-    for experiment_path in experiment_paths:
-       our, epfl, lucchipp = test_by_using_config_in_dir(experiment_path, False, True, False, save_mask="data/result_mito/" if save_mask else None)
-       one_epfl, two_epfl, tree_epfl, four_epfl = epfl
+def RunMultiTestsSeriesExpOnMultiDatasets(str_data, experiment_paths, save_mask=True):
+    save_report_all_dataset_path = "data/all_report/"
+    save_report_path = None
+    list_of_description_test_dataset = [
+        {"dataset_name": "UnnTestDataset",
+         "test_input_file_path": os.path.join(our_marking_test_path, "original"),
+         "etal_mask_path": our_marking_test_path,
+         #"class_names_list":,
+         "save_report_path": "data/report/",
+         "mask_save_dir_path": "data/result/" if save_mask else None
+         },
 
-       all_results_metrics_merge_epfl |= one_epfl
-       if two_epfl is not None:
-           all_results_metrics_epfl |= two_epfl
-       using_metrics_epfl = tree_epfl
-       classnames_epfl = four_epfl
+        {"dataset_name": "LucchiPPTestDataset",
+         "test_input_file_path": os.path.join(lucchipp_marking_test_path, "original"),
+         "etal_mask_path": lucchipp_marking_test_path,
+         "class_names_list": ["mitochondria"],
+         "save_report_path": "data/report_lucchipp_mito/",
+         "mask_save_dir_path": "data/result_mito/"  if save_mask else None,
+         "selected_class_indexes": [0]
+         },
 
-    save_report_path = "data/report_epfl_mito/"
-    save_report_path = os.path.join(save_report_path, str_data)
-    if not os.path.isdir(save_report_path):
-       print(f"create dir:'{save_report_path}'")
-       os.makedirs(save_report_path)
+        #{"dataset_name": "EPFLTestDataset",
+        # "test_input_file_path": os.path.join(epfl_marking_test_path, "original"),
+        # "etal_mask_path": epfl_marking_test_path,
+        # # "class_names_list":,
+        # "save_report_path": "data/report_epfl_mito/",
+        # "mask_save_dir_path": None,
+        # "selected_class_indexes": [0]
+        # },
 
-    test_for_excel_merge = GetFinalTestMetricForExcel(all_results_metrics_merge_epfl, using_metrics_epfl, classnames_epfl)
-    with open(os.path.join(save_report_path, f'excel_{str_data}_test_models_merge.txt'), 'w') as file_for_excel_merge:
-       file_for_excel_merge.write(test_for_excel_merge)
+        {"dataset_name": "KasthuriTestDataset",
+         "test_input_file_path": os.path.join(Kasthuri_test_path, "Test_In"),
+         "etal_mask_path": Kasthuri_test_path,
+         "class_names_list": ["Test_Out"],
+         "save_report_path": "data/report_kasthuri_mito/",
+         "mask_save_dir_path": "data/result_kasthuri_mito/" if save_mask else None,
+         "selected_class_indexes": [0]
+         },
 
-    all_results_metrics_merge_lucchi={}
-    all_results_metrics_lucchi={}
-    using_metrics_lucchi=None
-    classnames_lucchi=None
+        {"dataset_name": "UroCellDataset",
+         "test_input_file_path": os.path.join(UroCell_test_path, "data/fib1-0-0-0"),
+         "etal_mask_path": UroCell_test_path,
+         "class_names_list": ["mito/binary/fib1-0-0-0"],
+         "save_report_path": "data/report_urocell_mito/",
+         "mask_save_dir_path": "data/result_urocell_mito/" if save_mask else None,
+         "selected_class_indexes": [0]
+         },
 
-    for experiment_path in experiment_paths:
-        our, epfl, lucchipp =test_by_using_config_in_dir(experiment_path, False, False, True, save_mask=None)
-        one_lucchi, two_lucchi, tree_lucchi, four_lucchi = lucchipp
+        {"dataset_name": "MouseNucleusAccumbens",
+         "test_input_file_path": os.path.join(MouseNucleusAccumbens_test_path, "em/fibsem-uint8"),
+         "etal_mask_path": MouseNucleusAccumbens_test_path,
+         "class_names_list": ["labels/groundtruth/crop115/mito", "labels/groundtruth/crop115/ves", "labels/groundtruth/crop115/pm", "labels/groundtruth/crop115/mito_mem"],
+         "save_report_path": "data/report_mna/",
+         "mask_save_dir_path": "data/result_mna/" if save_mask else None,
+         "selected_class_indexes": [0, 2, 4, 5]
+         },
+    ]
 
-        all_results_metrics_merge_lucchi |= one_lucchi
-        if two_lucchi is not None:
-            all_results_metrics_lucchi |= two_lucchi
-        using_metrics_lucchi = tree_lucchi
-        classnames_lucchi = four_lucchi
+    #list_of_description_test_dataset = list_of_description_test_dataset[:-1]
+    #list_of_description_test_dataset = [list_of_description_test_dataset[-1]]
 
-    save_report_path = "data/report_lucchipp_mito/"
-    save_report_path = os.path.join(save_report_path, str_data)
-    if not os.path.isdir(save_report_path):
-        print(f"create dir:'{save_report_path}'")
-        os.makedirs(save_report_path)
+    datasets_res = []
+    for dataset in list_of_description_test_dataset:
+        print(f'Test on dataset "{dataset["dataset_name"]}"')
+        test_for_excel_merge = checking_models_list_on_one_dataset(str_data,
+                                                                   experiment_paths,
+                                                                   [dataset],
+                                                                   save_report_path=dataset["save_report_path"])
+        datasets_res.append((test_for_excel_merge, dataset["dataset_name"]))
 
-    test_for_excel_merge = GetFinalTestMetricForExcel(all_results_metrics_merge_lucchi, using_metrics_lucchi, classnames_lucchi)
-    with open(os.path.join(save_report_path, f'excel_{str_data}_test_models_merge.txt'), 'w') as file_for_excel_merge:
-        file_for_excel_merge.write(test_for_excel_merge)
+
+    all_text_excel = ""
+    for text_res, name_dataset in datasets_res:
+        all_text_excel += name_dataset + "\n"
+        all_text_excel += text_res + "\n"
+
+    if not os.path.isdir(save_report_all_dataset_path):
+        print(f"create dir:'{save_report_all_dataset_path}'")
+        os.makedirs(save_report_all_dataset_path)
+    with open(os.path.join(save_report_all_dataset_path, f'excel_{str_data}_test_models_merge.csv'),'w') as file_for_excel_merge:
+       file_for_excel_merge.write(all_text_excel)
+
+def file_log_parcer(file):
+    pars_list = []
+    model_path_list = []
+
+    for line in file.readlines():
+        if len(line.split(' - ')) >= 4:
+            d = dict()
+            d['date'] = line.split(' - ')[0]
+            d['type'] = line.split(' - ')[2]
+            message = line.split(' - ')[3]
+            d["model_name"] = message.split('"')[1]
+            #d['message'] = message
+            d["type_with_data_save"] = message.split('"')[3]
+            model_path_list.append(os.path.join(d["type_with_data_save"], d["model_name"]))
+            pars_list.append(d)
+    return pars_list, model_path_list
+
+def runExperimentByLogs(series_experiment_name=None, log_path="experiments_log.log"):
+    if not os.path.isfile(log_path):
+        print("Experiment file not found!")
+    else:
+        if series_experiment_name is None:
+           now = datetime.datetime.now()
+           series_experiment_name = f"{now.year:04}_{now.month:02}_{now.day:02}_{now.hour:02}_{now.minute:02}_{now.second:02}"
+        
+        with open(log_path, 'r') as f:
+                _, model_path_list = file_log_parcer(f)
+
+        RunMultiTestsSeriesExpOnMultiDatasets(series_experiment_name, model_path_list)
+        os.remove(log_path)
 
 if __name__ == "__main__":
 
@@ -513,7 +487,33 @@ if __name__ == "__main__":
     #str_data = "10_12_2024_balance_experiment"
     #main(str_data, experiment_paths)
 
-    experiment_paths = [f"segmentation/2025_02_15"]
+    #experiment_paths = [f"segmentation/2000_images"]
 
-    str_data = "test_experiment"
-    main(str_data, experiment_paths)
+    #_half_diff
+
+    #experiment_paths = [f"segmentation/Multiple_segmentation_stability_100",
+    #                    f"segmentation/Multiple_segmentation_stability_165",]
+
+    '''
+    experiment_paths = []
+
+    n_slices = [5, 10, 15] #, 20, 30, 42]
+    n_classes = [1, 5, 6]
+
+    for n_slice in n_slices:
+        for n_class in n_classes:
+            experiment_paths.append(f"segmentation/Multiple_segmentation_stability_{n_slice}_{n_class}_classes_half_diff")
+
+
+    experiment_paths = sorting_names(experiment_paths)
+
+    str_data = "re_re_experiment_2k_diff_data_half_diff"
+    RunMultiTestsSeriesExpOnMultiDatasets(str_data, experiment_paths)
+    '''
+
+
+    RunMultiTestsSeriesExpOnMultiDatasets("test_working", ["segmentation/2025_08_26"])
+
+    #RunMultiTestsSeriesExpOnMultiDatasets("multi datasets testing", ["F:/Data UnetClass/segmentation/segmentation 16.03.2025/Multiple_segmentation_stability_42_6_classes/config_diffusion_42_6_classes_seed_1924400995_6_classes_dataset_mix_tiny_unet_v3.json"])
+
+    #runExperimentByLogs()

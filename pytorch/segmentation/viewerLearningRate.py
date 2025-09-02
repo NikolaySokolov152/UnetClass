@@ -17,6 +17,7 @@ def viewData(history, name = "", save_path = None, view = True, print_save_model
             save_epoch = history['model_saving_epoch']
     count_epoch = len(history["train_work_time"])
 
+    '''
     # metric 1
     ax = fig.add_subplot(2, 2, 1)
     ax.set_ylim(ymax = 1.0)
@@ -28,6 +29,7 @@ def viewData(history, name = "", save_path = None, view = True, print_save_model
     ax.set_ylabel("Dice")
     ax.set_xlabel("Epoch")
     ax.legend(["Train", "Validation"], loc="upper left")
+    '''
 
     # metric 2
     ax = fig.add_subplot(2, 2, 2)
@@ -98,6 +100,7 @@ def getLossActivationDirs():
     return return_dir
 
 def getStandartTestDirs():
+    '''
     str_data1 = "Models_and_classes_multiclass_BCG"
     str_data2 = "2023_05_21"
 
@@ -106,10 +109,15 @@ def getStandartTestDirs():
                       "sint",
                       #"sint_v2"
                       ]
+    '''
+ 
+    slices = [30]
+    classes = [1,5,6]
 
     return_dir = []
-    for dataset in types_datasets:
-        return_dir.append("_".join([str_data1, dataset, str_data2]))
+    for slice_val in slices:
+        for class_val in classes:
+            return_dir.append("_".join(["Multiple_diffusion", str(slice_val), "slices", str(class_val), "classes"]))
     return return_dir
 
 
@@ -120,8 +128,10 @@ if __name__ == "__main__":
 
     #paths = getStandartTestDirs() + getLossActivationDirs() + ["Models_and_classes_sint_v2_2023_05_15"]
     #paths = ["new_loss_dist_test"] #+ getStandartTestDirs()
-    paths = ["Test_v10_dataset",
-             "Test_mix_v2_dataset"]
+    #paths = ["Test_v10_dataset",
+    #         "Test_mix_v2_dataset"]
+
+    paths = getStandartTestDirs()
 
     for i, path in enumerate(paths):
         print(f"In the work {i+1} of {len(paths)} dirs named '{path}'")

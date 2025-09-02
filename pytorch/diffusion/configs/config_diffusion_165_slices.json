@@ -11,8 +11,8 @@
 
     "data_info": [
             {
-                "dir_img_path":              "diffusion/data/train/all/original",
-                "dir_mask_path_without_name":"diffusion/data/train/all/",
+                "common_dir_path":          "diffusion/data/train/cutting data mito 165/",
+                "dir_img_name":             "original",
                 "add_mask_prefix": "",
                 "proportion_of_dataset": 1
             }
@@ -23,7 +23,7 @@
         "save_prefix_image": "image_",
         "save_prefix_mask":  "mask_",
         "save_prefix_model": "",
-        "save_suffix_model": "MSELoss_5_classses_mean_std"
+        "save_suffix_model": ""
     },
 
     "model" : {
@@ -39,7 +39,7 @@
 
     "train": {
         "mask_name_label_list": ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"],
-        "num_class": 5,
+        "num_class": 1,
         "batch_size": 12,
         "num_epochs": 100,
         "optimizer": "Adam",

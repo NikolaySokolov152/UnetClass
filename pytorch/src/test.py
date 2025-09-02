@@ -1,152 +1,149 @@
 import sys
 if not __name__ == "__main__":
     sys.path.append("src/")
-from splitImages import *
-from models import *
-import torch
 
 import cv2
+import json
 import numpy as np
-import skimage.io as io
+import os
 import time
-import tqdm
+
+#from tqdm import tqdm
+from tqdm.auto import tqdm
+
+from config_parser_funs import (type_experiment_parcer,
+                                activation_parcer,
+                                silence_mode_parcer,
+                                device_parcer,
+                                num_class_channel_parcer,
+                                model_parcer,
+                                classnames_parcer)
+from pipeliner import Pipeliner
+from prepare_data import saveResultMask, tiledGen, prepare_list_batch_to_list_imgs, read_img, to_0_1_format_img
+from tilingImages import glit_image, split_image
 
 
-EPSILON = 1e-7
-########################################################## разобраться с чтеним без альфа канала
+def getPipliner(path_dir_to_model, config_name):
+    name_model = "model_by_" + config_name
 
-def to_0_1_format_img(in_img):
-    max_val = in_img[:,:].max()
-    if max_val <= 1:
-        return in_img
+    pipeliner_path = os.path.join(path_dir_to_model, name_model+"_pipeline.pkl")
+    all_model_path = os.path.join(path_dir_to_model, name_model + ".pt")
+    model_weights_path = os.path.join(path_dir_to_model, name_model + ".pth")
+    if os.path.isfile(pipeliner_path):
+        print("Found pipeline file.")
+        model = Pipeliner.load_pipeliner(pipeliner_path)
+    elif os.path.isfile(all_model_path) or os.path.isfile(model_weights_path):
+        with open(os.path.join(path_dir_to_model, config_name + ".json")) as config_buffer:
+            config_file = json.load(config_buffer)
+
+        model_class = model_parcer(config_file)
+        last_activation = activation_parcer(config_file)
+        num_classes, num_channel = num_class_channel_parcer(config_file)
+
+        silence_mode = silence_mode_parcer(config_file)
+        type_task = type_experiment_parcer(config_file)
+
+        hidden_params = {}
+        device = device_parcer(config_file)
+        classnames = classnames_parcer(config_file)
+
+        model = Pipeliner(model_class,
+                          last_activation,
+                          num_classes,
+                          num_channel,
+                          device,
+                          silence_mode,
+                          type_task,
+                          hidden_params,
+                          classnames=classnames)
+
+        if os.path.isfile(model_weights_path):
+            print("Found model weights file and config.")
+            model.load_model_weights_path(model_weights_path)
+        else:
+            print("Found model file and config.")
+            model.load_model_by_path(all_model_path)
+
     else:
-        out_img = in_img.astype(np.float32) / 255
-        return out_img
+        msg = f"FILE ERROR!!! Model weights data '{name_model}___' don't founded in '{path_dir_to_model}'!!!"
+        raise FileNotFoundError(msg)
 
-class tiledGen():
-    def __init__(self, data):
-        self.data = data
-    def __getitem__(self, index):
-        item = self.data[index]
-        img = np.reshape(item, (1,) + item.shape + (1,))
-        torch_img = torch.from_numpy(np.array(img)).type(torch.FloatTensor).permute(0, 3, 1, 2)
+    return model, name_model
 
-        return torch_img
+def readPredictDataset(path, as_gray=False):
+    list_test_dir = os.listdir(os.path.join(path))
+    list_test_img_dir = [name for name in list_test_dir if name.endswith((".png", ".jpg"))]
 
-    def __len__(self):
-        return len(self.data)
+    dataset = []
+    for name in list_test_img_dir:
+        img = read_img(os.path.join(path, name), as_gray)
+        img = to_0_1_format_img(img)
+        dataset.append(([img], [name]))
+    return dataset
 
-def glit_mask(tiled_masks, num_class, out_size, tile_info, overlap = 64):
-    masks = []
-    for i_class in range(num_class):
-        pic = tiled_masks.take(i_class, axis=-1)
-        i_mask = glit_image(pic, out_size, tile_info, overlap)
-        #print(result_class.shape)
-        masks.append(i_mask)
+def glit_mask(tiled_masks, out_size, tile_info, overlap = 64):
+    masks = glit_image(tiled_masks, out_size, tile_info, overlap)
+    return np.array(masks)
 
-    #print(masks[0].shape)
-    union_arr = np.zeros(out_size + (num_class,), np.uint8)
-    for i_class in range(num_class):
-        union_arr[:,:,i_class] = masks[i_class]
-    #print(union_arr.shape)
+def test_data(model_pipeliner,
+              dataset,
+              save_mask_dir=None,
+              batch_size = 2,
+              tiled_data={"size":256, "overlap":64, "unique_area":0},
+              save_spliting_dir=None):
 
-    return np.reshape(union_arr, (1,) + union_arr.shape)
-
-def saveResultMask(save_path, npyfile, namelist, num_class = 2 , classnames=None):
-    for i,item in enumerate(npyfile):
-        for class_index in range(num_class):
-            out_dir = os.path.join(save_path, classnames[class_index] if classnames is not None else str(class_index))
-            if not os.path.isdir(out_dir):
-                if os.name == 'nt':  # for Windows
-                    print("создаю out_dir:" + out_dir.replace(u"\\\\?\\"+os.getcwd()+"\\", ""))
-                else:
-                    print("создаю out_dir:" + out_dir.replace(os.getcwd() + "\\", ""))
-                os.makedirs(out_dir)
-
-            if (os.path.isfile(os.path.join(out_dir, "predict_" + namelist[i]))):
-                os.remove(os.path.join(out_dir, "predict_" + namelist[i]))
-
-            io.imsave(os.path.join(out_dir, "predict_" + namelist[i]), item[:,:,class_index], check_contrast=False)
-
-def predictModel(model, data, device, last_activation, eps = EPSILON):
-    result = []
-    model.eval()
-    with torch.no_grad():
-        #time.sleep(0.2)  # чтобы tqdm не печатал вперед print
-        #tqdm_test_loop = tqdm.tqdm(data, file=sys.stdout, desc="\tSlice", colour="GREEN")
-        for epoch_valid_iteration, inputs in enumerate(data):
-            inputs = inputs.to(device)
-            outputs = model(inputs)
-            # ADD LAST ACTIVATION
-            outputs = globals()[last_activation](outputs, eps)
-
-            result.append(outputs.detach().cpu().permute(0, 2, 3, 1).numpy()[0])
-    return np.array(result)
-
-def test_tiled(model_path, num_class, save_mask_dir, last_activation = None, dataset={'filenames': None, "filepath": "data/test", "classnames": None},
-               tiled_data={"size":256, "overlap":64, "unique_area":0}, save_dir = None):
-    filenames = dataset["filenames"]
-    filepath = dataset["filepath"]
-    classnames = dataset["classnames"]
-
-    if len(filenames) == 0:
+    if len(dataset) == 0:
         raise Exception(f"No image to predict")
 
-    size = tiled_data["size"]
-    overlap = tiled_data["overlap"]
-    unique_area = tiled_data["unique_area"]
+    if tiled_data is not None:
+        size = tiled_data["size"]
+        overlap = tiled_data["overlap"]
+        unique_area = tiled_data["unique_area"]
+        test_mode = "tiled"
+    else:
+        test_mode = "full"
 
-    model = torch.load(model_path)
-
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
-    last_activation = "sigmoid_activation" if last_activation is None else last_activation
-    model.to(device)
+    print(f'Test mode "{test_mode}"')
 
     ret_images = []
-    print(last_activation)
-    time.sleep(0.2)
+    ret_names = []
 
-    if save_mask_dir is not None:
-        save_mask_dir = os.path.abspath(save_mask_dir)
+    slices_tqdm = tqdm(dataset, ncols=80, desc="Test", position=0, disable=model_pipeliner.silence_mode)
+    for imgs_batch, img_names_batch in slices_tqdm:
+        if test_mode == "tiled":
+            img_shapes = []
+            tile_info_list = []
+            list_of_tilled_imgs = []
+            ret_images_batch = []
 
-        if os.name == 'nt': # for Windows
-            if save_mask_dir.startswith(u"\\\\"):
-                save_mask_dir = u"\\\\?\\UNC\\" + save_mask_dir[2:]
-            else:
-                save_mask_dir = u"\\\\?\\" + save_mask_dir
+            # распил
+            for i, img in enumerate(imgs_batch):
+                img_shapes.append(img.shape[:2])
+                tiled_arr, tile_info = split_image(img, save_spliting_dir, size, overlap, unique_area)
+                tile_info_list.append(tile_info)
+                list_of_tilled_imgs += tiled_arr
 
-    slices_tqdm = tqdm.tqdm(filenames, file=sys.stdout, desc="Test")
-    for img_name in slices_tqdm:
-        ##########################################################
-        #img = io.imread(os.path.join(filepath, img_name))
-        # io открывает с альфа каналом, поэтому всего может быть и 2 и 4 канала (1, 2, 3 ,4)
-        # поэтому пока что открываю всё в сером !
-        img = cv2.imread(os.path.join(filepath, img_name), cv2.IMREAD_GRAYSCALE)
+            img_generator = tiledGen(list_of_tilled_imgs, batch_size=batch_size)
+            results = prepare_list_batch_to_list_imgs(model_pipeliner.predict(img_generator))
 
-        if img is None:
-            raise Exception(f"No open predict image '{img_name}'")
+            # сборка
+            for i in range(len(imgs_batch)):
+                one_img_counts = tile_info_list[i]
+                masks = results[:one_img_counts[0]*one_img_counts[1]] # взять картинки на один слой
+                ret_images_batch.append(glit_mask(masks, img_shapes[i], one_img_counts, overlap))
+                results = results[one_img_counts[0]*one_img_counts[1]:] # изъять взятые картинки
 
-        if len(img.shape) == 3:
-            img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-
-        img = to_0_1_format_img(img)
-
-        # delete suffix (.png, .jpg)
-        tiled_name = img_name.split('.')[0]
-        tiled_arr, tile_info = split_image(img, tiled_name, save_dir, size, overlap, unique_area)
-
-        img_generator = tiledGen(tiled_arr)
-
-        results = predictModel(model, img_generator, device, last_activation)
-
-        res_img = glit_mask(results, num_class, img.shape, tile_info, overlap)
+        elif test_mode == "full":
+            img_generator = tiledGen(imgs_batch, batch_size=batch_size)
+            ret_images_batch = prepare_list_batch_to_list_imgs(model_pipeliner.predict(img_generator))
+        else:
+            msg = f"ERROR! Preparation mode {test_mode} is not implemented."
+            raise Exception(msg)
         # print("glit_mask", res_img.shape)
 
-        ################################################################################################################ вспомнить почему нужна единичная ось в начале
-        ################################### нужно для корректной работы универсальной функции сохранения (подумать нужно ли это вообще)
-        ret_images.append((img_name, res_img[0]))
         if save_mask_dir is not None:
-            saveResultMask(save_mask_dir, res_img, [img_name], num_class=num_class, classnames=classnames)
+            saveResultMask(save_mask_dir, ret_images_batch, img_names_batch, classnames=model_pipeliner.classnames)
+        ret_images += ret_images_batch
+        ret_names += img_names_batch
 
-    return ret_images
+    return ret_images, ret_names

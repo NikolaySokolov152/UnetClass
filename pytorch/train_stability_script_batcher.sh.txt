@@ -1,0 +1,30 @@
+#!/bin/bash
+
+path_to_file="/common/home/vasyliev_e/dl/UnetEPFL_v2/pytorch_v4/"
+main_name_script="series_segmentation"
+
+
+for n_classes in 1
+do
+for n_slices in 165 100
+do
+sbatch -p a100 --export=ALL,n_classes=${n_classes},n_slices=${n_slices} -o "${path_to_file}/result_stability_script_output_${n_slices}_slices_${n_classes}_classes.txt" --job-name "${main_name_script}_${n_slices}_slices_${n_classes}_classes" "${path_to_file}/train_stability_script.script"
+done
+done
+
+for n_classes in 6 5 1
+do
+for n_slices in 42 30 20 15 10 5
+do
+sbatch -p a100 --export=ALL,n_classes=${n_classes},n_slices=${n_slices} -o "${path_to_file}/result_stability_script_output_${n_slices}_slices_${n_classes}_classes.txt" --job-name "${main_name_script}_${n_slices}_slices_${n_classes}_classes" "${path_to_file}/train_stability_script.script"
+done
+done
+
+
+
+
+
+
+
+
+

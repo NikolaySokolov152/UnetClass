@@ -120,15 +120,12 @@ def change_model(device, num_classes):
 
     return model, optimizer
 
-
-
 def fit_diffusion_Model(my_data_generator,
              model,
              last_activation,
              num_epoch,
-             device,
              optimizer,
-             metrics,
+             metrics_data,
              losses,
              modelName,
              lr_scheduler = None,
@@ -138,8 +135,12 @@ def fit_diffusion_Model(my_data_generator,
              train_mode="segmentation",
              train_args=None):
 
-    history_metrics, val_history_metrics=initHistoryMetric(metrics)
+    metrics_funs, metrics_names = metrics_data
 
+    metrics = metrics_funs # костыль
+    history_metrics, val_history_metrics=initHistoryMetric(metrics_names)
+    device = my_data_generator.device
+    model.to(device)
     history_losses = []
     val_history_losses = []
     learning_rate = []
@@ -193,7 +194,7 @@ def fit_diffusion_Model(my_data_generator,
         # desc изменен,чтобы не было 0% в начале
 
         start_train_time = time.time()
-        for epoch_train_iteration, (inputs, targets) in enumerate(tqdm_train_loop):
+        for epoch_train_iteration, (inputs, targets, batch_statistic) in enumerate(tqdm_train_loop):
             t = torch.randint(0, steps_denoise, (my_data_generator.transform_data.batch_size,), device=device)
             ############################################################################################################ костыль
             if my_data_generator.transform_data.mode_mask == "no_mask":
@@ -270,7 +271,7 @@ def fit_diffusion_Model(my_data_generator,
                                        disable=silence_mode)
 
                 start_valid_time = time.time()
-                for epoch_valid_iteration, (inputs, targets) in enumerate(tqdm_valid_loop):
+                for epoch_valid_iteration, (inputs, targets, batch_statistic) in enumerate(tqdm_valid_loop):
                     t = torch.randint(0, steps_denoise, (my_data_generator.transform_data.batch_size,), device=device)
                     ############################################################################################################ костыль
                     if my_data_generator.transform_data.mode_mask == "no_mask":
@@ -338,10 +339,15 @@ def fit_diffusion_Model(my_data_generator,
 
     print("Finish Train")
 
+    dataset_info = my_data_generator.get_dataset_info()
     history = {"metrics": history_metrics,
                "loss": history_losses,
                "train_work_time": train_work_time,
-               "model_saving_epoch": model_saving_epoch
+               "model_saving_epoch": model_saving_epoch,
+               "generator info": {
+                                    "number of images": dataset_info["number of images"],
+                                    "number of titles": dataset_info["number of titles"]
+                                 }
                }
     if use_validation:
         history["val_metrics"] = val_history_metrics

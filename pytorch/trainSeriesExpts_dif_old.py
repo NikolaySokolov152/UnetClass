@@ -4,9 +4,11 @@ import json
 
 def build_argparser_multi():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--config', type=str, default = "segmentation/multi_config_test.json")
+    parser.add_argument('-c', '--config', type=str, default = "diffusion/configs/multi_config_diffusion_5_slices_test.json")
     #parser.add_argument('-c', '--config', type=str, default = None)
     parser.add_argument('-s', '--silence_mode', action='store_true')
+    parser.add_argument('-seed', '--random_seed', type=int, default=None)
+
     args = parser.parse_args()
     return args
 
@@ -18,7 +20,9 @@ def printSeriesFunction():
           "'trainMultipleOptimazer' - choice optimazers\n"
           "'trainMultipleActivation' - choice fun last activations\n",
           "'trainMultipleLoss' - choice losses\n",
-          "'trainMultipleClasses' - change number classes"
+          "'trainMultipleClasses' - change number classes\n",
+          "'trainDataset' - set dataset indices and their names\n",
+          "'trainBalance' - set balance mode test flag (has't params, you can set any value, for example, such as 'null')"
           )
 
 def trainMultipleModels(config_file,
@@ -212,8 +216,13 @@ def trainSeries(config_file,
     # change_save_suffix = config["save_inform"]["save_suffix_model"]
     # config["move_to_date_folder"] = False
 
+    seed_list = []
     for id_experiment in range(num_experiments):
+
         random_seed = np.random.randint(np.iinfo(np.int32).max)
+        while random_seed in seed_list:
+            random_seed = np.random.randint(np.iinfo(np.int32).max)
+        seed_list.append(random_seed)
 
         print(f"\n{tabs}Learning model with seed {random_seed}\n")
 
@@ -229,6 +238,112 @@ def trainSeries(config_file,
                 funs[0](config_file, new_path, args_exp[0], funs=funs[1:], args_exp=args_exp[1:], tabs=tabs+"\t")
         else:
             print(trainByConfig(config_file, new_path))
+
+def trainDataset(config_file,
+                 config_path,
+                 turtle_list_indexes_and_names=[],
+                 funs = [],
+                 args_exp=None,
+                 tabs=""):
+    # change_save_suffix = config["save_inform"]["save_suffix_model"]
+    # config["move_to_date_folder"] = False
+
+    datasets_all = config_file["data_info"]
+
+    for name, list_indexes in turtle_list_indexes_and_names:
+        print(f"\n{tabs}Learning model with dataset {name}\n")
+
+        config_file["data_info"] = [datasets_all[i] for i in list_indexes]
+
+        new_path = os.path.basename(config_path)[:-5] + f"_dataset_{name}.json"
+
+        if len(funs) > 0:
+            if args_exp is None:
+                funs[0](config_file, new_path, funs=funs[1:], args_exp=args_exp, tabs=tabs+"\t")
+            else:
+                funs[0](config_file, new_path, args_exp[0], funs=funs[1:], args_exp=args_exp[1:], tabs=tabs+"\t")
+        else:
+            print(trainByConfig(config_file, new_path))
+
+    config_file["data_info"] = datasets_all
+
+# Аргумент None, так как этот тип эксперимента игнорирует конфиг файл по балансировке
+def trainBalance(config_file,
+                 config_path,
+                 void_arg=None,
+                 funs = [],
+                 args_exp=None,
+                 tabs=""):
+    # change_save_suffix = config["save_inform"]["save_suffix_model"]
+    # config["move_to_date_folder"] = False
+
+    if "balancing_parameters" in config_file.keys():
+        print("'balancing_parameters' in config file is ignoring !")
+    else:
+        print("'balancing_parameters' is't in config file !")
+
+###########################################################################################################
+    print(f"\n{tabs}Learning model with use_p_class_balance and  use_count_pixel_balance\n")
+
+    config_file["balancing_parameters"] = {"calculate_statistic": True,
+                                           "use_p_class_balance": True,
+                                           "use_count_pixel_balance": True}
+
+    new_path = os.path.basename(config_path)[:-5] + f"_use_p_class_balance&use_count_pixel_balance.json"
+    if len(funs) > 0:
+        if args_exp is None:
+            funs[0](config_file, new_path, funs=funs[1:], args_exp=args_exp, tabs=tabs+"\t")
+        else:
+            funs[0](config_file, new_path, args_exp[0], funs=funs[1:], args_exp=args_exp[1:], tabs=tabs+"\t")
+    else:
+        print(trainByConfig(config_file, new_path))
+
+#########################################################################################################
+    print(f"\n{tabs}Learning model with use_p_class_balance\n")
+
+    config_file["balancing_parameters"] = {"calculate_statistic": True,
+                                           "use_p_class_balance": True,
+                                           "use_count_pixel_balance": False}
+
+    new_path = os.path.basename(config_path)[:-5] + f"_use_p_class_balance.json"
+    if len(funs) > 0:
+        if args_exp is None:
+            funs[0](config_file, new_path, funs=funs[1:], args_exp=args_exp, tabs=tabs+"\t")
+        else:
+            funs[0](config_file, new_path, args_exp[0], funs=funs[1:], args_exp=args_exp[1:], tabs=tabs+"\t")
+    else:
+        print(trainByConfig(config_file, new_path))
+###########################################################################################################
+    print(f"\n{tabs}Learning model with use_count_pixel_balance\n")
+
+    config_file["balancing_parameters"] = {"calculate_statistic": True,
+                                           "use_p_class_balance": False,
+                                           "use_count_pixel_balance": True}
+
+    new_path = os.path.basename(config_path)[:-5] + f"_use_count_pixel_balance.json"
+    if len(funs) > 0:
+        if args_exp is None:
+            funs[0](config_file, new_path, funs=funs[1:], args_exp=args_exp, tabs=tabs+"\t")
+        else:
+            funs[0](config_file, new_path, args_exp[0], funs=funs[1:], args_exp=args_exp[1:], tabs=tabs+"\t")
+    else:
+        print(trainByConfig(config_file, new_path))
+
+###########################################################################################################
+    print(f"\n{tabs}Learning model with no balance\n")
+
+    config_file["balancing_parameters"] = {"calculate_statistic": False,
+                                           "use_p_class_balance": False,
+                                           "use_count_pixel_balance": False}
+
+    new_path = os.path.basename(config_path)[:-5] + f"_no_use_balance.json"
+    if len(funs) > 0:
+        if args_exp is None:
+            funs[0](config_file, new_path, funs=funs[1:], args_exp=args_exp, tabs=tabs+"\t")
+        else:
+            funs[0](config_file, new_path, args_exp[0], funs=funs[1:], args_exp=args_exp[1:], tabs=tabs+"\t")
+    else:
+        print(trainByConfig(config_file, new_path))
 
 def trainMultiple(config_file, config_path, funs=[], args_exp=None, tabs=""):
     if len(funs) > 0:
@@ -276,13 +391,16 @@ if __name__ == '__main__':
 
         config_file["silence_mode"] = silence_mode
 
+        if args.random_seed is not None:
+            config_file["train"]["seed"] = args.random_seed
+            config_path = os.path.basename(config_path)[:-5] + f"_seed_{args.random_seed}.json"
+
         list_multi_fun = strListTrainMultiple2fun(multi_config_file["list_experiments"])
-        
+
         if "list_arguments" in multi_config_file.keys():
             args_exp = multi_config_file["list_arguments"]
         else:
             args_exp = None
-        
 
         trainMultiple(config_file, config_path, funs=list_multi_fun, args_exp=args_exp)
     else:

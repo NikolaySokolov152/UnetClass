@@ -11,8 +11,8 @@
 
     "data_info": [
             {
-                "dir_img_path":              "diffusion/data/train/all/original",
-                "dir_mask_path_without_name":"diffusion/data/train/all/",
+                "common_dir_path":          "diffusion/data/train/cutting data 42 slices/",
+                "dir_img_name":             "original",
                 "add_mask_prefix": "",
                 "proportion_of_dataset": 1
             }
@@ -23,7 +23,7 @@
         "save_prefix_image": "image_",
         "save_prefix_mask":  "mask_",
         "save_prefix_model": "",
-        "save_suffix_model": "MSELoss_1_class_mean_std"
+        "save_suffix_model": ""
     },
 
     "model" : {
@@ -53,8 +53,8 @@
         "mode_mask": "separated",
         "target_size": [256, 256],
         "normalization_img_fun": "mean std",
-        "normalization_mask_fun": "mean std",
-        "binary_mask": false
+        "normalization_mask_fun": "dev 255",
+        "binary_mask": true
     },
 
     "generator_config": {

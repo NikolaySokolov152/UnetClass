@@ -2,7 +2,7 @@ import sys
 sys.path.append("src/")
 
 from src.dataGenerator import DataGeneratorReaderAll
-from trainer import generator_parcer
+from trainer_old import generator_parcer
 import json
 
 is_silence_mode=False

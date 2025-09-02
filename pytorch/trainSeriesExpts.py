@@ -1,5 +1,5 @@
 # этот скрипт запускает последовательно обучение одной конфигурации с разным количеством классов
-from trainer import *
+from trainer_old import *
 import numpy as np
 import json
 import sys
@@ -39,6 +39,8 @@ def trainMultipleModels(config_file,
                         tabs=""):
     # change_save_suffix = config["save_inform"]["save_suffix_model"]
     # config["move_to_date_folder"] = False
+    if isinstance(models, str):
+        models = [models]
 
     for model in models:
         print(f"\n{tabs}Learning '{model}'  model\n")
@@ -62,6 +64,8 @@ def trainMultipleClasses(config_file,
                          tabs=""):
     # change_save_suffix = config["save_inform"]["save_suffix_model"]
     # config["move_to_date_folder"] = False
+    if isinstance(classes, int):
+        classes = [classes]
 
     for n_class in classes:
         print(f"\n{tabs}Learning model with {n_class} classes\n")

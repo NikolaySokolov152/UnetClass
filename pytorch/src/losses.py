@@ -1,10 +1,11 @@
 import torch
+
 from torch.nn import BCELoss, MSELoss
 from torch.nn import functional as F
-from models import *
 
-import numpy as np
-import cv2
+from activation_function import getActivationFunctionByName
+
+AVAILABLE_LOSSES = ['DiceLoss', 'BCELoss', 'MSELoss', 'DiceLossMulticlass', 'BCELossMulticlass', 'MSELossMulticlass', 'LossDistance2Nearest', "HuberLoss"]
 
 @torch.jit.script
 def softsign_with_logits(y_hat : torch.Tensor, y_true : torch.Tensor, epsilon : float, correction_weights : float = 1) -> torch.Tensor:
@@ -233,28 +234,28 @@ def getLossByName(name_loss, num_classes = 1, last_activation = "sigmoid_activat
 
     return loss_func, calculate_stable_loss
 
-def get_work_loss(losses, eps, last_fun_activation_name, num_classes, device, weights=None, weights_losses=None):
+def getLossFunUnion(losses, eps, last_fun_activation_name, num_classes, device, weights_classes=None, weights_losses=None):
     num_losses = len(losses)
 
     # Балансировка по классам
-    if weights is None:
+    if weights_classes is None:
         work_weights = torch.full(torch.Size([num_losses]), 1/num_losses, device=device)
     else:
-        work_weights = torch.from_numpy(weights).to(device)
+        work_weights = torch.from_numpy(weights_classes).to(device)
     # Балансировка значимости если лосс функций несколько
     if weights_losses is None:
         weights_losses = torch.full(torch.Size([num_losses]), 1/num_losses, device=device)
     else:
         weights_losses = torch.from_numpy(weights_losses).to(device)
 
-    last_activation_fun = globals()[last_fun_activation_name]
+    last_activation_fun = getActivationFunctionByName(last_fun_activation_name)
 
     losses_list = []
     for loss_name in losses:
         losses_list.append(getLossByName(loss_name, num_classes=num_classes, last_activation=last_fun_activation_name, weights=work_weights))
 
     # correction_weights может быть вектором длиной размера классов
-    def calculate_losses (outputs, targets, correction_weights=None):
+    def calculate_losses(outputs, targets, correction_weights=None):
         loss_result = torch.zeros(num_losses, device=targets.get_device())
         for i, (loss_func, calculate_stable_loss) in enumerate(losses_list):
             if calculate_stable_loss:

@@ -1,24 +1,10 @@
-import skimage.io as io
 import numpy as np
 import os
+import skimage.io as io
 
-def to_0_255_format_img(in_img):
-    max_val = in_img[:,:].max()
-    if max_val <= 1:
-       out_img = np.round(in_img * 255)
-       return out_img.astype(np.uint8)
-    else:
-        return in_img
+from prepare_data import to_0_255_format_img, to_0_1_format_img
 
-def to_0_1_format_img(in_img):
-    max_val = in_img[:,:].max()
-    if max_val <= 1:
-        return in_img
-    else:
-        out_img = in_img / 255
-        return out_img
-
-def split_image(img, tiled_name, save_dir = None, size = 256, overlap = 64, unique_area = 0):
+def split_image(img, tiled_name_path, size = 256, overlap = 64, unique_area = 0):
     '''
     Split image to array of smaller images.
 
@@ -26,10 +12,8 @@ def split_image(img, tiled_name, save_dir = None, size = 256, overlap = 64, uniq
     ----------
     img : np.array
         Input image.
-    tiled_name : list of np.arrays
-        Tiled input imagr.
-    save_dir : string, optional
-        A folder with saved tiled images in png format. The default is "split_test/". If  save_dir = None, tiles don't save to hard drive.
+    tiled_name_path : str
+        Tiled input imagr. A folder with saved tiled images in png format. The default is "split_test/". If  save_dir = None, tiles don't save to hard drive.
     size : int, optional
         Size of tile side. Tiles are always square. The default is 256.
     overlap : int, optional
@@ -44,7 +28,7 @@ def split_image(img, tiled_name, save_dir = None, size = 256, overlap = 64, uniq
 
     '''
 
-    tiled_img = []
+    tiled_imgs = []
     h, w = img.shape[0:2]
     step = size - overlap
     count = 0
@@ -70,9 +54,9 @@ def split_image(img, tiled_name, save_dir = None, size = 256, overlap = 64, uniq
                 start_x = w - size
                 end_x = w
 
-            tiled_img.append(img[start_y : end_y, start_x : end_x])
-            if(save_dir != None):
-                io.imsave( os.path.join(save_dir, (tiled_name + "_" + str(count) + ".png")), to_0_255_format_img(img[start_y : end_y, start_x : end_x]))
+            tiled_imgs.append(img[start_y : end_y, start_x : end_x])
+            if(tiled_name_path != None):
+                io.imsave(tiled_name_path + "_" + str(count) + ".png", to_0_255_format_img(img[start_y: end_y, start_x: end_x]))
             count += 1
             if(end_x == w): # reached the end of the line
                 break
@@ -80,7 +64,7 @@ def split_image(img, tiled_name, save_dir = None, size = 256, overlap = 64, uniq
             break
 
     cols = int(count / rows)
-    return tiled_img, (rows, cols)
+    return tiled_imgs, (rows, cols)
 
 def glit_image(img_arr, out_size, tile_info, overlap = 64):
     '''
@@ -109,7 +93,9 @@ def glit_image(img_arr, out_size, tile_info, overlap = 64):
     count_x = tile_info[1]
     count_y = tile_info[0]
 
-    out = np.zeros(out_size)
+    channels = img_arr[0].shape[2] if len(img_arr[0].shape) > 2 else None
+
+    out = np.zeros(out_size) if channels is None else np.zeros((*out_size, channels))
 
 
     # corners
@@ -133,24 +119,21 @@ def glit_image(img_arr, out_size, tile_info, overlap = 64):
         # last column
         out[half  + y * area : half + (y + 1) * area, w - size : w] = img_arr[(y + 1) * count_x - 1][half : size - half, 0 : size]
 
-
     # inner area
     for y in range(1, count_y - 1):
         for x in range(1, count_x - 1):
             out[half + y * area : half + (y + 1) * area, half + x * area : half + (x + 1) * area] = img_arr[y * count_x + x][half : size - half, half : size - half]
 
-
     return to_0_255_format_img(out)
 
 def test_split(filepath, filename, tiled_save_folder = "split_test", tiledfilename = "test"):
-
     if not os.path.isdir(tiled_save_folder):
         print("create output directory:" + tiled_save_folder)
         os.makedirs(tiled_save_folder)
 
     img = io.imread(os.path.join(filepath, filename), as_gray=True)
     img = to_0_1_format_img(img)
-    arr, s = split_image(img, tiledfilename, save_dir = tiled_save_folder, size = 256, overlap = 64)
+    arr, s = split_image(img, os.path.join(tiled_save_folder, tiledfilename), size = 256, overlap = 64)
 
     print("x,y:", s)
 

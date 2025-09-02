@@ -1,44 +1,22 @@
-from torch.utils.data import Dataset
-import torch
-from torchvision import tv_tensors
-from tqdm import tqdm
 import cv2
-import skimage.io as io
 import numpy as np
 import os
 import random
 import sys
-
-from scipy.signal import convolve2d
-
-import json
-
-from augmentation import *
-
 import time
+import torch
 
-from torch.utils.data import DataLoader
+
+from torchvision import tv_tensors
+from tqdm import tqdm
+from torch.utils.data import Dataset
+
+from augmentation import create_transform
+from prepare_data import to_0_1_format_img, to_mean_std_format_img, read_img
 
 ###################################################################################### разобраться с чтением картинок с альфа каналом
 
 img_type = ('.png', '.jpg', '.jpeg')
-
-def to_0_1_format_img(in_img):
-    max_val = in_img[:, :].max()
-    if max_val <= 1:
-        return in_img
-    else:
-        out_img = in_img / 255
-        return out_img
-
-def to_mean_std_format_img(in_img):
-    mean = np.mean(in_img)
-    std_dev = np.std(in_img)
-
-    if std_dev != 0:
-        return (in_img - mean) / std_dev
-    else:
-        return in_img
 
 '''
 class TailingData:
@@ -63,32 +41,24 @@ class TailingData:
 
 
 class InfoDirData:
-    def __init__(self,
-                 common_dir_path=None,
-                 dir_img_name=None,
-                 dir_img_path="data/train/origin",
-                 dir_mask_path_without_name="data/train/",
-                 add_mask_prefix='mask_',
-                 proportion_of_dataset = 1.0,
-                 num_gen_repetitions = 0,
-                 tiling_data = False,
-                 type_load_data = "img",
-                 proportion_taking_type="random"):
-        self.dir_img_name = dir_img_path if dir_img_name is None else dir_img_name
-        self.dir_mask_name = dir_mask_path_without_name
-        self.add_mask_prefix = add_mask_prefix
-        self.proportion_of_dataset = proportion_of_dataset
-        self.common_dir_path = common_dir_path
-        self.proportion_taking_type = proportion_taking_type
-        self.tiling_data = tiling_data
-        self.num_gen_repetitions = num_gen_repetitions
-        self.type_load_data = type_load_data
+    def __init__(self,**kwargs
+                 ):
+        self.dir_img_name = kwargs.get('dir_img_name', kwargs.get('dir_img_path', "data/train/origin"))
+        self.dir_mask_name = kwargs.get('dir_mask_path_without_name', "data/train/")
+        self.add_mask_prefix = kwargs.get('add_mask_prefix', 'mask_')
+        self.proportion_of_dataset = kwargs.get('proportion_of_dataset', 1.0)
+        self.common_dir_path = kwargs.get('common_dir_path', None)
+
+        self.proportion_taking_type = kwargs.get('proportion_taking_type', "random")
+        self.tiling_data = kwargs.get('tiling_data', False)
+        self.num_gen_repetitions = kwargs.get('num_gen_repetitions', 0)
+        self.type_load_data = kwargs.get('type_load_data', "img")
 
     def __str__(self):
         return f"\nInfoDirData:"+ \
-               f"\n\t common_dir_path: {self.common_dir_path}" if self.common_dir_path is not None else "" +\
-               f"\n\t dir_img_name: {self.dir_img_name}" +\
-               f"\n\t dir_mask_name: {self.dir_mask_name}" if self.common_dir_path is None else "" + \
+               (f"\n\t common_dir_path: {self.common_dir_path}" if self.common_dir_path is not None else "") +\
+               f"\n\t dir_img_name: {self.dir_img_name}" + \
+               (f"\n\t dir_mask_name: {self.dir_mask_name}" if self.common_dir_path is None else "") + \
                f"\n\t add_mask_prefix: {self.add_mask_prefix}" + \
                f"\n\t proportion_of_dataset: {self.proportion_of_dataset}" + \
                f"\n\t proportion_taking_type: {self.proportion_taking_type}" + \
@@ -197,7 +167,7 @@ class AugmentGenerator(Dataset):
             for work_index in work_indexes:
                 y.append(self.masks[work_index])
 
-            X, y = self.batch_transform(X, y, bool_tiling_batch)
+            X, y = self.batch_transform(X, y, bool_crop_batch=bool_tiling_batch)
 
             batch_statistic = None if self.class_statistic is None else self.calculate_batch_class_statictic(y)
 
@@ -247,11 +217,11 @@ class AugmentGenerator(Dataset):
             aug_masks = aug_masks.round()
         return aug_img, aug_masks
 
-    def batch_transform(self, img_batch, masks_batch, bool_tiling_batch):
+    def batch_transform(self, img_batch, masks_batch, bool_crop_batch):
         for i in range(self.transform_data.batch_size):
 
-            if bool_tiling_batch[i] == True:
-                img,mask = self.tiling_img(img_batch[i], masks_batch[i])
+            if bool_crop_batch[i] == True:
+                img,mask = self.random_crop_img(img_batch[i], masks_batch[i])
             else:
                 img, mask = img_batch[i], masks_batch[i]
 
@@ -259,7 +229,7 @@ class AugmentGenerator(Dataset):
         return img_batch, masks_batch
 
 
-    def tiling_img(self, x, y):
+    def random_crop_img(self, x, y):
         shape_y, shape_x = x.shape[-2:]
 
         size_y, size_x = self.transform_data.target_size
@@ -463,6 +433,7 @@ class DataGeneratorReaderAll:
         for mask in tqdm(self.all_masks, file=sys.stdout, desc='\tCalculate statistic', disable=self.silence_mode):
             num_pixels+= mask[0, :,:].size().numel()
             #print(num_pixels, mask.shape)
+            #print(mask.get_device())
 
             conv = torch.nn.Conv2d(in_channels=1,
                                    out_channels=1,
@@ -499,19 +470,18 @@ class DataGeneratorReaderAll:
         if name == "dev 255":
             return to_0_1_format_img
         elif name == "mean std":
-            self.img_normalization_fun = to_mean_std_format_img
+            return to_mean_std_format_img
         else:
             raise Exception(f"normalization function '{name}' is not define")
-
     def load_one_img(self, img_path):
         if self.transform_data.color_mode_img == "rgb":
-            image = io.imread(img_path)
+            image = read_img(img_path)
             # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         elif self.transform_data.color_mode_img == "hsv":
-            img = io.imread(img_path)
+            img = read_img(img_path)
             image = cv2.cvtColor(img, cv2.COLOR_RGB2HSV_FULL)
         elif self.transform_data.color_mode_img == "gray":
-            img = io.imread(img_path, as_gray=True)
+            img = read_img(img_path, as_gray=True)
             image = np.expand_dims(img, axis=-1)
         else:
             raise Exception(f"Don't known color_mode_img '{self.transform_data.color_mode_img}' ")
@@ -564,6 +534,7 @@ class DataGeneratorReaderAll:
             img_path = os.path.join(path_to_img_dir, name)
             img = self.load_one_img(img_path)
             img = self.img_normalization_fun(img)
+
             # Store samples
             imgs.append(img)
             repiter_list.append(info_dir_data.num_gen_repetitions + 1)
@@ -583,7 +554,7 @@ class DataGeneratorReaderAll:
                                              info_dir_data.add_mask_prefix + name)
 
                     if os.path.isfile(mask_path):
-                        mask_read = io.imread(mask_path, as_gray=True)
+                        mask_read = read_img(mask_path, as_gray=True)
                         masks = mask_read.astype(np.float32)
                         masks = self.mask_normalization_fun(masks)
                         if self.transform_data.binary_mask:

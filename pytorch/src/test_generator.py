@@ -1,10 +1,8 @@
 from dataGenerator import *
-from models import *
-from metrics import *
 
 import cv2
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 def to_0_255_format_img(in_img):
     max_val = in_img[:, :].max()

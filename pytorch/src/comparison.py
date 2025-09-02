@@ -1,20 +1,23 @@
-import numpy as np
-import cv2
-import os
-import json
-import math
+import sys
 
-import sklearn.metrics
+import pandas
+
+if not __name__ == "__main__":
+    sys.path.append("src/")
+
+import json
+import numpy as np
+import os
+import cv2
+
+import pandas as pd
+
+from test_metric import (METRIC_NAMES, METRIC_FUN)
 
 ############################################### передлелать структуру, вынеся сами метрики в отдельный файл
+############################################### сделать сохранение в таблицу пандаса
+from prepare_data import to_0_255_format_img
 
-def to_0_255_format_img(in_img):
-    max_val = in_img[:, :].max()
-    if max_val <= 1:
-        out_img = np.round(in_img * 255)
-        return out_img.astype(np.uint8)
-    else:
-        return in_img
 
 def viewImage(image, name_of_window):
     cv2.namedWindow(name_of_window, cv2.WINDOW_NORMAL)
@@ -22,184 +25,60 @@ def viewImage(image, name_of_window):
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
 
-def Jaccard(y_true, y_pred):
-    error = 0.0000001
-    y_true_bool = np.asarray(y_true, bool)  # Not necessary, if you keep your data
-    y_pred_bool = np.asarray(y_pred, bool)  # in a boolean array already!
 
-    intersection = np.double(np.bitwise_and(y_true_bool, y_pred_bool).sum())
-    union = np.double(np.bitwise_or(y_true_bool, y_pred_bool).sum())
-    return (intersection + error) / (union + error)
-
-def Dice(y_true, y_pred):
-    error = 0.0000001
-    y_true_bool = np.asarray(y_true, bool)  # Not necessary, if you keep your data
-    y_pred_bool = np.asarray(y_pred, bool)  # in a boolean array already!
-    intersection = np.double(np.bitwise_and(y_true_bool, y_pred_bool).sum())
-    union_and_intersection = y_true_bool.sum() + y_pred_bool.sum()
-    return (2. * intersection + error) / (union_and_intersection + error)
-
-def RI(y_true, y_pred):
-    try:
-        y_true = np.asarray(y_true, bool).astype(np.int32)
-        y_pred = np.asarray(y_pred, bool).astype(np.int32)
-        TN, FP, FN, TP = sklearn.metrics.confusion_matrix(y_true, y_pred).ravel()
-        n = len(y_true)
-        a = 0.5 * (TP * (TP - 1) + FP * (FP - 1) + TN * (TN - 1) + FN * (FN - 1))
-        b = 0.5 * ((TP + FN) ** 2 + (TN + FP) ** 2 - (TP ** 2 + TN ** 2 + FP ** 2 + FN ** 2))
-        c = 0.5 * ((TP + FP) ** 2 + (TN + FN) ** 2 - (TP ** 2 + TN ** 2 + FP ** 2 + FN ** 2))
-        d = n * (n - 1) / 2 - (a + b + c)
-
-        RI = (a + b) / (a + b + c + d)
-    except:
-        print("RI EXEPTION")
-        RI = 0
-
-    return RI
-
-def Accuracy(y_true, y_pred):
-    try:
-        y_true = np.asarray(y_true, bool).astype(np.int32)
-        y_pred = np.asarray(y_pred, bool).astype(np.int32)
-        TN, FP, FN, TP = sklearn.metrics.confusion_matrix(y_true, y_pred).ravel()
-        accuracy = float(TN + TP) / (TN + TP + FN + FP)
-    except:
-        print("Accuracy EXEPTION")
-        accuracy = 0
-    return accuracy
-
-def Precition(y_true, y_pred):
-    try:
-        y_true = np.asarray(y_true, bool).astype(np.int32)
-        y_pred = np.asarray(y_pred, bool).astype(np.int32)
-        TN, FP, FN, TP = sklearn.metrics.confusion_matrix(y_true, y_pred).ravel()
-        precition = float(TP) / (TP + FP)
-    except:
-        print("Precition EXEPTION")
-        precition = 0
-    return precition
-
-def Recall(y_true, y_pred):
-    try:
-        y_true = np.asarray(y_true, bool).astype(np.int32)
-        y_pred = np.asarray(y_pred, bool).astype(np.int32)
-        TN, FP, FN, TP = sklearn.metrics.confusion_matrix(y_true, y_pred).ravel()
-        recall = float(TP) / (TP + FN)
-    except:
-        print("Recall EXEPTION")
-        recall = 0
-    return recall
-
-def Fscore(y_true, y_pred):
-    try:
-        y_true = np.asarray(y_true, bool).astype(np.int32)
-        y_pred = np.asarray(y_pred, bool).astype(np.int32)
-        precition = Precition(y_true, y_pred)
-        recall = Recall(y_true, y_pred)
-
-        fscore = (2 * precition * recall) / (precition + recall)
-    except:
-        print("Fscore EXEPTION")
-        fscore = 0
-    return fscore
-
-def CrowdsourcingMetrics(y_true, y_pred):
-    y_true = np.asarray(y_true, bool).astype(np.int32).ravel()
-    y_pred = np.asarray(y_pred, bool).astype(np.int32).ravel()
-    n = len(y_true)
-    num_class = 1
-    pij_matrix = np.zeros((num_class + 1, num_class + 1), np.float64)
-
-    for i in range(len(y_true)):
-        pij_matrix[y_pred[i], y_true[i]] += 1
-    pij_matrix = pij_matrix / n  # pij_matrix.sum()
-
-    s_i_arr = np.zeros(pij_matrix.shape[0], np.float64)
-    for i in range(0, pij_matrix.shape[0]):
-        for j in range(pij_matrix.shape[1]):
-            s_i_arr[i] += pij_matrix[i][j]
-
-    t_j_arr = np.zeros(pij_matrix.shape[1], np.float64)
-    for j in range(0, pij_matrix.shape[1]):
-        for i in range(0, pij_matrix.shape[0]):
-            t_j_arr[j] += pij_matrix[i][j]
-
-    sqr_t_sum = (t_j_arr ** 2).sum()
-    sqr_s_sum = (s_i_arr ** 2).sum()
-    sqr_pij_sum = (pij_matrix ** 2).sum()
-
-    Vrand_split = sqr_pij_sum / sqr_t_sum
-    Vrand_merge = sqr_pij_sum / sqr_s_sum
-
-    Rand_Fscore = 2.0 * sqr_pij_sum / (sqr_t_sum + sqr_s_sum)
-
-    p_logp = 0
-    for i in range(0, pij_matrix.shape[0]):
-        for j in range(0, pij_matrix.shape[1]):
-            if pij_matrix[i, j] != 0:
-                p_logp += pij_matrix[i, j] * math.log(pij_matrix[i, j])
-    s_logs = 0
-    for s_i in s_i_arr[:]:
-        if s_i != 0:
-            s_logs -= s_i * math.log(s_i)
-    t_logt = 0
-    for t_j in t_j_arr[:]:
-        if t_j != 0:
-            t_logt -= t_j * math.log(t_j)
-
-    I = p_logp + s_logs + t_logt
-
-    Vinfo_split = I / (s_logs)
-    Vinfo_merge = I / (t_logt)
-
-    InformationTheoreticFscore = 2.0 * I / (s_logs + t_logt)
-
-    return [Vrand_split, Vrand_merge, Rand_Fscore, Vinfo_split, Vinfo_merge, InformationTheoreticFscore]
-
-def calculateMetric(y_true, y_pred, metrics = []):
-    result = []
-    for metric in metrics:
-        if metric.__name__ == "CrowdsourcingMetrics":
-            temp_result = metric(y_true, y_pred)
-            result += temp_result
-        else:
-            result.append(metric(y_true, y_pred))
-    return result
-
+def calculateMetrics(y_true, y_pred, using_metrics = []):
+    res = {}
+    df = pd.DataFrame()
+    for metric, names in using_metrics:
+        vals = metric(y_true, y_pred)
+        if not metric.__name__ == "CrowdsourcingMetrics":
+            vals = [vals]
+        for i, name in enumerate(names):
+            res[name] = vals[i]
+    return res
 
 # Вычисляет все данные метрики для каждого класса одного реального изображения с передачей предсказания модели
 def EvaluateSingleImageModelResultsFromPredict(etal_path,
-                                               model_predict,
+                                               model_predict_val,
                                                num_classes,
                                                class_names,
                                                using_metrics,
                                                threshold=128):
-    result = {}
+
+    img_name = model_predict_val[0]
+    model_output = model_predict_val[1]
+
+    res = {"test_img_name":img_name}
     # cycle through classes
     for i in range(num_classes):
         class_name = class_names[i]
+        predict_img = model_output.take(i, axis=-1)
 
-        etal_img_path = os.path.join(etal_path, class_name, model_predict[0])
+        etal_img_path = os.path.join(etal_path, class_name, img_name)
         etal = cv2.imread(etal_img_path, cv2.IMREAD_GRAYSCALE)
         etal = to_0_255_format_img(etal)
         if (etal is None):
             print("error etal")
 
-        pred_img = model_predict[1] ######################################################################################### [:,:,i]
-        pred_img = to_0_255_format_img(pred_img)
+        pred_img = to_0_255_format_img(predict_img)
         if (pred_img is None):
             print("error predict img")
 
         # бинаризация с порогом (на всякий случай)
-        ret, bin_true = cv2.threshold(etal, threshold, 255, 0)
-        ret, bin_img_true = cv2.threshold(pred_img, threshold, 255, 0)
+        bin_true = etal.copy()
+        bin_true[bin_true<threshold]  =0
+        bin_true[bin_true>threshold-1]=255
+
+        bin_img_true = pred_img.copy()
+        bin_img_true[bin_img_true<threshold]  =0
+        bin_img_true[bin_img_true>threshold-1]=255
 
         # c векторами работать легче и нет требований на работу с окрестностями пикселей
         y_true = bin_true.ravel()
         y_pred = bin_img_true.ravel()
 
-        result[class_name.replace(' ', '_')] = calculateMetric(y_true, y_pred, using_metrics)
-    return result
+        res[class_name.replace(' ', '_')]=calculateMetrics(y_true, y_pred, using_metrics)
+    return res
 # Вычисляет все данные метрики для каждого класса одного реального изображения
 def EvaluateSingleImageModelResults(etal_path,
                                     predict_path,
@@ -238,7 +117,7 @@ def EvaluateMergeImageModelResultsFromPredict(etal_path,
                                               class_names,
                                               using_metrics,
                                               threshold=128):
-    result = {}
+    res = {"test_img_name": f"combined_prediction_by_{len(model_predicts)}_images"}
     # cycle through classes
     for i in range(num_classes):
         class_name = class_names[i]
@@ -256,8 +135,13 @@ def EvaluateMergeImageModelResultsFromPredict(etal_path,
             # обработка предикта на всякий случай
             pred_img = to_0_255_format_img(pred_img.take(i, axis=-1))
             # бинаризация с порогом (на всякий случай)
-            ret, bin_true = cv2.threshold(etal, threshold, 255, 0)
-            ret, bin_pred = cv2.threshold(pred_img, threshold, 255, 0)
+            bin_true = etal.copy()
+            bin_true[bin_true < threshold] = 0
+            bin_true[bin_true > threshold - 1] = 255
+
+            bin_pred = pred_img.copy()
+            bin_pred[bin_pred < threshold] = 0
+            bin_pred[bin_pred > threshold - 1] = 255
 
             etalons_merge.append(bin_true)
             pred_imgs_merge.append(bin_pred)
@@ -266,8 +150,8 @@ def EvaluateMergeImageModelResultsFromPredict(etal_path,
         y_true = np.array(etalons_merge).ravel()
         y_pred = np.array(pred_imgs_merge).ravel()
 
-        result[class_name.replace(' ', '_')] = calculateMetric(y_true, y_pred, using_metrics)
-    return result
+        res[class_name.replace(' ', '_')] = calculateMetrics(y_true, y_pred, using_metrics)
+    return res
 # Вычисляет все данные метрики для каждого класса со всеми эталонами сразу
 def EvaluateMergeImageModelResults(etal_path,
                                    predict_path,
@@ -296,14 +180,20 @@ def EvaluateMergeImageModelResults(etal_path,
     return EvaluateMergeImageModelResultsFromPredict(etal_path, model_predicts, num_classes, class_names, using_metrics, threshold=threshold)
 
 
-def GetTestMetric(model_name, result_mertic_data, using_metrics, is_print = True, is_all = False):
+def GetTextMetric(result_mertic_data, using_metric_names, is_print = True, is_all = False):
+    model_name = result_mertic_data["Model_name"]
+    result_mertic_data = result_mertic_data["Metrics"]
 
     text_metrics = ""
     text_metrics_all = ""
 
     classes = {}
+    test_img_names = []
     for class_name_and_metrics in result_mertic_data:
+        test_img_names.append(class_name_and_metrics.pop("test_img_name"))
+
         for class_name, metrics in class_name_and_metrics.items():
+
             if not class_name in classes.keys():
                 classes[class_name] = [metrics]
             else:
@@ -313,33 +203,33 @@ def GetTestMetric(model_name, result_mertic_data, using_metrics, is_print = True
     text_metrics += title
     text_metrics_all += title
 
-    str_metric_name_info = " ".join([metric_name.__name__ for metric_name in using_metrics])
+    str_metric_name_info = " ".join(using_metric_names)
 
     metric_name_info = f"\tclass {str_metric_name_info}\n"
     text_metrics += metric_name_info
     text_metrics_all += metric_name_info
 
-
     for class_name, metrics_all in classes.items():
         text_metrics_all += f"\t{class_name}"
         for metrics in metrics_all:
-            str_metrics = " ".join([f"{val:.3f}" for val in metrics])
+            str_metrics = " ".join([f"{metrics[metric_name]:.3f}" for metric_name in using_metric_names])
             text_metrics_all += f"\t\t[{str_metrics}]\n"
 
     for class_name, metrics_all in classes.items():
-        mean_metric = None
-        num_images = len(metrics_all)
-        for metrics in metrics_all:
-            if mean_metric is None:
-                mean_metric = metrics
-            else:
-                for i, metric in enumerate(metrics):
-                    mean_metric[i] += metric
+        means_vals = []
+        for metric_name in using_metric_names:
+            mean_metric = None
+            num_images = len(metrics_all)
+            for metrics in metrics_all:
+                if mean_metric is None:
+                    mean_metric = metrics[metric_name]
+                else:
+                    mean_metric += metrics[metric_name]
 
-        for i in range(len(mean_metric)):
-            mean_metric[i] /= num_images
+            mean_metric /= num_images
+            means_vals.append(mean_metric)
 
-        str_metrics = " ".join([f"{val:.3f}" for val in mean_metric])
+        str_metrics = " ".join([f"{val:.3f}" for val in means_vals])
         text_metrics += f"\t{class_name} {str_metrics}\n"
 
     text_metrics = text_metrics.replace(".", ",") + '\n'
@@ -351,30 +241,31 @@ def GetTestMetric(model_name, result_mertic_data, using_metrics, is_print = True
             print(text_metrics)
     return text_metrics, text_metrics_all
 
-def GetFinalTestMetricForExcel(dict_results_mertics_data, using_metrics, class_names, is_print = True):
+def GetFinalTestMetricForExcel(dict_results_mertics_data, using_metric_names, class_names, is_print = True):
 
     text_metrics = "Model;Metric"
     for class_name in class_names:
         text_metrics += f";{class_name.replace(' ', '_')}"
     text_metrics += '\n'
 
-    for model_name in dict_results_mertics_data.keys():
-        result_mertic_data = dict_results_mertics_data[model_name]
+    for model_test_res in dict_results_mertics_data:
+        model_name = model_test_res["Model_name"]
+        result_mertic_data = model_test_res["Metrics"]
 
         #[imgs{classnames[metric[]]}] -> {metric{classnames[imgs]}}
         dict_metrics = {}
 
         for class_name_and_metrics in result_mertic_data:
             for class_name, metrics in class_name_and_metrics.items():
-                for metric_id, metric in enumerate(metrics):
-                    metric_name = using_metrics[metric_id].__name__
+                for metric_name in using_metric_names:
+
                     if not metric_name in dict_metrics.keys():
                         dict_metrics[metric_name] = {}
 
                     if not class_name in dict_metrics[metric_name].keys():
-                        dict_metrics[metric_name][class_name] = [metric]
+                        dict_metrics[metric_name][class_name] = [metrics[metric_name]]
                     else:
-                        dict_metrics[metric_name][class_name].append(metric)
+                        dict_metrics[metric_name][class_name].append(metrics[metric_name])
 
         for metric_name, classes_data in dict_metrics.items():
             text_metrics += f"{model_name};{metric_name}"
@@ -395,7 +286,7 @@ def CalulateMetricsDir(CNN_name,
                        etal_path = "G:/Data/Unet_multiclass/data/original data/testing",
                        predict_prefix = "predict_",
                        class_names = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"],
-                       using_metrics = [Jaccard, Dice, RI, Accuracy, Precition, Recall, Fscore, CrowdsourcingMetrics],
+                       using_metrics = ["Jaccard", "Dice", "RI", "Accuracy", "Precition", "Recall", "Fscore", "CrowdsourcingMetrics"],
                        save_report_path = None,
                        origin_image_path = 'original',
                        path_to_standart_model_result = "data/result/",
@@ -417,7 +308,6 @@ def CalulateMetricsDir(CNN_name,
     img_suffix = ('.png', '.jpg', '.jpeg')
     etal_image_names = [name for name in os.listdir(os.path.join(etal_path, origin_image_path)) if
                         name.endswith(img_suffix)]
-    print(etal_image_names)
     if len(etal_image_names) == 0:
         print("ERROR !!! NO ETALONS")
 
@@ -442,7 +332,7 @@ def CalulateMetricsDir(CNN_name,
                                                                  using_metrics=using_metrics)
             model_results.append(model_results_temp)
 
-    text_result, text_result_all = GetTestMetric(CNN_name, model_results, using_metrics, is_print=is_print_metric)
+    text_result, text_result_all = GetTextMetric(CNN_name, model_results, using_metrics, is_print=is_print_metric)
     test_for_excel = GetFinalTestMetricForExcel({CNN_name: model_results}, using_metrics, class_names, is_print=is_print_metric)
 
     if save_report_path is not None:
@@ -466,9 +356,9 @@ def CalulateMetricsDir(CNN_name,
             file_all.write(text_result_all)
             print(f"{CNN_name}{'_merge' if merge_images else ''}_all.txt was saved")
 
-        with open(os.path.join(save_report_path, f'excel_{CNN_name}{"_merge" if merge_images else ""}.txt'),'w') as file_for_excel:
+        with open(os.path.join(save_report_path, f'excel_{CNN_name}{"_merge" if merge_images else ""}.csv'),'w') as file_for_excel:
             file_for_excel.write(test_for_excel)
-            print(f"excel_{CNN_name}{'_merge' if merge_images else ''}.txt was saved")
+            print(f"excel_{CNN_name}{'_merge' if merge_images else ''}.csv was saved")
 
     return model_results, text_result, text_result_all
 
@@ -478,7 +368,7 @@ def CalulateMetricsDirListModels(CNN_names,
                                  etal_path = "G:/Data/Unet_multiclass/data/original data/testing",
                                  predict_prefix = "predict_",
                                  class_names = ["mitochondria", "PSD", "vesicles", "axon", "boundaries", "mitochondrial boundaries"],
-                                 using_metrics = [Jaccard, Dice, RI, Accuracy, Precition, Recall, Fscore, CrowdsourcingMetrics],
+                                 using_metrics = ["Jaccard", "Dice", "RI", "Accuracy", "Precition", "Recall", "Fscore", "CrowdsourcingMetrics"],
                                  save_report_path = "data/report/",
                                  origin_image_path = 'original',
                                  path_to_standart_model_result = "data/result/",
@@ -536,37 +426,42 @@ def CalulateMetricsDirListModels(CNN_names,
 
     return all_text_results, all_text_results_all
 
-
 def CalulateMetricsFromModelPredict(model_predicts,
                                     CNN_name,
                                     num_classes,
                                     etal_path = "G:/Data/Unet_multiclass/data/original data/testing",
                                     class_names = None,
-                                    using_metrics = [Jaccard, Dice, RI, Accuracy, Precition, Recall, Fscore, CrowdsourcingMetrics],
+                                    using_metric_names = ["Jaccard", "Dice", "RI", "Accuracy", "Precition", "Recall", "Fscore", "CrowdsourcingMetrics"],
                                     save_report_path = None,
                                     merge_images = True,
                                     is_print_metric = True
-                                   ):
+                                    ):
 
+
+
+    using_metrics = [(METRIC_FUN[name], METRIC_NAMES[name]) for name in using_metric_names]
+
+    model_results = {"Model_name": CNN_name}
     if merge_images:
         res = EvaluateMergeImageModelResultsFromPredict(etal_path,
                                                         model_predicts,
                                                         num_classes=num_classes,
                                                         class_names=class_names,
                                                         using_metrics=using_metrics)
-        model_results = [res]
+
+        model_results["Metrics"] = [res]
     else:
-        model_results = []
+        model_results["Metrics"] = []
         for one_model_predict in model_predicts:
             model_results_temp = EvaluateSingleImageModelResultsFromPredict(etal_path,
                                                                             one_model_predict,
                                                                             num_classes=num_classes,
                                                                             class_names=class_names,
                                                                             using_metrics=using_metrics)
-            model_results.append(model_results_temp)
+            model_results["Metrics"].append(model_results_temp)
 
-    text_result, text_result_all = GetTestMetric(CNN_name, model_results, using_metrics, is_print=is_print_metric)
-    test_for_excel = GetFinalTestMetricForExcel({CNN_name: model_results}, using_metrics, class_names, is_print=is_print_metric)
+    text_result, text_result_all = GetTextMetric(model_results, using_metric_names, is_print=is_print_metric)
+    test_for_excel = GetFinalTestMetricForExcel([model_results], using_metric_names, class_names, is_print=is_print_metric)
 
     if save_report_path is not None:
         if not os.path.isdir(save_report_path):
@@ -589,9 +484,9 @@ def CalulateMetricsFromModelPredict(model_predicts,
             file_all.write(text_result_all)
             print(f"{CNN_name}{'_merge' if merge_images else ''}_all.txt was saved")
 
-        with open(os.path.join(save_report_path, f'excel_{CNN_name}{"_merge" if merge_images else ""}.txt'),'w') as file_for_excel:
+        with open(os.path.join(save_report_path, f'excel_{CNN_name}{"_merge" if merge_images else ""}.csv'),'w') as file_for_excel:
             file_for_excel.write(test_for_excel)
-            print(f"excel_{CNN_name}{'_merge' if merge_images else ''}.txt was saved")
+            print(f"excel_{CNN_name}{'_merge' if merge_images else ''}.csv was saved")
 
     return model_results, text_result, text_result_all
 
