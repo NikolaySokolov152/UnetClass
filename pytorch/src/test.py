@@ -23,7 +23,7 @@ from prepare_data import saveResultMask, tiledGen, prepare_list_batch_to_list_im
 from tilingImages import glit_image, split_image
 
 
-def getPipliner(path_dir_to_model, config_name):
+def getPipliner(path_dir_to_model, config_name, device=None):
     name_model = "model_by_" + config_name
 
     pipeliner_path = os.path.join(path_dir_to_model, name_model+"_pipeline.pkl")
@@ -44,14 +44,14 @@ def getPipliner(path_dir_to_model, config_name):
         type_task = type_experiment_parcer(config_file)
 
         hidden_params = {}
-        device = device_parcer(config_file)
+        use_device = device_parcer(config_file) if device is None else device
         classnames = classnames_parcer(config_file)
 
         model = Pipeliner(model_class,
                           last_activation,
                           num_classes,
                           num_channel,
-                          device,
+                          use_device,
                           silence_mode,
                           type_task,
                           hidden_params,
