@@ -20,7 +20,7 @@ Kasthuri_test_path = "D:/Data/mito_data/Kasthuri++/"
 UroCell_test_path = "D:/Data/mito_data/UroCell-master/"
 MouseNucleusAccumbens_test_path = "D:/Data/mito_data/Mouse nucleus accumbens jrc_mus-nacc-1/recon-1/"
 
-
+batch_test_size = 4
 
 def test_models_all_dir(path_to_model_data,
                         class_check_names,
@@ -78,6 +78,7 @@ def test_models_all_dir(path_to_model_data,
                                                             dataset_for_predict,
                                                             save_mask_dir=result_CNN_dir,
                                                             tiled_data=tiled_data,
+                                                            batch_size=batch_test_size,
                                                             # save_spliting_dir="data/split test/"
                                                             )
 
@@ -199,6 +200,10 @@ def test_by_using_config_in_dir(path_to_models, list_of_description_test_dataset
     if isinstance(path_to_models, str) and path_to_models.endswith(".json"):
         path_to_dir, file_name = os.path.split(path_to_models)
         config_file_names = [file_name]
+        work_path = path_to_dir
+    elif isinstance(path_to_models, list) and path_to_models[0].endswith(".json"):
+        path_to_dir = os.path.commonpath(path_to_models)
+        config_file_names = [name.replace(path_to_dir, "") for name in path_to_models]
         work_path = path_to_dir
     else:
         config_file_names = [name for name in os.listdir(path_to_models) if name.endswith(".json") and name.startswith("config_")]
@@ -513,7 +518,4 @@ if __name__ == "__main__":
 
 
     RunMultiTestsSeriesExpOnMultiDatasets("test_working", ["segmentation/2025_08_26"])
-
-    #RunMultiTestsSeriesExpOnMultiDatasets("multi datasets testing", ["F:/Data UnetClass/segmentation/segmentation 16.03.2025/Multiple_segmentation_stability_42_6_classes/config_diffusion_42_6_classes_seed_1924400995_6_classes_dataset_mix_tiny_unet_v3.json"])
-
     #runExperimentByLogs()

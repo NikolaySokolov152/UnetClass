@@ -122,7 +122,9 @@ def test_data(model_pipeliner,
                 tiled_arr, tile_info = split_image(img, save_spliting_dir, size, overlap, unique_area)
                 tile_info_list.append(tile_info)
                 list_of_tilled_imgs += tiled_arr
-
+                #for iterat, img_tile in enumerate(tiled_arr):
+                #    cv2.imshow(f"img {iterat}", img_tile)
+                #cv2.waitKey()
             img_generator = tiledGen(list_of_tilled_imgs, batch_size=batch_size)
             results = prepare_list_batch_to_list_imgs(model_pipeliner.predict(img_generator))
 
