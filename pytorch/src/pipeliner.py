@@ -14,10 +14,7 @@ from tqdm.auto import tqdm
 
 from activation_function import getActivationFunctionByName
 from history             import History
-from losses              import getLossFunUnion
-from metrics             import getCalcMetric, getMetricsAndName
 from models              import getModelClassByName
-from optimize_parser     import getOptimizerByName
 from prepare_data        import getPrepareDataFunction
 
 

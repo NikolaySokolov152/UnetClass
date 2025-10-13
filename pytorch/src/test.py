@@ -11,17 +11,75 @@ import time
 #from tqdm import tqdm
 from tqdm.auto import tqdm
 
-from config_parser_funs import (type_experiment_parcer,
-                                activation_parcer,
-                                silence_mode_parcer,
-                                device_parcer,
-                                num_class_channel_parcer,
-                                model_parcer,
-                                classnames_parcer)
 from pipeliner import Pipeliner
 from prepare_data import saveResultMask, tiledGen, prepare_list_batch_to_list_imgs, read_img, to_0_1_format_img
 from tilingImages import glit_image, split_image
 
+def type_experiment_parcer(dict_config):
+    return dict_config["model"]["experiment_type"]
+
+def model_parcer(dict_config):
+    if not dict_config["model"]["type_model"]:
+        return "tiny_unet_v3"
+    else:
+        return dict_config["model"]["type_model"]
+
+def activation_parcer(dict_config):
+    # GET LAST ACTIVATION
+    if not "last_activation" in dict_config["model"].keys():
+        last_activation = 'sigmoid_activation'
+    else:
+        last_activation = dict_config["model"]["last_activation"]
+    return last_activation
+
+def silence_mode_parcer(dict_config):
+    # GET LAST ACTIVATION
+    if "silence_mode" in dict_config.keys():
+        silence_mode = dict_config["silence_mode"]
+    else:
+        silence_mode = False
+    return silence_mode
+
+def device_parcer(dict_config):
+    # GET WORKING DEVICE
+    if not dict_config["device"]:
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    else:
+        if dict_config["device"].lower() == 'cuda':
+            if torch.cuda.is_available():
+                device = 'cuda'
+            else:
+                raise Exception("ERROR! Cuda device no working !")
+
+        elif dict_config["device"].lower() == 'cpu':
+            device = 'cpu'
+        else:
+            print("WARNING! I don't know what is using device, I will use the device as I see fit")
+            device = 'cuda' if torch.cuda.is_available() else 'cpu'
+            print("Using device:", device)
+    return device
+
+def num_class_channel_parcer(dict_config):
+    # GET MODEL
+    num_channel = 1 if dict_config["img_transform_data"]["color_mode_img"] == 'gray' else 3
+    n_classes = num_channel if dict_config["img_transform_data"]["mode_mask"] == "image" else dict_config["train"]["num_class"]
+    # Для диффузионки кол-во каналов для входа и выхода одинаковое
+    if type_experiment_parcer(dict_config)=="diffusion":
+        if dict_config["img_transform_data"]["mode_mask"] == "no_mask":
+            n_classes=0
+        num_channel=num_channel+n_classes
+        n_classes=num_channel
+
+    return n_classes, num_channel
+
+def classnames_parcer(dict_config):
+    # для чтения старых конфигов
+    if "mask_name_label_list" in dict_config.keys():
+        classnames = dict_config["mask_name_label_list"]
+    else:
+        classnames = dict_config["train"]["mask_name_label_list"]
+
+    return [name.replace(" ", "_") for name in classnames]
 
 def getPipliner(path_dir_to_model, config_name, device=None):
     name_model = "model_by_" + config_name
