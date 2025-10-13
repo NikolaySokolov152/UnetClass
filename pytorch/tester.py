@@ -49,7 +49,7 @@ def test_models_all_dir(path_to_model_data,
     dataset_for_predict = readPredictDataset(test_input_file_path, as_gray=True)
 
     for i in range(len(list_CNN_num_class)):
-        all_path_to_model = os.path.join(path_to_model_data, "model_to_" + CNN_config_name_list[i])
+        all_path_to_model = os.path.join(path_to_model_data, "model_by_" + CNN_config_name_list[i])
 
         print(f"predict model '{all_path_to_model}'")
         for overlap in overlap_list:
