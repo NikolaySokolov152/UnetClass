@@ -146,7 +146,7 @@ with gr.Blocks(fill_height=True) as demo:
         threshold_of_hybrid = gr.Number(value=0.5, label="Порог гибридной модели")
         #param2 = gr.Slider(0.1, 3.0, value=1.0, step=0.1, label="Пусть будет 2")
     
-    process_button = gr.Button("Сегментировать")
+    process_button = gr.Button("Запуск классификации")
 
     text_feild = gr.Textbox(label=f"Result", elem_id="result_feild", interactive=False, lines=10)
 
