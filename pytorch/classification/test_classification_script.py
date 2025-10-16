@@ -6,6 +6,10 @@ from src.metric import get_accuracy_by_name_list, get_loader_by_namelist, get_ac
 import torch
 from src.models import Custom_VGG, Custom_ResNet, Custom_EfficientNet, Custom_DenseNet
 
+
+num_of_test_data = 20
+threshold = 0.5
+
 def Hybrid_solution(outputs):
     hybrid_res = np.array(outputs)
     return hybrid_res.mean(axis=0)
@@ -21,7 +25,6 @@ with open('names_for_test.json', 'r') as file:
     test_name_data = json.load(file)
     print(len(test_name_data))
 
-num_of_test_data = 20
 
 test_imgs = random.sample(test_name_data, num_of_test_data)
 
@@ -97,8 +100,6 @@ result = [
     accuracy_model_densenet
 ]
 
-
-threshold = 0.5
 
 for i in range(len(result)): 
     print(f"Accuracy {names[i]} = {result[i].item():.3f},\t full val {np.abs(np.array(outputs[i]))}")
