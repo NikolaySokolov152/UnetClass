@@ -217,7 +217,7 @@ class Pipeliner:
         self.model.load_state_dict(model_weights)
 
     def load_model_weights_path(self, model_path):
-        self.model.load_state_dict(torch.load(model_path))
+        self.model.load_state_dict(torch.load(model_path, map_location=self.device, weights_only=True))
 
     def load_model_by_path(self, model_path):
         self.model = torch.load(model_path)

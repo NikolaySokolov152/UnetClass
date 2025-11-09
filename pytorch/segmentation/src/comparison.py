@@ -1,7 +1,5 @@
 import sys
 
-import pandas
-
 if not __name__ == "__main__":
     sys.path.append("src/")
 
@@ -10,7 +8,6 @@ import numpy as np
 import os
 import cv2
 
-import pandas as pd
 
 from test_metric import (METRIC_NAMES, METRIC_FUN)
 
@@ -28,7 +25,6 @@ def viewImage(image, name_of_window):
 
 def calculateMetrics(y_true, y_pred, using_metrics = []):
     res = {}
-    df = pd.DataFrame()
     for metric, names in using_metrics:
         vals = metric(y_true, y_pred)
         if not metric.__name__ == "CrowdsourcingMetrics":
