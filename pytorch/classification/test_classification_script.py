@@ -6,9 +6,9 @@ from src.metric import get_accuracy_by_name_list, get_loader_by_namelist, get_ac
 import torch
 from src.models import Custom_VGG, Custom_ResNet, Custom_EfficientNet, Custom_DenseNet
 
-
 num_of_test_data = 20
-threshold = 0.5
+threshold_of_hybrid = 0.5
+
 
 def Hybrid_solution(outputs):
     hybrid_res = np.array(outputs)
@@ -24,7 +24,6 @@ def threshold_val(hybrid_res, threshold):
 with open('names_for_test.json', 'r') as file:
     test_name_data = json.load(file)
     print(len(test_name_data))
-
 
 test_imgs = random.sample(test_name_data, num_of_test_data)
 
@@ -109,6 +108,6 @@ print(f"\nHibrid result {hybrid_res}")
 print(f"True result {etal_class_list}")
 
 n = len(etal_class_list)
-tp = (np.array(threshold_val(hybrid_res, threshold)) == np.array(etal_class_list)).sum()
+tp = (np.array(threshold_val(hybrid_res, threshold_of_hybrid)) == np.array(etal_class_list)).sum()
 
 print(f"Result accuracy {tp / n}")

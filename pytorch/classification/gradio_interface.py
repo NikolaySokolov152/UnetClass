@@ -1,7 +1,6 @@
 import gradio as gr
 import torch
 import numpy as np
-import cv2
 
 from src.metric import get_loader_by_namelist, get_accuracy_with_output
 from src.models import Custom_VGG, Custom_ResNet, Custom_EfficientNet, Custom_DenseNet
@@ -20,11 +19,8 @@ def read_image(image_path, device="cpu"):
     minv = img.min()
     maxv = img.max()
     img = (img - minv)/(maxv-minv) *255 if img.max() != img.min() else img
-    
-    (h, w) = img.shape[:2]
-    img = cv2.resize(img.astype(np.uint8), (h*3, w*3))
 
-    return img, data, targets
+    return img.astype(np.uint8), data, targets
 
 
 def init_models():
@@ -65,10 +61,9 @@ def calculate_hybrid_res(outputs_list, true_res, threshold_of_hybrid):
         return hybrid_res.mean(axis=0)
 
     def threshold_val(hybrid_res, threshold):
-        res = hybrid_res.copy()
-        res[hybrid_res<threshold] = 0
-        res[hybrid_res>0] = 1
-        return res.astype(int)
+        hybrid_res[hybrid_res<threshold] = 0
+        hybrid_res[hybrid_res>0] = 1
+        return hybrid_res.astype(int)
 
     hybrid_res = Hybrid_solution(outputs_list)
     n = len(true_res)
@@ -116,6 +111,30 @@ with gr.Blocks(fill_height=True) as demo:
         file_input = gr.File(label="Выберите файл", scale=10)
         input_image = gr.Image(label="Открытое изображение", elem_id="my_image", interactive=False, scale=10)
         redo_button = gr.Button("Сбросить ввод", elem_id="reset_button", scale=0)
+          
+    # Вставляем CSS через компонент HTML
+    style = """
+    <style>
+    /* Для больших экранов */
+    #my_image .gri-image {
+        height: 600px  !important;
+    }
+    /* Для средних экранов */
+    @media (max-width: 768px) {
+        #my_image .gri-image {
+            height: 400px  !important;
+        }
+    }
+    /* Для маленьких экранов */
+    @media (max-width: 480px) {
+        #my_image .gri-image {
+            height: 100px  !important;
+        }
+    }
+    </style>
+    """
+    gr.HTML(style)
+          
 
     # Изначально скрыт изображение
     input_image.visible = False
@@ -127,7 +146,7 @@ with gr.Blocks(fill_height=True) as demo:
         threshold_of_hybrid = gr.Number(value=0.5, label="Порог гибридной модели")
         #param2 = gr.Slider(0.1, 3.0, value=1.0, step=0.1, label="Пусть будет 2")
     
-    process_button = gr.Button("Запуск классификации")
+    process_button = gr.Button("Сегментировать")
 
     text_feild = gr.Textbox(label=f"Result", elem_id="result_feild", interactive=False, lines=10)
 

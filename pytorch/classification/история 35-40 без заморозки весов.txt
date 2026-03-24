@@ -1,0 +1,2772 @@
+(unetclass_v2) D:\Projects\UnetClass\pytorch\classification\v2>python train_exp.py
+number of all models 32
+use device: cuda
+use batch_size: 64
+number of train: 45757, number of test 11438
+use_sigmoid_fun True
+        create model vgg11
+        train model vgg11
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9706, loss= 0.0046: : 715it [04:15,  2.80it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9706, mean_epoch_loss = 0.0233
+
+Epoch [2/5], accuracy= 0.9732, loss= 0.0233: : 715it [03:50,  3.10it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9732, mean_epoch_loss = 0.0213
+
+Epoch [3/5], accuracy= 0.9728, loss= 0.0398: : 715it [03:51,  3.08it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9728, mean_epoch_loss = 0.0216
+
+Epoch [4/5], accuracy= 0.9747, loss= 0.0074: : 715it [03:50,  3.10it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9747, mean_epoch_loss = 0.0206
+
+Epoch [5/5], accuracy= 0.9765, loss= 0.0416: : 715it [03:50,  3.10it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9765, mean_epoch_loss = 0.0187
+
+                Finished Training
+179it [00:56,  3.15it/s]
+                Test result 0.9365273714065552
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9779, loss= 0.0068: : 715it [03:49,  3.12it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9779, mean_epoch_loss = 0.0178
+
+Epoch [2/5], accuracy= 0.9782, loss= 0.0348: : 715it [03:49,  3.11it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9782, mean_epoch_loss = 0.0174
+
+Epoch [3/5], accuracy= 0.9785, loss= 0.0244: : 715it [03:50,  3.10it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9785, mean_epoch_loss = 0.0171
+
+Epoch [4/5], accuracy= 0.9794, loss= 0.0361: : 715it [03:52,  3.07it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9794, mean_epoch_loss = 0.0165
+
+Epoch [5/5], accuracy= 0.9805, loss= 0.0094: : 715it [03:50,  3.10it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9805, mean_epoch_loss = 0.016
+
+                Finished Training
+179it [00:51,  3.49it/s]
+                Test result 0.935215950012207
+!RESULT! vgg11 __35 и 40_эпох__: [0.9365273714065552, 0.935215950012207]
+        create model vgg11_bn
+        train model vgg11_bn
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9655, loss= 0.0671: : 715it [04:15,  2.80it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9655, mean_epoch_loss = 0.0273
+
+Epoch [2/5], accuracy= 0.9671, loss= 0.0065: : 715it [04:52,  2.44it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9671, mean_epoch_loss = 0.0263
+
+Epoch [3/5], accuracy= 0.9677, loss= 0.0251: : 715it [04:53,  2.44it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9677, mean_epoch_loss = 0.0259
+
+Epoch [4/5], accuracy= 0.9679, loss= 0.0009: : 715it [04:53,  2.44it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9679, mean_epoch_loss = 0.026
+
+Epoch [5/5], accuracy= 0.969, loss= 0.0023: : 715it [04:50,  2.46it/s]
+        Epoch 5: mean_epoch_accuracy = 0.969, mean_epoch_loss = 0.0246
+
+                Finished Training
+179it [00:57,  3.09it/s]
+                Test result 0.9346913695335388
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9719, loss= 0.001: : 715it [04:46,  2.49it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9719, mean_epoch_loss = 0.0223
+
+Epoch [2/5], accuracy= 0.973, loss= 0.0081: : 715it [04:44,  2.51it/s]
+        Epoch 2: mean_epoch_accuracy = 0.973, mean_epoch_loss = 0.0219
+
+Epoch [3/5], accuracy= 0.9749, loss= 0.0089: : 715it [04:15,  2.80it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9749, mean_epoch_loss = 0.0201
+
+Epoch [4/5], accuracy= 0.9755, loss= 0.02: : 715it [04:17,  2.78it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9755, mean_epoch_loss = 0.0195
+
+Epoch [5/5], accuracy= 0.9756, loss= 0.0244: : 715it [04:09,  2.87it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9756, mean_epoch_loss = 0.0194
+
+                Finished Training
+179it [00:54,  3.29it/s]
+                Test result 0.9430844187736511
+!RESULT! vgg11_bn __35 и 40_эпох__: [0.9346913695335388, 0.9430844187736511]
+        create model vgg13
+        train model vgg13
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9716, loss= 0.0369: : 715it [04:26,  2.68it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9716, mean_epoch_loss = 0.0229
+
+Epoch [2/5], accuracy= 0.9726, loss= 0.0466: : 715it [04:22,  2.72it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9726, mean_epoch_loss = 0.0219
+
+Epoch [3/5], accuracy= 0.9739, loss= 0.0029: : 715it [04:23,  2.71it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9739, mean_epoch_loss = 0.0211
+
+Epoch [4/5], accuracy= 0.9755, loss= 0.0027: : 715it [04:27,  2.67it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9755, mean_epoch_loss = 0.0196
+
+Epoch [5/5], accuracy= 0.9768, loss= 0.0185: : 715it [04:47,  2.49it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9768, mean_epoch_loss = 0.0182
+
+                Finished Training
+179it [00:54,  3.29it/s]
+                Test result 0.934866189956665
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9782, loss= 0.0012: : 715it [05:06,  2.33it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9782, mean_epoch_loss = 0.0178
+
+Epoch [2/5], accuracy= 0.9788, loss= 0.0167: : 715it [05:32,  2.15it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9788, mean_epoch_loss = 0.0172
+
+Epoch [3/5], accuracy= 0.9793, loss= 0.0209: : 715it [05:40,  2.10it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9793, mean_epoch_loss = 0.0164
+
+Epoch [4/5], accuracy= 0.9802, loss= 0.0046: : 715it [05:48,  2.05it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9802, mean_epoch_loss = 0.0162
+
+Epoch [5/5], accuracy= 0.9804, loss= 0.0001: : 715it [05:40,  2.10it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9804, mean_epoch_loss = 0.0159
+
+                Finished Training
+179it [01:02,  2.85it/s]
+                Test result 0.9248994588851929
+!RESULT! vgg13 __35 и 40_эпох__: [0.934866189956665, 0.9248994588851929]
+        create model vgg13_bn
+        train model vgg13_bn
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9717, loss= 0.031: : 715it [05:23,  2.21it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9717, mean_epoch_loss = 0.0226
+
+Epoch [2/5], accuracy= 0.9726, loss= 0.0195: : 715it [04:51,  2.45it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9726, mean_epoch_loss = 0.022
+
+Epoch [3/5], accuracy= 0.9741, loss= 0.0107: : 715it [04:48,  2.48it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9741, mean_epoch_loss = 0.0206
+
+Epoch [4/5], accuracy= 0.9741, loss= 0.0154: : 715it [04:50,  2.46it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9741, mean_epoch_loss = 0.0202
+
+Epoch [5/5], accuracy= 0.9755, loss= 0.0198: : 715it [04:46,  2.50it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9755, mean_epoch_loss = 0.0194
+
+                Finished Training
+179it [00:55,  3.25it/s]
+                Test result 0.9355656504631042
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.977, loss= 0.0213: : 715it [04:44,  2.52it/s]
+        Epoch 1: mean_epoch_accuracy = 0.977, mean_epoch_loss = 0.0182
+
+Epoch [2/5], accuracy= 0.9789, loss= 0.0348: : 715it [04:44,  2.51it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9789, mean_epoch_loss = 0.0168
+
+Epoch [3/5], accuracy= 0.9793, loss= 0.0319: : 715it [05:18,  2.24it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9793, mean_epoch_loss = 0.0169
+
+Epoch [4/5], accuracy= 0.9797, loss= 0.0079: : 715it [04:46,  2.50it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9797, mean_epoch_loss = 0.0162
+
+Epoch [5/5], accuracy= 0.9802, loss= 0.0178: : 715it [04:48,  2.48it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9802, mean_epoch_loss = 0.0158
+
+                Finished Training
+179it [00:54,  3.28it/s]
+                Test result 0.9308445453643799
+!RESULT! vgg13_bn __35 и 40_эпох__: [0.9355656504631042, 0.9308445453643799]
+        create model vgg16
+        train model vgg16
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9697, loss= 0.0237: : 715it [04:44,  2.51it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9697, mean_epoch_loss = 0.0244
+
+Epoch [2/5], accuracy= 0.972, loss= 0.0325: : 715it [04:45,  2.51it/s]
+        Epoch 2: mean_epoch_accuracy = 0.972, mean_epoch_loss = 0.0226
+
+Epoch [3/5], accuracy= 0.9728, loss= 0.0254: : 715it [04:41,  2.54it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9728, mean_epoch_loss = 0.022
+
+Epoch [4/5], accuracy= 0.9742, loss= 0.024: : 715it [04:45,  2.50it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9742, mean_epoch_loss = 0.021
+
+Epoch [5/5], accuracy= 0.9748, loss= 0.0049: : 715it [04:39,  2.56it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9748, mean_epoch_loss = 0.0202
+
+                Finished Training
+179it [00:54,  3.29it/s]
+                Test result 0.9399370551109314
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9763, loss= 0.0228: : 715it [04:37,  2.58it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9763, mean_epoch_loss = 0.0195
+
+Epoch [2/5], accuracy= 0.978, loss= 0.011: : 715it [04:36,  2.59it/s]
+        Epoch 2: mean_epoch_accuracy = 0.978, mean_epoch_loss = 0.0179
+
+Epoch [3/5], accuracy= 0.9782, loss= 0.0125: : 715it [04:36,  2.59it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9782, mean_epoch_loss = 0.0174
+
+Epoch [4/5], accuracy= 0.9792, loss= 0.0157: : 715it [04:33,  2.61it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9792, mean_epoch_loss = 0.0167
+
+Epoch [5/5], accuracy= 0.9802, loss= 0.0001: : 715it [04:40,  2.55it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9802, mean_epoch_loss = 0.0161
+
+                Finished Training
+179it [00:55,  3.23it/s]
+                Test result 0.9359153509140015
+!RESULT! vgg16 __35 и 40_эпох__: [0.9399370551109314, 0.9359153509140015]
+        create model vgg16_bn
+        train model vgg16_bn
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9714, loss= 0.0242: : 715it [05:04,  2.35it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9714, mean_epoch_loss = 0.0228
+
+Epoch [2/5], accuracy= 0.9725, loss= 0.0147: : 715it [05:19,  2.24it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9725, mean_epoch_loss = 0.0221
+
+Epoch [3/5], accuracy= 0.9741, loss= 0.0043: : 715it [05:14,  2.27it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9741, mean_epoch_loss = 0.0206
+
+Epoch [4/5], accuracy= 0.9755, loss= 0.0214: : 715it [05:14,  2.28it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9755, mean_epoch_loss = 0.0197
+
+Epoch [5/5], accuracy= 0.9769, loss= 0.0152: : 715it [05:08,  2.32it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9769, mean_epoch_loss = 0.0183
+
+                Finished Training
+179it [00:56,  3.19it/s]
+                Test result 0.9307571053504944
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9772, loss= 0.0068: : 715it [05:10,  2.30it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9772, mean_epoch_loss = 0.018
+
+Epoch [2/5], accuracy= 0.9779, loss= 0.0493: : 715it [05:08,  2.32it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9779, mean_epoch_loss = 0.0175
+
+Epoch [3/5], accuracy= 0.98, loss= 0.0205: : 715it [05:08,  2.32it/s]
+        Epoch 3: mean_epoch_accuracy = 0.98, mean_epoch_loss = 0.0162
+
+Epoch [4/5], accuracy= 0.9808, loss= 0.0017: : 715it [05:08,  2.32it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9808, mean_epoch_loss = 0.0157
+
+Epoch [5/5], accuracy= 0.9794, loss= 0.0115: : 715it [05:12,  2.28it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9794, mean_epoch_loss = 0.0162
+
+                Finished Training
+179it [00:55,  3.20it/s]
+                Test result 0.9389753341674805
+!RESULT! vgg16_bn __35 и 40_эпох__: [0.9307571053504944, 0.9389753341674805]
+        create model vgg19
+        train model vgg19
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.967, loss= 0.0203: : 715it [05:02,  2.37it/s]
+        Epoch 1: mean_epoch_accuracy = 0.967, mean_epoch_loss = 0.0263
+
+Epoch [2/5], accuracy= 0.9694, loss= 0.0275: : 715it [05:30,  2.16it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9694, mean_epoch_loss = 0.0241
+
+Epoch [3/5], accuracy= 0.9704, loss= 0.0169: : 715it [05:12,  2.29it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9704, mean_epoch_loss = 0.0235
+
+Epoch [4/5], accuracy= 0.9716, loss= 0.0004: : 715it [05:06,  2.33it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9716, mean_epoch_loss = 0.0226
+
+Epoch [5/5], accuracy= 0.972, loss= 0.0012: : 715it [05:03,  2.36it/s]
+        Epoch 5: mean_epoch_accuracy = 0.972, mean_epoch_loss = 0.0226
+
+                Finished Training
+179it [00:56,  3.16it/s]
+                Test result 0.9439586997032166
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9744, loss= 0.046: : 715it [05:03,  2.35it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9744, mean_epoch_loss = 0.0206
+
+Epoch [2/5], accuracy= 0.9751, loss= 0.0334: : 715it [05:01,  2.37it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9751, mean_epoch_loss = 0.0201
+
+Epoch [3/5], accuracy= 0.9759, loss= 0.0068: : 715it [05:03,  2.36it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9759, mean_epoch_loss = 0.0191
+
+Epoch [4/5], accuracy= 0.9742, loss= 0.0207: : 715it [05:02,  2.37it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9742, mean_epoch_loss = 0.0204
+
+Epoch [5/5], accuracy= 0.9784, loss= 0.0086: : 715it [05:05,  2.34it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9784, mean_epoch_loss = 0.0176
+
+                Finished Training
+179it [00:57,  3.12it/s]
+                Test result 0.942122757434845
+!RESULT! vgg19 __35 и 40_эпох__: [0.9439586997032166, 0.942122757434845]
+        create model vgg19_bn
+        train model vgg19_bn
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9689, loss= 0.0418: : 715it [05:25,  2.20it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9689, mean_epoch_loss = 0.0247
+
+Epoch [2/5], accuracy= 0.9691, loss= 0.0563: : 715it [05:22,  2.22it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9691, mean_epoch_loss = 0.0244
+
+Epoch [3/5], accuracy= 0.9716, loss= 0.0465: : 715it [05:22,  2.22it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9716, mean_epoch_loss = 0.0226
+
+Epoch [4/5], accuracy= 0.9748, loss= 0.0029: : 715it [05:21,  2.23it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9748, mean_epoch_loss = 0.0204
+
+Epoch [5/5], accuracy= 0.9736, loss= 0.0341: : 715it [05:27,  2.19it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9736, mean_epoch_loss = 0.0208
+
+                Finished Training
+179it [00:56,  3.17it/s]
+                Test result 0.9363524913787842
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9755, loss= 0.0362: : 715it [05:22,  2.22it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9755, mean_epoch_loss = 0.0193
+
+Epoch [2/5], accuracy= 0.9766, loss= 0.0209: : 715it [05:19,  2.24it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9766, mean_epoch_loss = 0.0186
+
+Epoch [3/5], accuracy= 0.978, loss= 0.0253: : 715it [05:20,  2.23it/s]
+        Epoch 3: mean_epoch_accuracy = 0.978, mean_epoch_loss = 0.0182
+
+Epoch [4/5], accuracy= 0.9782, loss= 0.0278: : 715it [05:28,  2.18it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9782, mean_epoch_loss = 0.0174
+
+Epoch [5/5], accuracy= 0.9792, loss= 0.0123: : 715it [05:25,  2.20it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9792, mean_epoch_loss = 0.0166
+
+                Finished Training
+179it [00:57,  3.12it/s]
+                Test result 0.947281002998352
+!RESULT! vgg19_bn __35 и 40_эпох__: [0.9363524913787842, 0.947281002998352]
+        create model resnet18
+        train model resnet18
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9701, loss= 0.0265: : 715it [03:33,  3.34it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9701, mean_epoch_loss = 0.0232
+
+Epoch [2/5], accuracy= 0.972, loss= 0.0005: : 715it [03:33,  3.35it/s]
+        Epoch 2: mean_epoch_accuracy = 0.972, mean_epoch_loss = 0.0219
+
+Epoch [3/5], accuracy= 0.9736, loss= 0.0218: : 715it [03:32,  3.36it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9736, mean_epoch_loss = 0.0209
+
+Epoch [4/5], accuracy= 0.9741, loss= 0.0294: : 715it [03:33,  3.35it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9741, mean_epoch_loss = 0.0198
+
+Epoch [5/5], accuracy= 0.9762, loss= 0.0058: : 715it [03:32,  3.36it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9762, mean_epoch_loss = 0.0187
+
+                Finished Training
+179it [00:48,  3.72it/s]
+                Test result 0.9434341192245483
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9755, loss= 0.0131: : 715it [03:31,  3.38it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9755, mean_epoch_loss = 0.0192
+
+Epoch [2/5], accuracy= 0.9771, loss= 0.0366: : 715it [03:32,  3.37it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9771, mean_epoch_loss = 0.0178
+
+Epoch [3/5], accuracy= 0.9788, loss= 0.0008: : 715it [03:30,  3.39it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9788, mean_epoch_loss = 0.0169
+
+Epoch [4/5], accuracy= 0.9785, loss= 0.0003: : 715it [03:31,  3.38it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9785, mean_epoch_loss = 0.0167
+
+Epoch [5/5], accuracy= 0.9796, loss= 0.0174: : 715it [03:31,  3.37it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9796, mean_epoch_loss = 0.0159
+
+                Finished Training
+179it [00:48,  3.68it/s]
+                Test result 0.9394999146461487
+!RESULT! resnet18 __35 и 40_эпох__: [0.9434341192245483, 0.9394999146461487]
+        create model resnet34
+        train model resnet34
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9705, loss= 0.0415: : 715it [03:40,  3.24it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9705, mean_epoch_loss = 0.0235
+
+Epoch [2/5], accuracy= 0.9725, loss= 0.0073: : 715it [03:40,  3.24it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9725, mean_epoch_loss = 0.0219
+
+Epoch [3/5], accuracy= 0.9734, loss= 0.003: : 715it [03:39,  3.26it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9734, mean_epoch_loss = 0.0208
+
+Epoch [4/5], accuracy= 0.9751, loss= 0.0324: : 715it [03:39,  3.25it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9751, mean_epoch_loss = 0.0195
+
+Epoch [5/5], accuracy= 0.9762, loss= 0.0173: : 715it [03:39,  3.26it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9762, mean_epoch_loss = 0.0189
+
+                Finished Training
+179it [00:49,  3.65it/s]
+                Test result 0.9322434067726135
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9778, loss= 0.0255: : 715it [03:38,  3.27it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9778, mean_epoch_loss = 0.0176
+
+Epoch [2/5], accuracy= 0.9774, loss= 0.0213: : 715it [03:38,  3.27it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9774, mean_epoch_loss = 0.0176
+
+Epoch [3/5], accuracy= 0.9795, loss= 0.0376: : 715it [03:39,  3.26it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9795, mean_epoch_loss = 0.0163
+
+Epoch [4/5], accuracy= 0.9804, loss= 0.0114: : 715it [03:39,  3.26it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9804, mean_epoch_loss = 0.0153
+
+Epoch [5/5], accuracy= 0.9807, loss= 0.0187: : 715it [03:39,  3.26it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9807, mean_epoch_loss = 0.0153
+
+                Finished Training
+179it [00:49,  3.64it/s]
+                Test result 0.9464067220687866
+!RESULT! resnet34 __35 и 40_эпох__: [0.9322434067726135, 0.9464067220687866]
+        create model resnet50
+        train model resnet50
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.972, loss= 0.018: : 715it [03:54,  3.04it/s]
+        Epoch 1: mean_epoch_accuracy = 0.972, mean_epoch_loss = 0.0219
+
+Epoch [2/5], accuracy= 0.9751, loss= 0.0308: : 715it [03:53,  3.06it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9751, mean_epoch_loss = 0.0198
+
+Epoch [3/5], accuracy= 0.9749, loss= 0.0112: : 715it [03:54,  3.05it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9749, mean_epoch_loss = 0.0195
+
+Epoch [4/5], accuracy= 0.9764, loss= 0.0039: : 715it [03:54,  3.05it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9764, mean_epoch_loss = 0.0185
+
+Epoch [5/5], accuracy= 0.9759, loss= 0.0385: : 715it [03:53,  3.06it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9759, mean_epoch_loss = 0.0183
+
+                Finished Training
+179it [00:51,  3.47it/s]
+                Test result 0.9339045286178589
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9786, loss= 0.0063: : 715it [03:54,  3.05it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9786, mean_epoch_loss = 0.0168
+
+Epoch [2/5], accuracy= 0.9791, loss= 0.0018: : 715it [03:55,  3.04it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9791, mean_epoch_loss = 0.016
+
+Epoch [3/5], accuracy= 0.9808, loss= 0.0075: : 715it [03:55,  3.04it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9808, mean_epoch_loss = 0.0153
+
+Epoch [4/5], accuracy= 0.9818, loss= 0.0397: : 715it [03:55,  3.03it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9818, mean_epoch_loss = 0.0145
+
+Epoch [5/5], accuracy= 0.9822, loss= 0.0308: : 715it [03:55,  3.04it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9822, mean_epoch_loss = 0.014
+
+                Finished Training
+179it [00:52,  3.43it/s]
+                Test result 0.9354782104492188
+!RESULT! resnet50 __35 и 40_эпох__: [0.9339045286178589, 0.9354782104492188]
+        create model resnet101
+        train model resnet101
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9735, loss= 0.0064: : 715it [04:19,  2.75it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9735, mean_epoch_loss = 0.0211
+
+Epoch [2/5], accuracy= 0.9745, loss= 0.0144: : 715it [04:20,  2.75it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9745, mean_epoch_loss = 0.0198
+
+Epoch [3/5], accuracy= 0.9772, loss= 0.0024: : 715it [04:20,  2.75it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9772, mean_epoch_loss = 0.0181
+
+Epoch [4/5], accuracy= 0.9773, loss= 0.0209: : 715it [04:20,  2.74it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9773, mean_epoch_loss = 0.0177
+
+Epoch [5/5], accuracy= 0.9797, loss= 0.0366: : 715it [04:23,  2.71it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9797, mean_epoch_loss = 0.0158
+
+                Finished Training
+179it [00:55,  3.25it/s]
+                Test result 0.9373142123222351
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.98, loss= 0.0033: : 715it [04:21,  2.74it/s]
+        Epoch 1: mean_epoch_accuracy = 0.98, mean_epoch_loss = 0.0158
+
+Epoch [2/5], accuracy= 0.9806, loss= 0.0075: : 715it [04:21,  2.73it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9806, mean_epoch_loss = 0.0151
+
+Epoch [3/5], accuracy= 0.9821, loss= 0.0011: : 715it [04:20,  2.74it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9821, mean_epoch_loss = 0.0142
+
+Epoch [4/5], accuracy= 0.9828, loss= 0.0089: : 715it [04:20,  2.75it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9828, mean_epoch_loss = 0.0139
+
+Epoch [5/5], accuracy= 0.9833, loss= 0.0145: : 715it [04:20,  2.74it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9833, mean_epoch_loss = 0.0129
+
+                Finished Training
+179it [00:54,  3.28it/s]
+                Test result 0.9443958401679993
+!RESULT! resnet101 __35 и 40_эпох__: [0.9373142123222351, 0.9443958401679993]
+        create model resnet152
+        train model resnet152
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9752, loss= 0.0047: : 715it [04:48,  2.48it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9752, mean_epoch_loss = 0.0196
+
+Epoch [2/5], accuracy= 0.9762, loss= 0.025: : 715it [04:49,  2.47it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9762, mean_epoch_loss = 0.0188
+
+Epoch [3/5], accuracy= 0.9776, loss= 0.0256: : 715it [04:48,  2.48it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9776, mean_epoch_loss = 0.0178
+
+Epoch [4/5], accuracy= 0.9793, loss= 0.0007: : 715it [04:48,  2.48it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9793, mean_epoch_loss = 0.0163
+
+Epoch [5/5], accuracy= 0.9791, loss= 0.0084: : 715it [04:48,  2.48it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9791, mean_epoch_loss = 0.016
+
+                Finished Training
+179it [00:54,  3.27it/s]
+                Test result 0.9469312429428101
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9805, loss= 0.0176: : 715it [04:47,  2.48it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9805, mean_epoch_loss = 0.0152
+
+Epoch [2/5], accuracy= 0.9822, loss= 0.0389: : 715it [04:48,  2.48it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9822, mean_epoch_loss = 0.0139
+
+Epoch [3/5], accuracy= 0.9816, loss= 0.0326: : 715it [04:48,  2.48it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9816, mean_epoch_loss = 0.0141
+
+Epoch [4/5], accuracy= 0.9833, loss= 0.011: : 715it [04:48,  2.48it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9833, mean_epoch_loss = 0.013
+
+Epoch [5/5], accuracy= 0.9839, loss= 0.0283: : 715it [04:48,  2.47it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9839, mean_epoch_loss = 0.0126
+
+                Finished Training
+179it [00:54,  3.26it/s]
+                Test result 0.9356530904769897
+!RESULT! resnet152 __35 и 40_эпох__: [0.9469312429428101, 0.9356530904769897]
+        create model efficientnet_b0
+        train model efficientnet_b0
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9733, loss= 0.0207: : 715it [03:38,  3.27it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9733, mean_epoch_loss = 0.0208
+
+Epoch [2/5], accuracy= 0.975, loss= 0.0714: : 715it [03:38,  3.28it/s]
+        Epoch 2: mean_epoch_accuracy = 0.975, mean_epoch_loss = 0.0195
+
+Epoch [3/5], accuracy= 0.9772, loss= 0.0218: : 715it [03:37,  3.28it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9772, mean_epoch_loss = 0.0181
+
+Epoch [4/5], accuracy= 0.9785, loss= 0.0167: : 715it [03:38,  3.27it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9785, mean_epoch_loss = 0.0167
+
+Epoch [5/5], accuracy= 0.9795, loss= 0.0326: : 715it [03:37,  3.29it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9795, mean_epoch_loss = 0.0161
+
+                Finished Training
+179it [00:48,  3.72it/s]
+                Test result 0.9372267723083496
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9798, loss= 0.0034: : 715it [03:37,  3.29it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9798, mean_epoch_loss = 0.0158
+
+Epoch [2/5], accuracy= 0.9816, loss= 0.0231: : 715it [03:36,  3.30it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9816, mean_epoch_loss = 0.0145
+
+Epoch [3/5], accuracy= 0.9818, loss= 0.0151: : 715it [03:37,  3.29it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9818, mean_epoch_loss = 0.0143
+
+Epoch [4/5], accuracy= 0.9825, loss= 0.0261: : 715it [03:37,  3.29it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9825, mean_epoch_loss = 0.0136
+
+Epoch [5/5], accuracy= 0.9831, loss= 0.0003: : 715it [03:36,  3.30it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9831, mean_epoch_loss = 0.0132
+
+                Finished Training
+179it [00:48,  3.72it/s]
+                Test result 0.9415981769561768
+!RESULT! efficientnet_b0 __35 и 40_эпох__: [0.9372267723083496, 0.9415981769561768]
+        create model efficientnet_b1
+        train model efficientnet_b1
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9758, loss= 0.0398: : 715it [03:46,  3.16it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9758, mean_epoch_loss = 0.0188
+
+Epoch [2/5], accuracy= 0.9787, loss= 0.0019: : 715it [03:47,  3.15it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9787, mean_epoch_loss = 0.0169
+
+Epoch [3/5], accuracy= 0.98, loss= 0.0299: : 715it [03:46,  3.15it/s]
+        Epoch 3: mean_epoch_accuracy = 0.98, mean_epoch_loss = 0.0163
+
+Epoch [4/5], accuracy= 0.9811, loss= 0.0354: : 715it [03:46,  3.15it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9811, mean_epoch_loss = 0.0149
+
+Epoch [5/5], accuracy= 0.9819, loss= 0.0118: : 715it [03:46,  3.15it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9819, mean_epoch_loss = 0.0143
+
+                Finished Training
+179it [00:49,  3.63it/s]
+                Test result 0.9366147518157959
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9828, loss= 0.0011: : 715it [03:46,  3.15it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9828, mean_epoch_loss = 0.0133
+
+Epoch [2/5], accuracy= 0.9836, loss= 0.0216: : 715it [03:47,  3.15it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9836, mean_epoch_loss = 0.0129
+
+Epoch [3/5], accuracy= 0.9839, loss= 0.005: : 715it [03:47,  3.15it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9839, mean_epoch_loss = 0.0125
+
+Epoch [4/5], accuracy= 0.985, loss= 0.0062: : 715it [03:47,  3.15it/s]
+        Epoch 4: mean_epoch_accuracy = 0.985, mean_epoch_loss = 0.0118
+
+Epoch [5/5], accuracy= 0.9856, loss= 0.0001: : 715it [03:46,  3.16it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9856, mean_epoch_loss = 0.0112
+
+                Finished Training
+179it [00:49,  3.62it/s]
+                Test result 0.9410735964775085
+!RESULT! efficientnet_b1 __35 и 40_эпох__: [0.9366147518157959, 0.9410735964775085]
+        create model efficientnet_b2
+        train model efficientnet_b2
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9771, loss= 0.0026: : 715it [03:49,  3.11it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9771, mean_epoch_loss = 0.0185
+
+Epoch [2/5], accuracy= 0.9777, loss= 0.0018: : 715it [03:49,  3.11it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9777, mean_epoch_loss = 0.0173
+
+Epoch [3/5], accuracy= 0.9796, loss= 0.0013: : 715it [03:50,  3.11it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9796, mean_epoch_loss = 0.0163
+
+Epoch [4/5], accuracy= 0.9803, loss= 0.0135: : 715it [03:49,  3.11it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9803, mean_epoch_loss = 0.0155
+
+Epoch [5/5], accuracy= 0.9815, loss= 0.0546: : 715it [03:49,  3.11it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9815, mean_epoch_loss = 0.0148
+
+                Finished Training
+179it [00:49,  3.61it/s]
+                Test result 0.9337296485900879
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9821, loss= 0.0119: : 715it [03:49,  3.11it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9821, mean_epoch_loss = 0.0141
+
+Epoch [2/5], accuracy= 0.9832, loss= 0.0056: : 715it [03:50,  3.11it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9832, mean_epoch_loss = 0.0134
+
+Epoch [3/5], accuracy= 0.9836, loss= 0.0073: : 715it [03:49,  3.12it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9836, mean_epoch_loss = 0.013
+
+Epoch [4/5], accuracy= 0.9842, loss= 0.002: : 715it [03:49,  3.11it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9842, mean_epoch_loss = 0.0126
+
+Epoch [5/5], accuracy= 0.9845, loss= 0.0117: : 715it [03:49,  3.11it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9845, mean_epoch_loss = 0.0119
+
+                Finished Training
+179it [00:49,  3.60it/s]
+                Test result 0.933117687702179
+!RESULT! efficientnet_b2 __35 и 40_эпох__: [0.9337296485900879, 0.933117687702179]
+        create model efficientnet_b3
+        train model efficientnet_b3
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9781, loss= 0.0287: : 715it [04:02,  2.95it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9781, mean_epoch_loss = 0.0172
+
+Epoch [2/5], accuracy= 0.98, loss= 0.0293: : 715it [04:02,  2.95it/s]
+        Epoch 2: mean_epoch_accuracy = 0.98, mean_epoch_loss = 0.0159
+
+Epoch [3/5], accuracy= 0.9809, loss= 0.0066: : 715it [04:02,  2.95it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9809, mean_epoch_loss = 0.0149
+
+Epoch [4/5], accuracy= 0.9826, loss= 0.0033: : 715it [04:01,  2.96it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9826, mean_epoch_loss = 0.0137
+
+Epoch [5/5], accuracy= 0.9831, loss= 0.0037: : 715it [04:03,  2.94it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9831, mean_epoch_loss = 0.0133
+
+                Finished Training
+179it [00:51,  3.50it/s]
+                Test result 0.9248120188713074
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9837, loss= 0.0141: : 715it [04:02,  2.95it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9837, mean_epoch_loss = 0.0128
+
+Epoch [2/5], accuracy= 0.9854, loss= 0.0105: : 715it [04:02,  2.95it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9854, mean_epoch_loss = 0.0114
+
+Epoch [3/5], accuracy= 0.986, loss= 0.0272: : 715it [04:01,  2.96it/s]
+        Epoch 3: mean_epoch_accuracy = 0.986, mean_epoch_loss = 0.0112
+
+Epoch [4/5], accuracy= 0.9869, loss= 0.0159: : 715it [04:02,  2.95it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9869, mean_epoch_loss = 0.0105
+
+Epoch [5/5], accuracy= 0.9867, loss= 0.045: : 715it [04:02,  2.95it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9867, mean_epoch_loss = 0.0104
+
+                Finished Training
+179it [00:51,  3.50it/s]
+                Test result 0.9362650513648987
+!RESULT! efficientnet_b3 __35 и 40_эпох__: [0.9248120188713074, 0.9362650513648987]
+        create model efficientnet_b4
+        train model efficientnet_b4
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9701, loss= 0.051: : 715it [04:23,  2.71it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9701, mean_epoch_loss = 0.0238
+
+Epoch [2/5], accuracy= 0.9708, loss= 0.0228: : 715it [04:21,  2.73it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9708, mean_epoch_loss = 0.0231
+
+Epoch [3/5], accuracy= 0.9721, loss= 0.0111: : 715it [04:22,  2.72it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9721, mean_epoch_loss = 0.0219
+
+Epoch [4/5], accuracy= 0.9734, loss= 0.0261: : 715it [04:22,  2.72it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9734, mean_epoch_loss = 0.0206
+
+Epoch [5/5], accuracy= 0.9751, loss= 0.0241: : 715it [04:22,  2.72it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9751, mean_epoch_loss = 0.0199
+
+                Finished Training
+179it [00:53,  3.35it/s]
+                Test result 0.9318062663078308
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9767, loss= 0.0092: : 715it [04:22,  2.72it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9767, mean_epoch_loss = 0.0186
+
+Epoch [2/5], accuracy= 0.9773, loss= 0.0014: : 715it [04:22,  2.72it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9773, mean_epoch_loss = 0.018
+
+Epoch [3/5], accuracy= 0.9791, loss= 0.0388: : 715it [04:23,  2.72it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9791, mean_epoch_loss = 0.0166
+
+Epoch [4/5], accuracy= 0.9793, loss= 0.0152: : 715it [04:23,  2.71it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9793, mean_epoch_loss = 0.0162
+
+Epoch [5/5], accuracy= 0.9807, loss= 0.0023: : 715it [04:23,  2.71it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9807, mean_epoch_loss = 0.0152
+
+                Finished Training
+179it [00:53,  3.36it/s]
+                Test result 0.9401993155479431
+!RESULT! efficientnet_b4 __35 и 40_эпох__: [0.9318062663078308, 0.9401993155479431]
+        create model efficientnet_b5
+        train model efficientnet_b5
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9807, loss= 0.0169: : 715it [04:52,  2.45it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9807, mean_epoch_loss = 0.0155
+
+Epoch [2/5], accuracy= 0.9814, loss= 0.0066: : 715it [04:51,  2.45it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9814, mean_epoch_loss = 0.0146
+
+Epoch [3/5], accuracy= 0.9828, loss= 0.0085: : 715it [04:51,  2.45it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9828, mean_epoch_loss = 0.0132
+
+Epoch [4/5], accuracy= 0.9832, loss= 0.0213: : 715it [04:52,  2.44it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9832, mean_epoch_loss = 0.0128
+
+Epoch [5/5], accuracy= 0.9851, loss= 0.0148: : 715it [04:52,  2.45it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9851, mean_epoch_loss = 0.0117
+
+                Finished Training
+179it [00:54,  3.31it/s]
+                Test result 0.9402867555618286
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9856, loss= 0.0005: : 715it [04:52,  2.45it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9856, mean_epoch_loss = 0.0115
+
+Epoch [2/5], accuracy= 0.9859, loss= 0.0037: : 715it [04:51,  2.45it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9859, mean_epoch_loss = 0.0112
+
+Epoch [3/5], accuracy= 0.9869, loss= 0.0001: : 715it [04:52,  2.45it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9869, mean_epoch_loss = 0.0103
+
+Epoch [4/5], accuracy= 0.9879, loss= 0.024: : 715it [04:52,  2.45it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9879, mean_epoch_loss = 0.0096
+
+Epoch [5/5], accuracy= 0.9873, loss= 0.0178: : 715it [04:52,  2.44it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9873, mean_epoch_loss = 0.0099
+
+                Finished Training
+179it [00:54,  3.29it/s]
+                Test result 0.9446581602096558
+!RESULT! efficientnet_b5 __35 и 40_эпох__: [0.9402867555618286, 0.9446581602096558]
+        create model efficientnet_v2_s
+        train model efficientnet_v2_s
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9764, loss= 0.0115: : 715it [04:04,  2.92it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9764, mean_epoch_loss = 0.0185
+
+Epoch [2/5], accuracy= 0.9791, loss= 0.0215: : 715it [04:05,  2.91it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9791, mean_epoch_loss = 0.0166
+
+Epoch [3/5], accuracy= 0.9796, loss= 0.0235: : 715it [04:05,  2.91it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9796, mean_epoch_loss = 0.0159
+
+Epoch [4/5], accuracy= 0.9807, loss= 0.0242: : 715it [04:04,  2.92it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9807, mean_epoch_loss = 0.015
+
+Epoch [5/5], accuracy= 0.9832, loss= 0.0081: : 715it [04:04,  2.92it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9832, mean_epoch_loss = 0.0138
+
+                Finished Training
+179it [00:51,  3.51it/s]
+                Test result 0.935215950012207
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9839, loss= 0.0015: : 715it [04:04,  2.92it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9839, mean_epoch_loss = 0.0129
+
+Epoch [2/5], accuracy= 0.9833, loss= 0.0039: : 715it [04:04,  2.92it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9833, mean_epoch_loss = 0.0131
+
+Epoch [3/5], accuracy= 0.9848, loss= 0.0003: : 715it [04:04,  2.92it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9848, mean_epoch_loss = 0.012
+
+Epoch [4/5], accuracy= 0.9852, loss= 0.0007: : 715it [04:05,  2.91it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9852, mean_epoch_loss = 0.0118
+
+Epoch [5/5], accuracy= 0.9855, loss= 0.0069: : 715it [04:05,  2.92it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9855, mean_epoch_loss = 0.0115
+
+                Finished Training
+179it [00:50,  3.51it/s]
+                Test result 0.940986156463623
+!RESULT! efficientnet_v2_s __35 и 40_эпох__: [0.935215950012207, 0.940986156463623]
+        create model efficientnet_v2_m
+        train model efficientnet_v2_m
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9787, loss= 0.0038: : 715it [04:47,  2.49it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9787, mean_epoch_loss = 0.017
+
+Epoch [2/5], accuracy= 0.9797, loss= 0.0136: : 715it [04:46,  2.49it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9797, mean_epoch_loss = 0.0158
+
+Epoch [3/5], accuracy= 0.981, loss= 0.0297: : 715it [04:47,  2.49it/s]
+        Epoch 3: mean_epoch_accuracy = 0.981, mean_epoch_loss = 0.0148
+
+Epoch [4/5], accuracy= 0.9827, loss= 0.0228: : 715it [04:47,  2.49it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9827, mean_epoch_loss = 0.0137
+
+Epoch [5/5], accuracy= 0.9835, loss= 0.0043: : 715it [04:46,  2.50it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9835, mean_epoch_loss = 0.0129
+
+                Finished Training
+179it [00:54,  3.29it/s]
+                Test result 0.9369645118713379
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9839, loss= 0.0264: : 715it [04:47,  2.49it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9839, mean_epoch_loss = 0.0127
+
+Epoch [2/5], accuracy= 0.9851, loss= 0.0012: : 715it [04:46,  2.49it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9851, mean_epoch_loss = 0.0117
+
+Epoch [3/5], accuracy= 0.9857, loss= 0.0103: : 715it [04:46,  2.49it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9857, mean_epoch_loss = 0.0113
+
+Epoch [4/5], accuracy= 0.9861, loss= 0.0001: : 715it [04:47,  2.49it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9861, mean_epoch_loss = 0.0109
+
+Epoch [5/5], accuracy= 0.9866, loss= 0.021: : 715it [04:46,  2.50it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9866, mean_epoch_loss = 0.0106
+
+                Finished Training
+179it [00:54,  3.26it/s]
+                Test result 0.9345164895057678
+!RESULT! efficientnet_v2_m __35 и 40_эпох__: [0.9369645118713379, 0.9345164895057678]
+        create model densenet121
+        train model densenet121
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.965, loss= 0.0276: : 715it [03:59,  2.98it/s]
+        Epoch 1: mean_epoch_accuracy = 0.965, mean_epoch_loss = 0.0275
+
+Epoch [2/5], accuracy= 0.9687, loss= 0.0237: : 715it [03:59,  2.98it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9687, mean_epoch_loss = 0.0253
+
+Epoch [3/5], accuracy= 0.9705, loss= 0.0188: : 715it [03:59,  2.99it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9705, mean_epoch_loss = 0.0237
+
+Epoch [4/5], accuracy= 0.972, loss= 0.0187: : 715it [03:58,  3.00it/s]
+        Epoch 4: mean_epoch_accuracy = 0.972, mean_epoch_loss = 0.022
+
+Epoch [5/5], accuracy= 0.9727, loss= 0.0157: : 715it [03:59,  2.99it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9727, mean_epoch_loss = 0.0217
+
+                Finished Training
+179it [00:52,  3.42it/s]
+                Test result 0.938713014125824
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9746, loss= 0.0224: : 715it [03:58,  2.99it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9746, mean_epoch_loss = 0.0203
+
+Epoch [2/5], accuracy= 0.9749, loss= 0.0015: : 715it [03:58,  3.00it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9749, mean_epoch_loss = 0.0199
+
+Epoch [3/5], accuracy= 0.9768, loss= 0.0168: : 715it [03:58,  3.00it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9768, mean_epoch_loss = 0.0186
+
+Epoch [4/5], accuracy= 0.9763, loss= 0.0142: : 715it [03:59,  2.99it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9763, mean_epoch_loss = 0.0188
+
+Epoch [5/5], accuracy= 0.9784, loss= 0.0264: : 715it [03:59,  2.98it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9784, mean_epoch_loss = 0.0176
+
+                Finished Training
+179it [00:52,  3.41it/s]
+                Test result 0.9374016523361206
+!RESULT! densenet121 __35 и 40_эпох__: [0.938713014125824, 0.9374016523361206]
+        create model densenet161
+        train model densenet161
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9442, loss= 0.0592: : 715it [05:05,  2.34it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9442, mean_epoch_loss = 0.0432
+
+Epoch [2/5], accuracy= 0.95, loss= 0.059: : 715it [05:02,  2.36it/s]
+        Epoch 2: mean_epoch_accuracy = 0.95, mean_epoch_loss = 0.0393
+
+Epoch [3/5], accuracy= 0.9532, loss= 0.0567: : 715it [05:01,  2.37it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9532, mean_epoch_loss = 0.0367
+
+Epoch [4/5], accuracy= 0.9545, loss= 0.0381: : 715it [05:01,  2.37it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9545, mean_epoch_loss = 0.0355
+
+Epoch [5/5], accuracy= 0.9578, loss= 0.0325: : 715it [05:02,  2.37it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9578, mean_epoch_loss = 0.033
+
+                Finished Training
+179it [00:56,  3.18it/s]
+                Test result 0.9512152075767517
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9607, loss= 0.0309: : 715it [05:00,  2.38it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9607, mean_epoch_loss = 0.031
+
+Epoch [2/5], accuracy= 0.9622, loss= 0.0131: : 715it [05:01,  2.37it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9622, mean_epoch_loss = 0.03
+
+Epoch [3/5], accuracy= 0.9643, loss= 0.034: : 715it [05:02,  2.36it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9643, mean_epoch_loss = 0.0282
+
+Epoch [4/5], accuracy= 0.9666, loss= 0.031: : 715it [05:02,  2.36it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9666, mean_epoch_loss = 0.0264
+
+Epoch [5/5], accuracy= 0.9677, loss= 0.0246: : 715it [05:00,  2.38it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9677, mean_epoch_loss = 0.0257
+
+                Finished Training
+179it [00:55,  3.20it/s]
+                Test result 0.947281002998352
+!RESULT! densenet161 __35 и 40_эпох__: [0.9512152075767517, 0.947281002998352]
+        create model densenet169
+        train model densenet169
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9598, loss= 0.0366: : 715it [04:13,  2.82it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9598, mean_epoch_loss = 0.0314
+
+Epoch [2/5], accuracy= 0.9618, loss= 0.0632: : 715it [04:13,  2.82it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9618, mean_epoch_loss = 0.0301
+
+Epoch [3/5], accuracy= 0.9645, loss= 0.0055: : 715it [04:13,  2.82it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9645, mean_epoch_loss = 0.0278
+
+Epoch [4/5], accuracy= 0.9668, loss= 0.0209: : 715it [04:13,  2.82it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9668, mean_epoch_loss = 0.0261
+
+Epoch [5/5], accuracy= 0.9696, loss= 0.0385: : 715it [04:14,  2.81it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9696, mean_epoch_loss = 0.0239
+
+                Finished Training
+179it [00:53,  3.33it/s]
+                Test result 0.947106122970581
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9712, loss= 0.018: : 715it [04:13,  2.82it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9712, mean_epoch_loss = 0.0229
+
+Epoch [2/5], accuracy= 0.97, loss= 0.0344: : 715it [04:13,  2.82it/s]
+        Epoch 2: mean_epoch_accuracy = 0.97, mean_epoch_loss = 0.0233
+
+Epoch [3/5], accuracy= 0.9722, loss= 0.0255: : 715it [04:14,  2.81it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9722, mean_epoch_loss = 0.0218
+
+Epoch [4/5], accuracy= 0.9742, loss= 0.0165: : 715it [04:14,  2.81it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9742, mean_epoch_loss = 0.02
+
+Epoch [5/5], accuracy= 0.9757, loss= 0.0346: : 715it [04:14,  2.81it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9757, mean_epoch_loss = 0.019
+
+                Finished Training
+179it [00:53,  3.32it/s]
+                Test result 0.9483301043510437
+!RESULT! densenet169 __35 и 40_эпох__: [0.947106122970581, 0.9483301043510437]
+        create model densenet201
+        train model densenet201
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9562, loss= 0.0225: : 715it [04:35,  2.59it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9562, mean_epoch_loss = 0.0339
+
+Epoch [2/5], accuracy= 0.9599, loss= 0.0603: : 715it [04:34,  2.60it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9599, mean_epoch_loss = 0.0315
+
+Epoch [3/5], accuracy= 0.9639, loss= 0.0151: : 715it [04:35,  2.60it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9639, mean_epoch_loss = 0.0286
+
+Epoch [4/5], accuracy= 0.9645, loss= 0.0318: : 715it [04:35,  2.59it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9645, mean_epoch_loss = 0.028
+
+Epoch [5/5], accuracy= 0.9646, loss= 0.0211: : 715it [04:36,  2.59it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9646, mean_epoch_loss = 0.0272
+
+                Finished Training
+179it [00:54,  3.27it/s]
+                Test result 0.9457947015762329
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9681, loss= 0.024: : 715it [04:36,  2.59it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9681, mean_epoch_loss = 0.0252
+
+Epoch [2/5], accuracy= 0.9707, loss= 0.0022: : 715it [04:35,  2.60it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9707, mean_epoch_loss = 0.0232
+
+Epoch [3/5], accuracy= 0.9718, loss= 0.0449: : 715it [04:36,  2.59it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9718, mean_epoch_loss = 0.0222
+
+Epoch [4/5], accuracy= 0.9727, loss= 0.0114: : 715it [04:36,  2.58it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9727, mean_epoch_loss = 0.0216
+
+Epoch [5/5], accuracy= 0.9747, loss= 0.0151: : 715it [04:36,  2.59it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9747, mean_epoch_loss = 0.0202
+
+                Finished Training
+179it [00:54,  3.28it/s]
+                Test result 0.9436964392662048
+!RESULT! densenet201 __35 и 40_эпох__: [0.9457947015762329, 0.9436964392662048]
+        create model googlenet
+        train model googlenet
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9707, loss= 0.025: : 715it [03:36,  3.30it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9707, mean_epoch_loss = 0.023
+
+Epoch [2/5], accuracy= 0.972, loss= 0.0313: : 715it [03:37,  3.29it/s]
+        Epoch 2: mean_epoch_accuracy = 0.972, mean_epoch_loss = 0.0218
+
+Epoch [3/5], accuracy= 0.9734, loss= 0.0799: : 715it [03:37,  3.29it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9734, mean_epoch_loss = 0.021
+
+Epoch [4/5], accuracy= 0.9744, loss= 0.0087: : 715it [03:36,  3.30it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9744, mean_epoch_loss = 0.0202
+
+Epoch [5/5], accuracy= 0.9767, loss= 0.0359: : 715it [03:37,  3.29it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9767, mean_epoch_loss = 0.0186
+
+                Finished Training
+179it [00:47,  3.73it/s]
+                Test result 0.9391501545906067
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9773, loss= 0.0213: : 715it [03:37,  3.29it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9773, mean_epoch_loss = 0.0183
+
+Epoch [2/5], accuracy= 0.9778, loss= 0.011: : 715it [03:36,  3.30it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9778, mean_epoch_loss = 0.0174
+
+Epoch [3/5], accuracy= 0.9794, loss= 0.0253: : 715it [03:36,  3.30it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9794, mean_epoch_loss = 0.0164
+
+Epoch [4/5], accuracy= 0.9789, loss= 0.0088: : 715it [03:37,  3.29it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9789, mean_epoch_loss = 0.0165
+
+Epoch [5/5], accuracy= 0.9804, loss= 0.0047: : 715it [03:37,  3.29it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9804, mean_epoch_loss = 0.0157
+
+                Finished Training
+179it [00:48,  3.72it/s]
+                Test result 0.932155966758728
+!RESULT! googlenet __35 и 40_эпох__: [0.9391501545906067, 0.932155966758728]
+        create model swin_t
+        train model swin_t
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.961, loss= 0.0153: : 715it [04:34,  2.61it/s]
+        Epoch 1: mean_epoch_accuracy = 0.961, mean_epoch_loss = 0.0301
+
+Epoch [2/5], accuracy= 0.9629, loss= 0.0136: : 715it [04:35,  2.60it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9629, mean_epoch_loss = 0.0285
+
+Epoch [3/5], accuracy= 0.9651, loss= 0.0442: : 715it [04:35,  2.60it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9651, mean_epoch_loss = 0.0271
+
+Epoch [4/5], accuracy= 0.9658, loss= 0.0265: : 715it [04:35,  2.59it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9658, mean_epoch_loss = 0.0269
+
+Epoch [5/5], accuracy= 0.9676, loss= 0.0214: : 715it [04:35,  2.60it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9676, mean_epoch_loss = 0.0255
+
+                Finished Training
+179it [00:54,  3.30it/s]
+                Test result 0.9413358569145203
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9685, loss= 0.0447: : 715it [04:35,  2.60it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9685, mean_epoch_loss = 0.0248
+
+Epoch [2/5], accuracy= 0.9706, loss= 0.038: : 715it [04:35,  2.60it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9706, mean_epoch_loss = 0.0234
+
+Epoch [3/5], accuracy= 0.9708, loss= 0.0188: : 715it [04:35,  2.60it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9708, mean_epoch_loss = 0.0229
+
+Epoch [4/5], accuracy= 0.9716, loss= 0.0406: : 715it [04:34,  2.60it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9716, mean_epoch_loss = 0.0224
+
+Epoch [5/5], accuracy= 0.9724, loss= 0.0251: : 715it [04:35,  2.60it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9724, mean_epoch_loss = 0.0216
+
+                Finished Training
+179it [00:54,  3.29it/s]
+                Test result 0.9431718587875366
+!RESULT! swin_t __35 и 40_эпох__: [0.9413358569145203, 0.9431718587875366]
+        create model swin_s
+        train model swin_s
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9669, loss= 0.0276: : 715it [05:46,  2.06it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9669, mean_epoch_loss = 0.0259
+
+Epoch [2/5], accuracy= 0.9689, loss= 0.041: : 715it [05:45,  2.07it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9689, mean_epoch_loss = 0.0243
+
+Epoch [3/5], accuracy= 0.971, loss= 0.0221: : 715it [05:46,  2.06it/s]
+        Epoch 3: mean_epoch_accuracy = 0.971, mean_epoch_loss = 0.0229
+
+Epoch [4/5], accuracy= 0.9727, loss= 0.0011: : 715it [05:46,  2.06it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9727, mean_epoch_loss = 0.0216
+
+Epoch [5/5], accuracy= 0.9723, loss= 0.0324: : 715it [05:46,  2.06it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9723, mean_epoch_loss = 0.0218
+
+                Finished Training
+179it [01:02,  2.85it/s]
+                Test result 0.9339045286178589
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9732, loss= 0.0363: : 715it [05:46,  2.06it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9732, mean_epoch_loss = 0.0212
+
+Epoch [2/5], accuracy= 0.9756, loss= 0.0257: : 715it [05:46,  2.06it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9756, mean_epoch_loss = 0.0193
+
+Epoch [3/5], accuracy= 0.976, loss= 0.0302: : 715it [05:46,  2.07it/s]
+        Epoch 3: mean_epoch_accuracy = 0.976, mean_epoch_loss = 0.0186
+
+Epoch [4/5], accuracy= 0.9778, loss= 0.023: : 715it [05:47,  2.06it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9778, mean_epoch_loss = 0.0174
+
+Epoch [5/5], accuracy= 0.9772, loss= 0.0202: : 715it [05:45,  2.07it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9772, mean_epoch_loss = 0.0176
+
+                Finished Training
+179it [01:02,  2.86it/s]
+                Test result 0.9473683834075928
+!RESULT! swin_s __35 и 40_эпох__: [0.9339045286178589, 0.9473683834075928]
+        create model swin_b
+        train model swin_b
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9605, loss= 0.038: : 715it [07:10,  1.66it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9605, mean_epoch_loss = 0.0308
+
+Epoch [2/5], accuracy= 0.9624, loss= 0.0486: : 715it [07:23,  1.61it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9624, mean_epoch_loss = 0.0296
+
+Epoch [3/5], accuracy= 0.9636, loss= 0.0203: : 715it [07:55,  1.50it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9636, mean_epoch_loss = 0.0283
+
+Epoch [4/5], accuracy= 0.9657, loss= 0.0166: : 715it [07:11,  1.66it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9657, mean_epoch_loss = 0.0273
+
+Epoch [5/5], accuracy= 0.9673, loss= 0.0189: : 715it [07:08,  1.67it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9673, mean_epoch_loss = 0.0258
+
+                Finished Training
+179it [01:09,  2.56it/s]
+                Test result 0.944832980632782
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9687, loss= 0.0143: : 715it [07:04,  1.68it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9687, mean_epoch_loss = 0.0249
+
+Epoch [2/5], accuracy= 0.9693, loss= 0.0116: : 715it [07:04,  1.68it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9693, mean_epoch_loss = 0.0243
+
+Epoch [3/5], accuracy= 0.9702, loss= 0.0699: : 715it [06:59,  1.70it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9702, mean_epoch_loss = 0.0234
+
+Epoch [4/5], accuracy= 0.9716, loss= 0.0144: : 715it [07:00,  1.70it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9716, mean_epoch_loss = 0.0227
+
+Epoch [5/5], accuracy= 0.9728, loss= 0.0175: : 715it [07:00,  1.70it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9728, mean_epoch_loss = 0.0218
+
+                Finished Training
+179it [01:04,  2.76it/s]
+                Test result 0.9404615759849548
+!RESULT! swin_b __35 и 40_эпох__: [0.944832980632782, 0.9404615759849548]
+        create model swin_v2_t
+        train model swin_v2_t
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9651, loss= 0.057: : 715it [04:35,  2.59it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9651, mean_epoch_loss = 0.0272
+
+Epoch [2/5], accuracy= 0.966, loss= 0.0243: : 715it [04:43,  2.53it/s]
+        Epoch 2: mean_epoch_accuracy = 0.966, mean_epoch_loss = 0.0263
+
+Epoch [3/5], accuracy= 0.9683, loss= 0.0658: : 715it [04:36,  2.58it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9683, mean_epoch_loss = 0.0248
+
+Epoch [4/5], accuracy= 0.9703, loss= 0.0155: : 715it [04:38,  2.57it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9703, mean_epoch_loss = 0.0237
+
+Epoch [5/5], accuracy= 0.9707, loss= 0.0172: : 715it [04:37,  2.58it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9707, mean_epoch_loss = 0.0232
+
+                Finished Training
+179it [00:54,  3.26it/s]
+                Test result 0.945007860660553
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9708, loss= 0.012: : 715it [04:57,  2.40it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9708, mean_epoch_loss = 0.0227
+
+Epoch [2/5], accuracy= 0.9736, loss= 0.0177: : 715it [06:04,  1.96it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9736, mean_epoch_loss = 0.0209
+
+Epoch [3/5], accuracy= 0.9736, loss= 0.0186: : 715it [06:20,  1.88it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9736, mean_epoch_loss = 0.0207
+
+Epoch [4/5], accuracy= 0.9748, loss= 0.03: : 715it [06:03,  1.97it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9748, mean_epoch_loss = 0.0198
+
+Epoch [5/5], accuracy= 0.976, loss= 0.0212: : 715it [06:00,  1.98it/s]
+        Epoch 5: mean_epoch_accuracy = 0.976, mean_epoch_loss = 0.0189
+
+                Finished Training
+179it [01:10,  2.55it/s]
+                Test result 0.9496415257453918
+!RESULT! swin_v2_t __35 и 40_эпох__: [0.945007860660553, 0.9496415257453918]
+        create model swin_v2_s
+        train model swin_v2_s
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9661, loss= 0.055: : 715it [07:45,  1.53it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9661, mean_epoch_loss = 0.0264
+
+Epoch [2/5], accuracy= 0.9678, loss= 0.0371: : 715it [06:47,  1.75it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9678, mean_epoch_loss = 0.0251
+
+Epoch [3/5], accuracy= 0.9684, loss= 0.0226: : 715it [07:15,  1.64it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9684, mean_epoch_loss = 0.0245
+
+Epoch [4/5], accuracy= 0.9707, loss= 0.0235: : 715it [07:38,  1.56it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9707, mean_epoch_loss = 0.0228
+
+Epoch [5/5], accuracy= 0.9719, loss= 0.0057: : 715it [07:40,  1.55it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9719, mean_epoch_loss = 0.022
+
+                Finished Training
+179it [01:01,  2.92it/s]
+                Test result 0.9467564225196838
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9734, loss= 0.0387: : 715it [06:03,  1.97it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9734, mean_epoch_loss = 0.0211
+
+Epoch [2/5], accuracy= 0.974, loss= 0.0136: : 715it [06:03,  1.97it/s]
+        Epoch 2: mean_epoch_accuracy = 0.974, mean_epoch_loss = 0.0203
+
+Epoch [3/5], accuracy= 0.9753, loss= 0.0258: : 715it [06:05,  1.95it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9753, mean_epoch_loss = 0.0194
+
+Epoch [4/5], accuracy= 0.9768, loss= 0.0429: : 715it [06:07,  1.94it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9768, mean_epoch_loss = 0.0179
+
+Epoch [5/5], accuracy= 0.9773, loss= 0.0037: : 715it [06:04,  1.96it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9773, mean_epoch_loss = 0.0176
+
+                Finished Training
+179it [01:00,  2.96it/s]
+                Test result 0.9485923647880554
+!RESULT! swin_v2_s __35 и 40_эпох__: [0.9467564225196838, 0.9485923647880554]
+        create model swin_v2_b
+        train model swin_v2_b
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9642, loss= 0.0473: : 715it [06:58,  1.71it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9642, mean_epoch_loss = 0.0281
+
+Epoch [2/5], accuracy= 0.9663, loss= 0.0458: : 715it [06:51,  1.74it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9663, mean_epoch_loss = 0.0268
+
+Epoch [3/5], accuracy= 0.9676, loss= 0.0161: : 715it [06:47,  1.75it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9676, mean_epoch_loss = 0.0257
+
+Epoch [4/5], accuracy= 0.9686, loss= 0.0174: : 715it [06:45,  1.76it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9686, mean_epoch_loss = 0.0245
+
+Epoch [5/5], accuracy= 0.9697, loss= 0.031: : 715it [06:45,  1.76it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9697, mean_epoch_loss = 0.0239
+
+                Finished Training
+179it [01:03,  2.83it/s]
+                Test result 0.9408987164497375
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9706, loss= 0.0015: : 715it [07:15,  1.64it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9706, mean_epoch_loss = 0.0228
+
+Epoch [2/5], accuracy= 0.9723, loss= 0.0004: : 715it [07:28,  1.59it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9723, mean_epoch_loss = 0.0215
+
+Epoch [3/5], accuracy= 0.9731, loss= 0.061: : 715it [07:30,  1.59it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9731, mean_epoch_loss = 0.0209
+
+Epoch [4/5], accuracy= 0.9754, loss= 0.0291: : 715it [07:20,  1.62it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9754, mean_epoch_loss = 0.0194
+
+Epoch [5/5], accuracy= 0.9752, loss= 0.0027: : 715it [07:22,  1.61it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9752, mean_epoch_loss = 0.0197
+
+                Finished Training
+179it [01:08,  2.62it/s]
+                Test result 0.9447455406188965
+!RESULT! swin_v2_b __35 и 40_эпох__: [0.9408987164497375, 0.9447455406188965]
+
+
+
+
+
+
+
+
+
+
+
+
+use_sigmoid_fun False
+        create model vgg11
+        train model vgg11
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9691, loss= 0.0238: : 715it [04:08,  2.88it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9691, mean_epoch_loss = 0.0248
+
+Epoch [2/5], accuracy= 0.9717, loss= 0.0217: : 715it [04:08,  2.88it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9717, mean_epoch_loss = 0.0228
+
+Epoch [3/5], accuracy= 0.9738, loss= 0.0225: : 715it [04:08,  2.87it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9738, mean_epoch_loss = 0.0214
+
+Epoch [4/5], accuracy= 0.9732, loss= 0.0325: : 715it [04:08,  2.87it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9732, mean_epoch_loss = 0.0218
+
+Epoch [5/5], accuracy= 0.9752, loss= 0.0089: : 715it [04:05,  2.92it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9752, mean_epoch_loss = 0.0202
+
+                Finished Training
+179it [00:53,  3.35it/s]
+                Test result 0.9431718587875366
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9771, loss= 0.017: : 715it [04:10,  2.85it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9771, mean_epoch_loss = 0.0189
+
+Epoch [2/5], accuracy= 0.9784, loss= 0.0043: : 715it [04:06,  2.90it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9784, mean_epoch_loss = 0.0179
+
+Epoch [3/5], accuracy= 0.9781, loss= 0.0055: : 715it [04:03,  2.94it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9781, mean_epoch_loss = 0.0175
+
+Epoch [4/5], accuracy= 0.98, loss= 0.0092: : 715it [04:08,  2.88it/s]
+        Epoch 4: mean_epoch_accuracy = 0.98, mean_epoch_loss = 0.0166
+
+Epoch [5/5], accuracy= 0.9818, loss= 0.0144: : 715it [04:06,  2.89it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9818, mean_epoch_loss = 0.0154
+
+                Finished Training
+179it [00:53,  3.34it/s]
+                Test result 0.9320685267448425
+!RESULT! vgg11 __35 и 40_эпох__: [0.9431718587875366, 0.9320685267448425]
+        create model vgg11_bn
+        train model vgg11_bn
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9659, loss= 0.033: : 715it [04:19,  2.76it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9659, mean_epoch_loss = 0.0273
+
+Epoch [2/5], accuracy= 0.9665, loss= 0.0128: : 715it [04:21,  2.73it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9665, mean_epoch_loss = 0.0266
+
+Epoch [3/5], accuracy= 0.9696, loss= 0.0171: : 715it [04:17,  2.77it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9696, mean_epoch_loss = 0.0248
+
+Epoch [4/5], accuracy= 0.9714, loss= 0.0142: : 715it [04:17,  2.77it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9714, mean_epoch_loss = 0.0234
+
+Epoch [5/5], accuracy= 0.973, loss= 0.0232: : 715it [04:18,  2.76it/s]
+        Epoch 5: mean_epoch_accuracy = 0.973, mean_epoch_loss = 0.0221
+
+                Finished Training
+179it [00:54,  3.31it/s]
+                Test result 0.9245496988296509
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9738, loss= 0.0048: : 715it [04:20,  2.75it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9738, mean_epoch_loss = 0.0216
+
+Epoch [2/5], accuracy= 0.9738, loss= 0.0221: : 715it [04:17,  2.77it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9738, mean_epoch_loss = 0.0212
+
+Epoch [3/5], accuracy= 0.975, loss= 0.0085: : 715it [04:15,  2.80it/s]
+        Epoch 3: mean_epoch_accuracy = 0.975, mean_epoch_loss = 0.0203
+
+Epoch [4/5], accuracy= 0.9768, loss= 0.0196: : 715it [04:19,  2.76it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9768, mean_epoch_loss = 0.0191
+
+Epoch [5/5], accuracy= 0.9781, loss= 0.0425: : 715it [04:21,  2.73it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9781, mean_epoch_loss = 0.0184
+
+                Finished Training
+179it [00:53,  3.33it/s]
+                Test result 0.9312816858291626
+!RESULT! vgg11_bn __35 и 40_эпох__: [0.9245496988296509, 0.9312816858291626]
+        create model vgg13
+        train model vgg13
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9719, loss= 0.0614: : 715it [04:44,  2.51it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9719, mean_epoch_loss = 0.0229
+
+Epoch [2/5], accuracy= 0.9722, loss= 0.0303: : 715it [04:41,  2.54it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9722, mean_epoch_loss = 0.0226
+
+Epoch [3/5], accuracy= 0.9741, loss= 0.026: : 715it [04:41,  2.54it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9741, mean_epoch_loss = 0.0213
+
+Epoch [4/5], accuracy= 0.9757, loss= 0.0045: : 715it [04:42,  2.53it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9757, mean_epoch_loss = 0.0197
+
+Epoch [5/5], accuracy= 0.9755, loss= 0.0163: : 715it [04:37,  2.58it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9755, mean_epoch_loss = 0.0198
+
+                Finished Training
+179it [00:59,  2.99it/s]
+                Test result 0.9465815424919128
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9783, loss= 0.0162: : 715it [04:55,  2.42it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9783, mean_epoch_loss = 0.0177
+
+Epoch [2/5], accuracy= 0.9786, loss= 0.0279: : 715it [04:47,  2.49it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9786, mean_epoch_loss = 0.0175
+
+Epoch [3/5], accuracy= 0.9802, loss= 0.0168: : 715it [04:37,  2.58it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9802, mean_epoch_loss = 0.0164
+
+Epoch [4/5], accuracy= 0.9815, loss= 0.0675: : 715it [04:35,  2.59it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9815, mean_epoch_loss = 0.0157
+
+Epoch [5/5], accuracy= 0.9811, loss= 0.0165: : 715it [04:35,  2.59it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9811, mean_epoch_loss = 0.0159
+
+                Finished Training
+179it [00:57,  3.10it/s]
+                Test result 0.9374890327453613
+!RESULT! vgg13 __35 и 40_эпох__: [0.9465815424919128, 0.9374890327453613]
+        create model vgg13_bn
+        train model vgg13_bn
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.972, loss= 0.0446: : 715it [04:51,  2.45it/s]
+        Epoch 1: mean_epoch_accuracy = 0.972, mean_epoch_loss = 0.023
+
+Epoch [2/5], accuracy= 0.9727, loss= 0.0373: : 715it [04:51,  2.46it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9727, mean_epoch_loss = 0.0224
+
+Epoch [3/5], accuracy= 0.975, loss= 0.002: : 715it [04:51,  2.45it/s]
+        Epoch 3: mean_epoch_accuracy = 0.975, mean_epoch_loss = 0.0205
+
+Epoch [4/5], accuracy= 0.9754, loss= 0.024: : 715it [04:51,  2.45it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9754, mean_epoch_loss = 0.0201
+
+Epoch [5/5], accuracy= 0.9769, loss= 0.0144: : 715it [04:52,  2.44it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9769, mean_epoch_loss = 0.0192
+
+                Finished Training
+179it [00:57,  3.09it/s]
+                Test result 0.935041069984436
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.978, loss= 0.008: : 715it [04:52,  2.44it/s]
+        Epoch 1: mean_epoch_accuracy = 0.978, mean_epoch_loss = 0.0182
+
+Epoch [2/5], accuracy= 0.9789, loss= 0.0015: : 715it [04:52,  2.44it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9789, mean_epoch_loss = 0.0175
+
+Epoch [3/5], accuracy= 0.9797, loss= 0.032: : 715it [04:53,  2.44it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9797, mean_epoch_loss = 0.017
+
+Epoch [4/5], accuracy= 0.9807, loss= 0.0022: : 715it [04:52,  2.44it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9807, mean_epoch_loss = 0.0159
+
+Epoch [5/5], accuracy= 0.9815, loss= 0.0255: : 715it [04:52,  2.44it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9815, mean_epoch_loss = 0.0155
+
+                Finished Training
+179it [00:58,  3.08it/s]
+                Test result 0.939062774181366
+!RESULT! vgg13_bn __35 и 40_эпох__: [0.935041069984436, 0.939062774181366]
+        create model vgg16
+        train model vgg16
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9669, loss= 0.0353: : 715it [04:50,  2.46it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9669, mean_epoch_loss = 0.0272
+
+Epoch [2/5], accuracy= 0.9686, loss= 0.0423: : 715it [04:51,  2.46it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9686, mean_epoch_loss = 0.0255
+
+Epoch [3/5], accuracy= 0.9708, loss= 0.0334: : 715it [04:50,  2.46it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9708, mean_epoch_loss = 0.0236
+
+Epoch [4/5], accuracy= 0.9722, loss= 0.0575: : 715it [04:50,  2.46it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9722, mean_epoch_loss = 0.0224
+
+Epoch [5/5], accuracy= 0.9729, loss= 0.0257: : 715it [04:50,  2.46it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9729, mean_epoch_loss = 0.022
+
+                Finished Training
+179it [00:58,  3.07it/s]
+                Test result 0.9453575611114502
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9747, loss= 0.0046: : 715it [04:50,  2.46it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9747, mean_epoch_loss = 0.0207
+
+Epoch [2/5], accuracy= 0.975, loss= 0.077: : 715it [04:50,  2.46it/s]
+        Epoch 2: mean_epoch_accuracy = 0.975, mean_epoch_loss = 0.0205
+
+Epoch [3/5], accuracy= 0.9776, loss= 0.0269: : 715it [04:50,  2.46it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9776, mean_epoch_loss = 0.0186
+
+Epoch [4/5], accuracy= 0.9767, loss= 0.0094: : 715it [04:53,  2.43it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9767, mean_epoch_loss = 0.0191
+
+Epoch [5/5], accuracy= 0.9784, loss= 0.007: : 715it [04:53,  2.44it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9784, mean_epoch_loss = 0.0179
+
+                Finished Training
+179it [00:55,  3.23it/s]
+                Test result 0.936002790927887
+!RESULT! vgg16 __35 и 40_эпох__: [0.9453575611114502, 0.936002790927887]
+        create model vgg16_bn
+        train model vgg16_bn
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9694, loss= 0.005: : 715it [05:10,  2.30it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9694, mean_epoch_loss = 0.0245
+
+Epoch [2/5], accuracy= 0.9715, loss= 0.0178: : 715it [05:04,  2.35it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9715, mean_epoch_loss = 0.0233
+
+Epoch [3/5], accuracy= 0.9725, loss= 0.0069: : 715it [05:13,  2.28it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9725, mean_epoch_loss = 0.0222
+
+Epoch [4/5], accuracy= 0.9744, loss= 0.0182: : 715it [05:26,  2.19it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9744, mean_epoch_loss = 0.0214
+
+Epoch [5/5], accuracy= 0.9753, loss= 0.0401: : 715it [05:36,  2.12it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9753, mean_epoch_loss = 0.0203
+
+                Finished Training
+179it [00:57,  3.13it/s]
+                Test result 0.942122757434845
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.976, loss= 0.028: : 715it [05:11,  2.29it/s]
+        Epoch 1: mean_epoch_accuracy = 0.976, mean_epoch_loss = 0.0197
+
+Epoch [2/5], accuracy= 0.9765, loss= 0.0076: : 715it [05:15,  2.27it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9765, mean_epoch_loss = 0.0191
+
+Epoch [3/5], accuracy= 0.9776, loss= 0.0167: : 715it [05:16,  2.26it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9776, mean_epoch_loss = 0.0179
+
+Epoch [4/5], accuracy= 0.9797, loss= 0.0258: : 715it [05:30,  2.16it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9797, mean_epoch_loss = 0.0168
+
+Epoch [5/5], accuracy= 0.9804, loss= 0.0127: : 715it [05:10,  2.30it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9804, mean_epoch_loss = 0.0162
+
+                Finished Training
+179it [00:56,  3.18it/s]
+                Test result 0.9433467388153076
+!RESULT! vgg16_bn __35 и 40_эпох__: [0.942122757434845, 0.9433467388153076]
+        create model vgg19
+        train model vgg19
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.965, loss= 0.0237: : 715it [05:11,  2.30it/s]
+        Epoch 1: mean_epoch_accuracy = 0.965, mean_epoch_loss = 0.0288
+
+Epoch [2/5], accuracy= 0.9666, loss= 0.019: : 715it [05:27,  2.19it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9666, mean_epoch_loss = 0.0273
+
+Epoch [3/5], accuracy= 0.9684, loss= 0.0233: : 715it [05:31,  2.16it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9684, mean_epoch_loss = 0.0259
+
+Epoch [4/5], accuracy= 0.9691, loss= 0.0184: : 715it [05:24,  2.20it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9691, mean_epoch_loss = 0.0247
+
+Epoch [5/5], accuracy= 0.9708, loss= 0.0255: : 715it [05:01,  2.37it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9708, mean_epoch_loss = 0.0236
+
+                Finished Training
+179it [01:06,  2.67it/s]
+                Test result 0.9431718587875366
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9719, loss= 0.0168: : 715it [05:26,  2.19it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9719, mean_epoch_loss = 0.0231
+
+Epoch [2/5], accuracy= 0.9727, loss= 0.0186: : 715it [05:09,  2.31it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9727, mean_epoch_loss = 0.0225
+
+Epoch [3/5], accuracy= 0.9751, loss= 0.0477: : 715it [05:08,  2.32it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9751, mean_epoch_loss = 0.0208
+
+Epoch [4/5], accuracy= 0.9741, loss= 0.0435: : 715it [05:05,  2.34it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9741, mean_epoch_loss = 0.0211
+
+Epoch [5/5], accuracy= 0.9758, loss= 0.0163: : 715it [05:11,  2.30it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9758, mean_epoch_loss = 0.0197
+
+                Finished Training
+179it [00:58,  3.08it/s]
+                Test result 0.9455324411392212
+!RESULT! vgg19 __35 и 40_эпох__: [0.9431718587875366, 0.9455324411392212]
+        create model vgg19_bn
+        train model vgg19_bn
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9679, loss= 0.0258: : 715it [05:36,  2.12it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9679, mean_epoch_loss = 0.0262
+
+Epoch [2/5], accuracy= 0.968, loss= 0.054: : 715it [05:30,  2.16it/s]
+        Epoch 2: mean_epoch_accuracy = 0.968, mean_epoch_loss = 0.0254
+
+Epoch [3/5], accuracy= 0.9707, loss= 0.042: : 715it [05:18,  2.25it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9707, mean_epoch_loss = 0.024
+
+Epoch [4/5], accuracy= 0.9709, loss= 0.0041: : 715it [05:10,  2.30it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9709, mean_epoch_loss = 0.0237
+
+Epoch [5/5], accuracy= 0.9731, loss= 0.0284: : 715it [05:10,  2.30it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9731, mean_epoch_loss = 0.0219
+
+                Finished Training
+179it [00:55,  3.20it/s]
+                Test result 0.938101053237915
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.974, loss= 0.0182: : 715it [05:10,  2.30it/s]
+        Epoch 1: mean_epoch_accuracy = 0.974, mean_epoch_loss = 0.0214
+
+Epoch [2/5], accuracy= 0.9744, loss= 0.0281: : 715it [05:15,  2.27it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9744, mean_epoch_loss = 0.0207
+
+Epoch [3/5], accuracy= 0.9757, loss= 0.0387: : 715it [05:30,  2.16it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9757, mean_epoch_loss = 0.0195
+
+Epoch [4/5], accuracy= 0.9769, loss= 0.0153: : 715it [05:35,  2.13it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9769, mean_epoch_loss = 0.0189
+
+Epoch [5/5], accuracy= 0.9775, loss= 0.0094: : 715it [05:26,  2.19it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9775, mean_epoch_loss = 0.0184
+
+                Finished Training
+179it [00:57,  3.10it/s]
+                Test result 0.9301450848579407
+!RESULT! vgg19_bn __35 и 40_эпох__: [0.938101053237915, 0.9301450848579407]
+        create model resnet18
+        train model resnet18
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9713, loss= 0.02: : 715it [03:35,  3.31it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9713, mean_epoch_loss = 0.0232
+
+Epoch [2/5], accuracy= 0.9729, loss= 0.0196: : 715it [03:35,  3.32it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9729, mean_epoch_loss = 0.0218
+
+Epoch [3/5], accuracy= 0.9745, loss= 0.0081: : 715it [03:36,  3.30it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9745, mean_epoch_loss = 0.0207
+
+Epoch [4/5], accuracy= 0.9763, loss= 0.0168: : 715it [03:32,  3.37it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9763, mean_epoch_loss = 0.0195
+
+Epoch [5/5], accuracy= 0.9778, loss= 0.0276: : 715it [03:33,  3.35it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9778, mean_epoch_loss = 0.0183
+
+                Finished Training
+179it [00:49,  3.61it/s]
+                Test result 0.941772997379303
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9789, loss= 0.0133: : 715it [03:33,  3.35it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9789, mean_epoch_loss = 0.0176
+
+Epoch [2/5], accuracy= 0.9793, loss= 0.0161: : 715it [03:35,  3.32it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9793, mean_epoch_loss = 0.0171
+
+Epoch [3/5], accuracy= 0.9804, loss= 0.0283: : 715it [03:35,  3.32it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9804, mean_epoch_loss = 0.0159
+
+Epoch [4/5], accuracy= 0.9812, loss= 0.0147: : 715it [03:38,  3.26it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9812, mean_epoch_loss = 0.0155
+
+Epoch [5/5], accuracy= 0.9824, loss= 0.013: : 715it [03:35,  3.31it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9824, mean_epoch_loss = 0.0146
+
+                Finished Training
+179it [00:49,  3.63it/s]
+                Test result 0.9340793490409851
+!RESULT! resnet18 __35 и 40_эпох__: [0.941772997379303, 0.9340793490409851]
+        create model resnet34
+        train model resnet34
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9708, loss= 0.0188: : 715it [03:48,  3.13it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9708, mean_epoch_loss = 0.0234
+
+Epoch [2/5], accuracy= 0.9731, loss= 0.0153: : 715it [03:44,  3.19it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9731, mean_epoch_loss = 0.0219
+
+Epoch [3/5], accuracy= 0.9747, loss= 0.0533: : 715it [03:42,  3.21it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9747, mean_epoch_loss = 0.0207
+
+Epoch [4/5], accuracy= 0.9756, loss= 0.0136: : 715it [03:41,  3.22it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9756, mean_epoch_loss = 0.0194
+
+Epoch [5/5], accuracy= 0.9772, loss= 0.0076: : 715it [03:44,  3.18it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9772, mean_epoch_loss = 0.0183
+
+                Finished Training
+179it [00:50,  3.56it/s]
+                Test result 0.9369645118713379
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9778, loss= 0.0173: : 715it [03:45,  3.17it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9778, mean_epoch_loss = 0.0175
+
+Epoch [2/5], accuracy= 0.9793, loss= 0.0134: : 715it [03:45,  3.17it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9793, mean_epoch_loss = 0.0167
+
+Epoch [3/5], accuracy= 0.9791, loss= 0.0433: : 715it [03:46,  3.16it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9791, mean_epoch_loss = 0.0164
+
+Epoch [4/5], accuracy= 0.9805, loss= 0.0231: : 715it [03:43,  3.19it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9805, mean_epoch_loss = 0.0157
+
+Epoch [5/5], accuracy= 0.9814, loss= 0.0179: : 715it [03:46,  3.16it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9814, mean_epoch_loss = 0.0149
+
+                Finished Training
+179it [00:50,  3.54it/s]
+                Test result 0.9477181434631348
+!RESULT! resnet34 __35 и 40_эпох__: [0.9369645118713379, 0.9477181434631348]
+        create model resnet50
+        train model resnet50
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.972, loss= 0.0206: : 715it [04:01,  2.96it/s]
+        Epoch 1: mean_epoch_accuracy = 0.972, mean_epoch_loss = 0.0222
+
+Epoch [2/5], accuracy= 0.9747, loss= 0.0075: : 715it [04:03,  2.94it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9747, mean_epoch_loss = 0.0204
+
+Epoch [3/5], accuracy= 0.975, loss= 0.0351: : 715it [04:01,  2.96it/s]
+        Epoch 3: mean_epoch_accuracy = 0.975, mean_epoch_loss = 0.0199
+
+Epoch [4/5], accuracy= 0.9773, loss= 0.0221: : 715it [04:04,  2.92it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9773, mean_epoch_loss = 0.0184
+
+Epoch [5/5], accuracy= 0.9769, loss= 0.0065: : 715it [04:03,  2.94it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9769, mean_epoch_loss = 0.0181
+
+                Finished Training
+179it [00:52,  3.40it/s]
+                Test result 0.9315439462661743
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9785, loss= 0.0044: : 715it [04:01,  2.96it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9785, mean_epoch_loss = 0.017
+
+Epoch [2/5], accuracy= 0.9798, loss= 0.0166: : 715it [04:04,  2.92it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9798, mean_epoch_loss = 0.0161
+
+Epoch [3/5], accuracy= 0.9812, loss= 0.0354: : 715it [04:03,  2.93it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9812, mean_epoch_loss = 0.0152
+
+Epoch [4/5], accuracy= 0.981, loss= 0.007: : 715it [04:03,  2.94it/s]
+        Epoch 4: mean_epoch_accuracy = 0.981, mean_epoch_loss = 0.0152
+
+Epoch [5/5], accuracy= 0.9822, loss= 0.0237: : 715it [04:03,  2.93it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9822, mean_epoch_loss = 0.0144
+
+                Finished Training
+179it [00:52,  3.39it/s]
+                Test result 0.9326805472373962
+!RESULT! resnet50 __35 и 40_эпох__: [0.9315439462661743, 0.9326805472373962]
+        create model resnet101
+        train model resnet101
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9747, loss= 0.0056: : 715it [04:30,  2.64it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9747, mean_epoch_loss = 0.02
+
+Epoch [2/5], accuracy= 0.9765, loss= 0.0532: : 715it [04:33,  2.62it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9765, mean_epoch_loss = 0.0188
+
+Epoch [3/5], accuracy= 0.9778, loss= 0.0539: : 715it [04:53,  2.43it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9778, mean_epoch_loss = 0.0183
+
+Epoch [4/5], accuracy= 0.9795, loss= 0.011: : 715it [04:19,  2.75it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9795, mean_epoch_loss = 0.0166
+
+Epoch [5/5], accuracy= 0.9796, loss= 0.0317: : 715it [04:19,  2.75it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9796, mean_epoch_loss = 0.016
+
+                Finished Training
+179it [00:54,  3.29it/s]
+                Test result 0.938101053237915
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9811, loss= 0.0071: : 715it [04:19,  2.76it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9811, mean_epoch_loss = 0.015
+
+Epoch [2/5], accuracy= 0.9816, loss= 0.0072: : 715it [04:19,  2.75it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9816, mean_epoch_loss = 0.0148
+
+Epoch [3/5], accuracy= 0.9825, loss= 0.0148: : 715it [04:36,  2.58it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9825, mean_epoch_loss = 0.014
+
+Epoch [4/5], accuracy= 0.9834, loss= 0.0075: : 715it [05:27,  2.19it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9834, mean_epoch_loss = 0.0135
+
+Epoch [5/5], accuracy= 0.9837, loss= 0.015: : 715it [05:28,  2.18it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9837, mean_epoch_loss = 0.0132
+
+                Finished Training
+179it [00:58,  3.05it/s]
+                Test result 0.9477181434631348
+!RESULT! resnet101 __35 и 40_эпох__: [0.938101053237915, 0.9477181434631348]
+        create model resnet152
+        train model resnet152
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9745, loss= 0.0034: : 715it [05:12,  2.29it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9745, mean_epoch_loss = 0.02
+
+Epoch [2/5], accuracy= 0.976, loss= 0.0116: : 715it [05:00,  2.38it/s]
+        Epoch 2: mean_epoch_accuracy = 0.976, mean_epoch_loss = 0.0193
+
+Epoch [3/5], accuracy= 0.9773, loss= 0.0188: : 715it [05:02,  2.36it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9773, mean_epoch_loss = 0.0179
+
+Epoch [4/5], accuracy= 0.979, loss= 0.0424: : 715it [05:03,  2.35it/s]
+        Epoch 4: mean_epoch_accuracy = 0.979, mean_epoch_loss = 0.0167
+
+Epoch [5/5], accuracy= 0.9797, loss= 0.0247: : 715it [05:05,  2.34it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9797, mean_epoch_loss = 0.0161
+
+                Finished Training
+179it [00:56,  3.18it/s]
+                Test result 0.9290085434913635
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9805, loss= 0.0501: : 715it [05:02,  2.36it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9805, mean_epoch_loss = 0.0154
+
+Epoch [2/5], accuracy= 0.9816, loss= 0.0396: : 715it [05:03,  2.36it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9816, mean_epoch_loss = 0.0146
+
+Epoch [3/5], accuracy= 0.982, loss= 0.0163: : 715it [05:03,  2.36it/s]
+        Epoch 3: mean_epoch_accuracy = 0.982, mean_epoch_loss = 0.0141
+
+Epoch [4/5], accuracy= 0.9837, loss= 0.0089: : 715it [05:07,  2.32it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9837, mean_epoch_loss = 0.0131
+
+Epoch [5/5], accuracy= 0.9836, loss= 0.0092: : 715it [05:01,  2.37it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9836, mean_epoch_loss = 0.0131
+
+                Finished Training
+179it [00:55,  3.24it/s]
+                Test result 0.9349536299705505
+!RESULT! resnet152 __35 и 40_эпох__: [0.9290085434913635, 0.9349536299705505]
+        create model efficientnet_b0
+        train model efficientnet_b0
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9736, loss= 0.0749: : 715it [03:44,  3.19it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9736, mean_epoch_loss = 0.0216
+
+Epoch [2/5], accuracy= 0.9748, loss= 0.0199: : 715it [03:46,  3.16it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9748, mean_epoch_loss = 0.0207
+
+Epoch [3/5], accuracy= 0.9779, loss= 0.0319: : 715it [03:46,  3.15it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9779, mean_epoch_loss = 0.0186
+
+Epoch [4/5], accuracy= 0.9783, loss= 0.002: : 715it [03:46,  3.15it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9783, mean_epoch_loss = 0.018
+
+Epoch [5/5], accuracy= 0.9795, loss= 0.0045: : 715it [03:45,  3.18it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9795, mean_epoch_loss = 0.017
+
+                Finished Training
+179it [00:56,  3.17it/s]
+                Test result 0.9360902309417725
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9807, loss= 0.0553: : 715it [03:39,  3.25it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9807, mean_epoch_loss = 0.0163
+
+Epoch [2/5], accuracy= 0.9812, loss= 0.0037: : 715it [03:39,  3.26it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9812, mean_epoch_loss = 0.0156
+
+Epoch [3/5], accuracy= 0.9817, loss= 0.0169: : 715it [03:40,  3.25it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9817, mean_epoch_loss = 0.0151
+
+Epoch [4/5], accuracy= 0.9832, loss= 0.0052: : 715it [03:39,  3.26it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9832, mean_epoch_loss = 0.0141
+
+Epoch [5/5], accuracy= 0.9832, loss= 0.0065: : 715it [03:39,  3.25it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9832, mean_epoch_loss = 0.0139
+
+                Finished Training
+179it [00:48,  3.69it/s]
+                Test result 0.9423850178718567
+!RESULT! efficientnet_b0 __35 и 40_эпох__: [0.9360902309417725, 0.9423850178718567]
+        create model efficientnet_b1
+        train model efficientnet_b1
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9745, loss= 0.032: : 715it [03:47,  3.15it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9745, mean_epoch_loss = 0.0212
+
+Epoch [2/5], accuracy= 0.9765, loss= 0.0109: : 715it [03:47,  3.15it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9765, mean_epoch_loss = 0.0197
+
+Epoch [3/5], accuracy= 0.9765, loss= 0.0157: : 715it [03:47,  3.14it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9765, mean_epoch_loss = 0.0195
+
+Epoch [4/5], accuracy= 0.9788, loss= 0.0136: : 715it [03:47,  3.14it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9788, mean_epoch_loss = 0.0181
+
+Epoch [5/5], accuracy= 0.9791, loss= 0.0068: : 715it [03:47,  3.14it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9791, mean_epoch_loss = 0.0171
+
+                Finished Training
+179it [00:49,  3.64it/s]
+                Test result 0.935215950012207
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9805, loss= 0.008: : 715it [03:47,  3.14it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9805, mean_epoch_loss = 0.0162
+
+Epoch [2/5], accuracy= 0.9815, loss= 0.0154: : 715it [03:47,  3.14it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9815, mean_epoch_loss = 0.0154
+
+Epoch [3/5], accuracy= 0.9821, loss= 0.0336: : 715it [03:48,  3.13it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9821, mean_epoch_loss = 0.0149
+
+Epoch [4/5], accuracy= 0.9833, loss= 0.0414: : 715it [03:47,  3.14it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9833, mean_epoch_loss = 0.0139
+
+Epoch [5/5], accuracy= 0.9838, loss= 0.0253: : 715it [03:47,  3.14it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9838, mean_epoch_loss = 0.0136
+
+                Finished Training
+179it [00:49,  3.62it/s]
+                Test result 0.9388004541397095
+!RESULT! efficientnet_b1 __35 и 40_эпох__: [0.935215950012207, 0.9388004541397095]
+        create model efficientnet_b2
+        train model efficientnet_b2
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.978, loss= 0.0143: : 715it [03:50,  3.10it/s]
+        Epoch 1: mean_epoch_accuracy = 0.978, mean_epoch_loss = 0.0187
+
+Epoch [2/5], accuracy= 0.9797, loss= 0.0027: : 715it [03:51,  3.09it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9797, mean_epoch_loss = 0.017
+
+Epoch [3/5], accuracy= 0.9805, loss= 0.0195: : 715it [03:50,  3.10it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9805, mean_epoch_loss = 0.0161
+
+Epoch [4/5], accuracy= 0.9816, loss= 0.0247: : 715it [03:50,  3.10it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9816, mean_epoch_loss = 0.0154
+
+Epoch [5/5], accuracy= 0.9827, loss= 0.0304: : 715it [03:51,  3.09it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9827, mean_epoch_loss = 0.0147
+
+                Finished Training
+179it [00:50,  3.58it/s]
+                Test result 0.944046139717102
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.983, loss= 0.0067: : 715it [03:50,  3.10it/s]
+        Epoch 1: mean_epoch_accuracy = 0.983, mean_epoch_loss = 0.0143
+
+Epoch [2/5], accuracy= 0.9837, loss= 0.0029: : 715it [03:50,  3.10it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9837, mean_epoch_loss = 0.013
+
+Epoch [3/5], accuracy= 0.9852, loss= 0.0074: : 715it [03:50,  3.10it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9852, mean_epoch_loss = 0.0124
+
+Epoch [4/5], accuracy= 0.9857, loss= 0.0253: : 715it [03:50,  3.11it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9857, mean_epoch_loss = 0.0118
+
+Epoch [5/5], accuracy= 0.9851, loss= 0.0153: : 715it [03:50,  3.10it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9851, mean_epoch_loss = 0.012
+
+                Finished Training
+179it [00:49,  3.60it/s]
+                Test result 0.940986156463623
+!RESULT! efficientnet_b2 __35 и 40_эпох__: [0.944046139717102, 0.940986156463623]
+        create model efficientnet_b3
+        train model efficientnet_b3
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9768, loss= 0.0276: : 715it [04:02,  2.94it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9768, mean_epoch_loss = 0.019
+
+Epoch [2/5], accuracy= 0.9781, loss= 0.0165: : 715it [04:01,  2.96it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9781, mean_epoch_loss = 0.0178
+
+Epoch [3/5], accuracy= 0.9805, loss= 0.0601: : 715it [04:03,  2.94it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9805, mean_epoch_loss = 0.0163
+
+Epoch [4/5], accuracy= 0.9816, loss= 0.0061: : 715it [04:02,  2.94it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9816, mean_epoch_loss = 0.0155
+
+Epoch [5/5], accuracy= 0.982, loss= 0.014: : 715it [04:02,  2.95it/s]
+        Epoch 5: mean_epoch_accuracy = 0.982, mean_epoch_loss = 0.0151
+
+                Finished Training
+179it [00:51,  3.49it/s]
+                Test result 0.9338170886039734
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9828, loss= 0.0226: : 715it [04:02,  2.94it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9828, mean_epoch_loss = 0.0142
+
+Epoch [2/5], accuracy= 0.9838, loss= 0.0119: : 715it [04:03,  2.94it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9838, mean_epoch_loss = 0.0133
+
+Epoch [3/5], accuracy= 0.9843, loss= 0.0167: : 715it [04:03,  2.94it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9843, mean_epoch_loss = 0.0129
+
+Epoch [4/5], accuracy= 0.9849, loss= 0.0154: : 715it [04:03,  2.93it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9849, mean_epoch_loss = 0.0122
+
+Epoch [5/5], accuracy= 0.986, loss= 0.0203: : 715it [04:03,  2.94it/s]
+        Epoch 5: mean_epoch_accuracy = 0.986, mean_epoch_loss = 0.0112
+
+                Finished Training
+179it [00:51,  3.49it/s]
+                Test result 0.9392375946044922
+!RESULT! efficientnet_b3 __35 и 40_эпох__: [0.9338170886039734, 0.9392375946044922]
+        create model efficientnet_b4
+        train model efficientnet_b4
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9706, loss= 0.0168: : 715it [04:22,  2.72it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9706, mean_epoch_loss = 0.0237
+
+Epoch [2/5], accuracy= 0.9731, loss= 0.0113: : 715it [04:23,  2.71it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9731, mean_epoch_loss = 0.0217
+
+Epoch [3/5], accuracy= 0.975, loss= 0.0454: : 715it [04:23,  2.71it/s]
+        Epoch 3: mean_epoch_accuracy = 0.975, mean_epoch_loss = 0.0207
+
+Epoch [4/5], accuracy= 0.9758, loss= 0.0106: : 715it [04:23,  2.72it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9758, mean_epoch_loss = 0.0198
+
+Epoch [5/5], accuracy= 0.9764, loss= 0.0095: : 715it [04:23,  2.72it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9764, mean_epoch_loss = 0.0192
+
+                Finished Training
+179it [00:54,  3.28it/s]
+                Test result 0.9365273714065552
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9788, loss= 0.0246: : 715it [04:23,  2.72it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9788, mean_epoch_loss = 0.0174
+
+Epoch [2/5], accuracy= 0.9795, loss= 0.0058: : 715it [04:23,  2.71it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9795, mean_epoch_loss = 0.0168
+
+Epoch [3/5], accuracy= 0.9794, loss= 0.0038: : 715it [04:23,  2.72it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9794, mean_epoch_loss = 0.0164
+
+Epoch [4/5], accuracy= 0.9809, loss= 0.0168: : 715it [04:24,  2.70it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9809, mean_epoch_loss = 0.0156
+
+Epoch [5/5], accuracy= 0.9823, loss= 0.0216: : 715it [04:24,  2.70it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9823, mean_epoch_loss = 0.0147
+
+                Finished Training
+179it [00:53,  3.35it/s]
+                Test result 0.9381884932518005
+!RESULT! efficientnet_b4 __35 и 40_эпох__: [0.9365273714065552, 0.9381884932518005]
+        create model efficientnet_b5
+        train model efficientnet_b5
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9826, loss= 0.0231: : 715it [04:53,  2.44it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9826, mean_epoch_loss = 0.0145
+
+Epoch [2/5], accuracy= 0.9837, loss= 0.0015: : 715it [04:53,  2.44it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9837, mean_epoch_loss = 0.0134
+
+Epoch [3/5], accuracy= 0.9848, loss= 0.002: : 715it [04:52,  2.44it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9848, mean_epoch_loss = 0.0128
+
+Epoch [4/5], accuracy= 0.9859, loss= 0.0135: : 715it [04:53,  2.44it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9859, mean_epoch_loss = 0.0116
+
+Epoch [5/5], accuracy= 0.9863, loss= 0.0019: : 715it [04:53,  2.44it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9863, mean_epoch_loss = 0.0115
+
+                Finished Training
+179it [00:59,  3.02it/s]
+                Test result 0.9336422085762024
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9872, loss= 0.0077: : 715it [04:53,  2.44it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9872, mean_epoch_loss = 0.0106
+
+Epoch [2/5], accuracy= 0.9878, loss= 0.0069: : 715it [04:53,  2.43it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9878, mean_epoch_loss = 0.0102
+
+Epoch [3/5], accuracy= 0.9886, loss= 0.0135: : 715it [04:53,  2.44it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9886, mean_epoch_loss = 0.0096
+
+Epoch [4/5], accuracy= 0.9886, loss= 0.0139: : 715it [04:53,  2.44it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9886, mean_epoch_loss = 0.0093
+
+Epoch [5/5], accuracy= 0.9889, loss= 0.0086: : 715it [04:53,  2.44it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9889, mean_epoch_loss = 0.0089
+
+                Finished Training
+179it [00:59,  3.03it/s]
+                Test result 0.9322434067726135
+!RESULT! efficientnet_b5 __35 и 40_эпох__: [0.9336422085762024, 0.9322434067726135]
+        create model efficientnet_v2_s
+        train model efficientnet_v2_s
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9795, loss= 0.0216: : 715it [04:07,  2.89it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9795, mean_epoch_loss = 0.0175
+
+Epoch [2/5], accuracy= 0.9805, loss= 0.04: : 715it [04:07,  2.89it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9805, mean_epoch_loss = 0.0161
+
+Epoch [3/5], accuracy= 0.9812, loss= 0.002: : 715it [04:07,  2.89it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9812, mean_epoch_loss = 0.0156
+
+Epoch [4/5], accuracy= 0.9823, loss= 0.0247: : 715it [04:07,  2.89it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9823, mean_epoch_loss = 0.0146
+
+Epoch [5/5], accuracy= 0.9833, loss= 0.0014: : 715it [04:07,  2.89it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9833, mean_epoch_loss = 0.0139
+
+                Finished Training
+179it [00:55,  3.23it/s]
+                Test result 0.9351285099983215
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9839, loss= 0.0021: : 715it [04:06,  2.90it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9839, mean_epoch_loss = 0.0137
+
+Epoch [2/5], accuracy= 0.9855, loss= 0.0151: : 715it [04:06,  2.90it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9855, mean_epoch_loss = 0.0121
+
+Epoch [3/5], accuracy= 0.9855, loss= 0.0158: : 715it [04:06,  2.90it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9855, mean_epoch_loss = 0.0122
+
+Epoch [4/5], accuracy= 0.9852, loss= 0.0092: : 715it [04:06,  2.90it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9852, mean_epoch_loss = 0.0118
+
+Epoch [5/5], accuracy= 0.9864, loss= 0.0085: : 715it [04:06,  2.90it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9864, mean_epoch_loss = 0.0113
+
+                Finished Training
+179it [00:55,  3.23it/s]
+                Test result 0.9336422085762024
+!RESULT! efficientnet_v2_s __35 и 40_эпох__: [0.9351285099983215, 0.9336422085762024]
+        create model efficientnet_v2_m
+        train model efficientnet_v2_m
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.979, loss= 0.0089: : 715it [04:48,  2.48it/s]
+        Epoch 1: mean_epoch_accuracy = 0.979, mean_epoch_loss = 0.0174
+
+Epoch [2/5], accuracy= 0.9799, loss= 0.0058: : 715it [04:48,  2.48it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9799, mean_epoch_loss = 0.0163
+
+Epoch [3/5], accuracy= 0.9828, loss= 0.0018: : 715it [04:47,  2.48it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9828, mean_epoch_loss = 0.0146
+
+Epoch [4/5], accuracy= 0.9825, loss= 0.0246: : 715it [04:48,  2.48it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9825, mean_epoch_loss = 0.0143
+
+Epoch [5/5], accuracy= 0.9834, loss= 0.0191: : 715it [04:49,  2.47it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9834, mean_epoch_loss = 0.0137
+
+                Finished Training
+179it [00:58,  3.04it/s]
+                Test result 0.9375764727592468
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9848, loss= 0.001: : 715it [04:47,  2.49it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9848, mean_epoch_loss = 0.0126
+
+Epoch [2/5], accuracy= 0.9851, loss= 0.003: : 715it [04:48,  2.48it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9851, mean_epoch_loss = 0.0124
+
+Epoch [3/5], accuracy= 0.9853, loss= 0.0187: : 715it [04:48,  2.48it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9853, mean_epoch_loss = 0.0121
+
+Epoch [4/5], accuracy= 0.9866, loss= 0.0034: : 715it [04:48,  2.48it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9866, mean_epoch_loss = 0.0111
+
+Epoch [5/5], accuracy= 0.9867, loss= 0.0006: : 715it [04:48,  2.48it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9867, mean_epoch_loss = 0.0111
+
+                Finished Training
+179it [00:58,  3.04it/s]
+                Test result 0.9391501545906067
+!RESULT! efficientnet_v2_m __35 и 40_эпох__: [0.9375764727592468, 0.9391501545906067]
+        create model densenet121
+        train model densenet121
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.926, loss= 0.0414: : 715it [04:01,  2.96it/s]
+        Epoch 1: mean_epoch_accuracy = 0.926, mean_epoch_loss = 0.0747
+
+Epoch [2/5], accuracy= 0.9427, loss= 0.0496: : 715it [04:01,  2.96it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9427, mean_epoch_loss = 0.0571
+
+Epoch [3/5], accuracy= 0.9516, loss= 0.0337: : 715it [04:01,  2.96it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9516, mean_epoch_loss = 0.0506
+
+Epoch [4/5], accuracy= 0.9572, loss= 0.0245: : 715it [04:01,  2.96it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9572, mean_epoch_loss = 0.0457
+
+Epoch [5/5], accuracy= 0.9536, loss= 0.0351: : 715it [04:01,  2.95it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9536, mean_epoch_loss = 0.0479
+
+                Finished Training
+179it [00:57,  3.13it/s]
+                Test result 0.9463192820549011
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9626, loss= 0.0423: : 715it [04:01,  2.96it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9626, mean_epoch_loss = 0.0386
+
+Epoch [2/5], accuracy= 0.959, loss= 0.123: : 715it [04:02,  2.95it/s]
+        Epoch 2: mean_epoch_accuracy = 0.959, mean_epoch_loss = 0.0422
+
+Epoch [3/5], accuracy= 0.9677, loss= 0.0417: : 715it [04:03,  2.94it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9677, mean_epoch_loss = 0.0344
+
+Epoch [4/5], accuracy= 0.9679, loss= 0.0208: : 715it [04:03,  2.94it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9679, mean_epoch_loss = 0.0343
+
+Epoch [5/5], accuracy= 0.9705, loss= 0.0218: : 715it [04:02,  2.94it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9705, mean_epoch_loss = 0.0334
+
+                Finished Training
+179it [00:57,  3.11it/s]
+                Test result 0.9435215592384338
+!RESULT! densenet121 __35 и 40_эпох__: [0.9463192820549011, 0.9435215592384338]
+        create model densenet161
+        train model densenet161
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.8994, loss= 0.1317: : 715it [05:04,  2.35it/s]
+        Epoch 1: mean_epoch_accuracy = 0.8994, mean_epoch_loss = 0.11
+
+Epoch [2/5], accuracy= 0.9242, loss= 0.0255: : 715it [05:03,  2.36it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9242, mean_epoch_loss = 0.0689
+
+Epoch [3/5], accuracy= 0.9248, loss= 0.0436: : 715it [05:03,  2.36it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9248, mean_epoch_loss = 0.0695
+
+Epoch [4/5], accuracy= 0.9025, loss= 0.0338: : 715it [05:03,  2.36it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9025, mean_epoch_loss = 0.1017
+
+Epoch [5/5], accuracy= 0.9473, loss= 0.0694: : 715it [05:03,  2.36it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9473, mean_epoch_loss = 0.0493
+
+                Finished Training
+179it [01:00,  2.95it/s]
+                Test result 0.9456198215484619
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9419, loss= 0.1355: : 715it [05:03,  2.35it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9419, mean_epoch_loss = 0.057
+
+Epoch [2/5], accuracy= 0.9395, loss= 0.0483: : 715it [05:03,  2.36it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9395, mean_epoch_loss = 0.0566
+
+Epoch [3/5], accuracy= 0.9547, loss= 0.0503: : 715it [05:04,  2.35it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9547, mean_epoch_loss = 0.0424
+
+Epoch [4/5], accuracy= 0.949, loss= 0.0273: : 715it [05:02,  2.36it/s]
+        Epoch 4: mean_epoch_accuracy = 0.949, mean_epoch_loss = 0.0483
+
+Epoch [5/5], accuracy= 0.9405, loss= 0.0396: : 715it [05:03,  2.36it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9405, mean_epoch_loss = 0.0578
+
+                Finished Training
+179it [01:00,  2.94it/s]
+                Test result 0.9490295052528381
+!RESULT! densenet161 __35 и 40_эпох__: [0.9456198215484619, 0.9490295052528381]
+        create model densenet169
+        train model densenet169
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9457, loss= 0.032: : 715it [04:16,  2.79it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9457, mean_epoch_loss = 0.0634
+
+Epoch [2/5], accuracy= 0.9434, loss= 0.0134: : 715it [04:14,  2.81it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9434, mean_epoch_loss = 0.0563
+
+Epoch [3/5], accuracy= 0.9526, loss= 0.061: : 715it [04:15,  2.80it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9526, mean_epoch_loss = 0.049
+
+Epoch [4/5], accuracy= 0.9573, loss= 0.0111: : 715it [04:31,  2.63it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9573, mean_epoch_loss = 0.0463
+
+Epoch [5/5], accuracy= 0.9652, loss= 0.013: : 715it [04:31,  2.63it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9652, mean_epoch_loss = 0.0385
+
+                Finished Training
+179it [01:01,  2.92it/s]
+                Test result 0.9393250346183777
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9666, loss= 0.0424: : 715it [04:42,  2.53it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9666, mean_epoch_loss = 0.038
+
+Epoch [2/5], accuracy= 0.9639, loss= 0.011: : 715it [04:45,  2.50it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9639, mean_epoch_loss = 0.0408
+
+Epoch [3/5], accuracy= 0.9705, loss= 0.0116: : 715it [05:00,  2.38it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9705, mean_epoch_loss = 0.0335
+
+Epoch [4/5], accuracy= 0.9654, loss= 0.0429: : 715it [04:32,  2.62it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9654, mean_epoch_loss = 0.0384
+
+Epoch [5/5], accuracy= 0.9722, loss= 0.0233: : 715it [04:30,  2.64it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9722, mean_epoch_loss = 0.0316
+
+                Finished Training
+179it [00:59,  3.01it/s]
+                Test result 0.9180800914764404
+!RESULT! densenet169 __35 и 40_эпох__: [0.9393250346183777, 0.9180800914764404]
+        create model densenet201
+        train model densenet201
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9363, loss= 0.1268: : 715it [05:03,  2.36it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9363, mean_epoch_loss = 0.0705
+
+Epoch [2/5], accuracy= 0.9467, loss= 0.0304: : 715it [04:47,  2.49it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9467, mean_epoch_loss = 0.0527
+
+Epoch [3/5], accuracy= 0.941, loss= 0.0385: : 715it [04:46,  2.50it/s]
+        Epoch 3: mean_epoch_accuracy = 0.941, mean_epoch_loss = 0.0589
+
+Epoch [4/5], accuracy= 0.9542, loss= 0.036: : 715it [04:41,  2.54it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9542, mean_epoch_loss = 0.0463
+
+Epoch [5/5], accuracy= 0.9514, loss= 0.0285: : 715it [04:36,  2.58it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9514, mean_epoch_loss = 0.0515
+
+                Finished Training
+179it [00:59,  3.02it/s]
+                Test result 0.9344290494918823
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9653, loss= 0.0294: : 715it [04:37,  2.58it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9653, mean_epoch_loss = 0.0364
+
+Epoch [2/5], accuracy= 0.9664, loss= 0.1512: : 715it [04:37,  2.58it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9664, mean_epoch_loss = 0.0368
+
+Epoch [3/5], accuracy= 0.9526, loss= 0.0323: : 715it [04:36,  2.59it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9526, mean_epoch_loss = 0.0461
+
+Epoch [4/5], accuracy= 0.9707, loss= 0.025: : 715it [04:36,  2.59it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9707, mean_epoch_loss = 0.0321
+
+Epoch [5/5], accuracy= 0.9712, loss= 0.0134: : 715it [04:35,  2.59it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9712, mean_epoch_loss = 0.0319
+
+                Finished Training
+179it [00:58,  3.04it/s]
+                Test result 0.9450953006744385
+!RESULT! densenet201 __35 и 40_эпох__: [0.9344290494918823, 0.9450953006744385]
+        create model googlenet
+        train model googlenet
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9729, loss= 0.0177: : 715it [03:37,  3.29it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9729, mean_epoch_loss = 0.0225
+
+Epoch [2/5], accuracy= 0.9745, loss= 0.0181: : 715it [03:36,  3.30it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9745, mean_epoch_loss = 0.0212
+
+Epoch [3/5], accuracy= 0.9751, loss= 0.0018: : 715it [03:37,  3.29it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9751, mean_epoch_loss = 0.0202
+
+Epoch [4/5], accuracy= 0.9762, loss= 0.0276: : 715it [03:37,  3.29it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9762, mean_epoch_loss = 0.0195
+
+Epoch [5/5], accuracy= 0.979, loss= 0.0115: : 715it [03:37,  3.29it/s]
+        Epoch 5: mean_epoch_accuracy = 0.979, mean_epoch_loss = 0.0176
+
+                Finished Training
+179it [00:52,  3.42it/s]
+                Test result 0.9359153509140015
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9785, loss= 0.006: : 715it [03:37,  3.29it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9785, mean_epoch_loss = 0.0175
+
+Epoch [2/5], accuracy= 0.9795, loss= 0.014: : 715it [03:37,  3.29it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9795, mean_epoch_loss = 0.0169
+
+Epoch [3/5], accuracy= 0.9805, loss= 0.0056: : 715it [03:37,  3.28it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9805, mean_epoch_loss = 0.016
+
+Epoch [4/5], accuracy= 0.9813, loss= 0.0193: : 715it [03:37,  3.28it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9813, mean_epoch_loss = 0.0153
+
+Epoch [5/5], accuracy= 0.982, loss= 0.0196: : 715it [03:39,  3.26it/s]
+        Epoch 5: mean_epoch_accuracy = 0.982, mean_epoch_loss = 0.0149
+
+                Finished Training
+179it [00:52,  3.39it/s]
+                Test result 0.9412484765052795
+!RESULT! googlenet __35 и 40_эпох__: [0.9359153509140015, 0.9412484765052795]
+        create model swin_t
+        train model swin_t
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9629, loss= 0.055: : 715it [04:41,  2.54it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9629, mean_epoch_loss = 0.0298
+
+Epoch [2/5], accuracy= 0.9637, loss= 0.0019: : 715it [04:36,  2.58it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9637, mean_epoch_loss = 0.0286
+
+Epoch [3/5], accuracy= 0.966, loss= 0.0265: : 715it [04:37,  2.58it/s]
+        Epoch 3: mean_epoch_accuracy = 0.966, mean_epoch_loss = 0.0273
+
+Epoch [4/5], accuracy= 0.9673, loss= 0.0253: : 715it [04:36,  2.58it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9673, mean_epoch_loss = 0.0263
+
+Epoch [5/5], accuracy= 0.9684, loss= 0.0253: : 715it [04:35,  2.60it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9684, mean_epoch_loss = 0.0254
+
+                Finished Training
+179it [00:59,  3.03it/s]
+                Test result 0.9450953006744385
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9703, loss= 0.0475: : 715it [04:35,  2.60it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9703, mean_epoch_loss = 0.0238
+
+Epoch [2/5], accuracy= 0.9705, loss= 0.022: : 715it [04:35,  2.60it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9705, mean_epoch_loss = 0.0238
+
+Epoch [3/5], accuracy= 0.9719, loss= 0.0353: : 715it [04:35,  2.60it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9719, mean_epoch_loss = 0.0227
+
+Epoch [4/5], accuracy= 0.9727, loss= 0.0261: : 715it [04:35,  2.60it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9727, mean_epoch_loss = 0.0217
+
+Epoch [5/5], accuracy= 0.9738, loss= 0.0155: : 715it [04:35,  2.59it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9738, mean_epoch_loss = 0.0206
+
+                Finished Training
+179it [00:58,  3.03it/s]
+                Test result 0.9501661062240601
+!RESULT! swin_t __35 и 40_эпох__: [0.9450953006744385, 0.9501661062240601]
+        create model swin_s
+        train model swin_s
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9659, loss= 0.0384: : 715it [05:47,  2.06it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9659, mean_epoch_loss = 0.0273
+
+Epoch [2/5], accuracy= 0.9678, loss= 0.0661: : 715it [05:47,  2.06it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9678, mean_epoch_loss = 0.0256
+
+Epoch [3/5], accuracy= 0.9693, loss= 0.0324: : 715it [05:47,  2.06it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9693, mean_epoch_loss = 0.0241
+
+Epoch [4/5], accuracy= 0.9706, loss= 0.0178: : 715it [05:46,  2.06it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9706, mean_epoch_loss = 0.0232
+
+Epoch [5/5], accuracy= 0.9711, loss= 0.0153: : 715it [05:47,  2.06it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9711, mean_epoch_loss = 0.0226
+
+                Finished Training
+179it [01:03,  2.81it/s]
+                Test result 0.9424724578857422
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9738, loss= 0.0105: : 715it [05:46,  2.06it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9738, mean_epoch_loss = 0.0213
+
+Epoch [2/5], accuracy= 0.9733, loss= 0.0315: : 715it [05:46,  2.06it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9733, mean_epoch_loss = 0.0214
+
+Epoch [3/5], accuracy= 0.9748, loss= 0.013: : 715it [05:46,  2.07it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9748, mean_epoch_loss = 0.0198
+
+Epoch [4/5], accuracy= 0.9758, loss= 0.0077: : 715it [05:45,  2.07it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9758, mean_epoch_loss = 0.0193
+
+Epoch [5/5], accuracy= 0.9779, loss= 0.0325: : 715it [05:45,  2.07it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9779, mean_epoch_loss = 0.0179
+
+                Finished Training
+179it [01:02,  2.84it/s]
+                Test result 0.9453575611114502
+!RESULT! swin_s __35 и 40_эпох__: [0.9424724578857422, 0.9453575611114502]
+        create model swin_b
+        train model swin_b
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9649, loss= 0.0153: : 715it [06:58,  1.71it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9649, mean_epoch_loss = 0.0283
+
+Epoch [2/5], accuracy= 0.966, loss= 0.0194: : 715it [06:58,  1.71it/s]
+        Epoch 2: mean_epoch_accuracy = 0.966, mean_epoch_loss = 0.0271
+
+Epoch [3/5], accuracy= 0.9696, loss= 0.0091: : 715it [06:58,  1.71it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9696, mean_epoch_loss = 0.0244
+
+Epoch [4/5], accuracy= 0.9684, loss= 0.0027: : 715it [07:05,  1.68it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9684, mean_epoch_loss = 0.0249
+
+Epoch [5/5], accuracy= 0.9706, loss= 0.016: : 715it [10:13,  1.17it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9706, mean_epoch_loss = 0.0233
+
+                Finished Training
+179it [01:31,  1.95it/s]
+                Test result 0.9333799481391907
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9723, loss= 0.0433: : 715it [09:59,  1.19it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9723, mean_epoch_loss = 0.0223
+
+Epoch [2/5], accuracy= 0.9729, loss= 0.0167: : 715it [08:37,  1.38it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9729, mean_epoch_loss = 0.0215
+
+Epoch [3/5], accuracy= 0.974, loss= 0.014: : 715it [07:11,  1.66it/s]
+        Epoch 3: mean_epoch_accuracy = 0.974, mean_epoch_loss = 0.0205
+
+Epoch [4/5], accuracy= 0.9749, loss= 0.0039: : 715it [07:01,  1.70it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9749, mean_epoch_loss = 0.0199
+
+Epoch [5/5], accuracy= 0.9757, loss= 0.0049: : 715it [07:01,  1.70it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9757, mean_epoch_loss = 0.0194
+
+                Finished Training
+179it [01:09,  2.58it/s]
+                Test result 0.9400244355201721
+!RESULT! swin_b __35 и 40_эпох__: [0.9333799481391907, 0.9400244355201721]
+        create model swin_v2_t
+        train model swin_v2_t
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9606, loss= 0.0242: : 715it [04:35,  2.60it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9606, mean_epoch_loss = 0.0316
+
+Epoch [2/5], accuracy= 0.9612, loss= 0.0175: : 715it [04:36,  2.59it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9612, mean_epoch_loss = 0.0305
+
+Epoch [3/5], accuracy= 0.9635, loss= 0.0466: : 715it [04:36,  2.58it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9635, mean_epoch_loss = 0.0287
+
+Epoch [4/5], accuracy= 0.9639, loss= 0.0364: : 715it [04:36,  2.59it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9639, mean_epoch_loss = 0.0283
+
+Epoch [5/5], accuracy= 0.9647, loss= 0.0208: : 715it [04:36,  2.59it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9647, mean_epoch_loss = 0.0275
+
+                Finished Training
+179it [00:56,  3.16it/s]
+                Test result 0.9456198215484619
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9675, loss= 0.0297: : 715it [05:00,  2.38it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9675, mean_epoch_loss = 0.0258
+
+Epoch [2/5], accuracy= 0.9685, loss= 0.0022: : 715it [04:56,  2.41it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9685, mean_epoch_loss = 0.0251
+
+Epoch [3/5], accuracy= 0.9692, loss= 0.0294: : 715it [04:52,  2.45it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9692, mean_epoch_loss = 0.0245
+
+Epoch [4/5], accuracy= 0.9702, loss= 0.0572: : 715it [04:36,  2.59it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9702, mean_epoch_loss = 0.0236
+
+Epoch [5/5], accuracy= 0.9712, loss= 0.0372: : 715it [04:36,  2.59it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9712, mean_epoch_loss = 0.0226
+
+                Finished Training
+179it [00:55,  3.24it/s]
+                Test result 0.9485923647880554
+!RESULT! swin_v2_t __35 и 40_эпох__: [0.9456198215484619, 0.9485923647880554]
+        create model swin_v2_s
+        train model swin_v2_s
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9651, loss= 0.0632: : 715it [05:53,  2.02it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9651, mean_epoch_loss = 0.0277
+
+Epoch [2/5], accuracy= 0.9687, loss= 0.068: : 715it [05:48,  2.05it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9687, mean_epoch_loss = 0.025
+
+Epoch [3/5], accuracy= 0.9697, loss= 0.0242: : 715it [05:50,  2.04it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9697, mean_epoch_loss = 0.0243
+
+Epoch [4/5], accuracy= 0.971, loss= 0.0302: : 715it [05:41,  2.09it/s]
+        Epoch 4: mean_epoch_accuracy = 0.971, mean_epoch_loss = 0.023
+
+Epoch [5/5], accuracy= 0.9721, loss= 0.0161: : 715it [05:39,  2.10it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9721, mean_epoch_loss = 0.0219
+
+                Finished Training
+179it [00:58,  3.08it/s]
+                Test result 0.9359153509140015
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9736, loss= 0.0106: : 715it [05:39,  2.11it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9736, mean_epoch_loss = 0.0212
+
+Epoch [2/5], accuracy= 0.9751, loss= 0.0154: : 715it [05:39,  2.11it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9751, mean_epoch_loss = 0.02
+
+Epoch [3/5], accuracy= 0.9758, loss= 0.009: : 715it [05:44,  2.07it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9758, mean_epoch_loss = 0.0196
+
+Epoch [4/5], accuracy= 0.9769, loss= 0.0219: : 715it [06:02,  1.97it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9769, mean_epoch_loss = 0.0184
+
+Epoch [5/5], accuracy= 0.9773, loss= 0.029: : 715it [06:59,  1.70it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9773, mean_epoch_loss = 0.0181
+
+                Finished Training
+179it [01:12,  2.47it/s]
+                Test result 0.9433467388153076
+!RESULT! swin_v2_s __35 и 40_эпох__: [0.9359153509140015, 0.9433467388153076]
+        create model swin_v2_b
+        train model swin_v2_b
+        loss_function: MSELoss
+        optimizer: Adam
+                Start training 35 epoch
+Epoch [1/5], accuracy= 0.9642, loss= 0.0283: : 715it [09:08,  1.30it/s]
+        Epoch 1: mean_epoch_accuracy = 0.9642, mean_epoch_loss = 0.0285
+
+Epoch [2/5], accuracy= 0.9647, loss= 0.0127: : 715it [07:02,  1.69it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9647, mean_epoch_loss = 0.0277
+
+Epoch [3/5], accuracy= 0.9673, loss= 0.027: : 715it [06:42,  1.78it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9673, mean_epoch_loss = 0.0258
+
+Epoch [4/5], accuracy= 0.9682, loss= 0.0286: : 715it [11:45,  1.01it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9682, mean_epoch_loss = 0.0253
+
+Epoch [5/5], accuracy= 0.9694, loss= 0.0073: : 715it [11:43,  1.02it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9694, mean_epoch_loss = 0.0241
+
+                Finished Training
+179it [01:22,  2.16it/s]
+                Test result 0.9475432634353638
+                Start training 40 epoch
+Epoch [1/5], accuracy= 0.9701, loss= 0.0068: : 715it [34:09,  2.87s/it]
+        Epoch 1: mean_epoch_accuracy = 0.9701, mean_epoch_loss = 0.0233
+
+Epoch [2/5], accuracy= 0.9725, loss= 0.0134: : 715it [07:07,  1.67it/s]
+        Epoch 2: mean_epoch_accuracy = 0.9725, mean_epoch_loss = 0.022
+
+Epoch [3/5], accuracy= 0.9732, loss= 0.0023: : 715it [06:56,  1.72it/s]
+        Epoch 3: mean_epoch_accuracy = 0.9732, mean_epoch_loss = 0.0212
+
+Epoch [4/5], accuracy= 0.9744, loss= 0.024: : 715it [07:18,  1.63it/s]
+        Epoch 4: mean_epoch_accuracy = 0.9744, mean_epoch_loss = 0.0198
+
+Epoch [5/5], accuracy= 0.9759, loss= 0.0138: : 715it [07:15,  1.64it/s]
+        Epoch 5: mean_epoch_accuracy = 0.9759, mean_epoch_loss = 0.0191
+
+                Finished Training
+179it [01:10,  2.53it/s]
+                Test result 0.9485049843788147
+!RESULT! swin_v2_b __35 и 40_эпох__: [0.9475432634353638, 0.9485049843788147]
+[('use_sigmoid_fun: True', [('vgg11', [0.9365273714065552, 0.935215950012207]), ('vgg11_bn', [0.9346913695335388, 0.9430844187736511]), ('vgg13', [0.934866189956665, 0.9248994588851929]), ('vgg13_bn', [0.9355656504631042, 0.9308445453643799]), ('vgg16', [0.9399370551109314, 0.9359153509140015]), ('vgg16_bn', [0.9307571053504944, 0.9389753341674805]), ('vgg19', [0.9439586997032166, 0.942122757434845]), ('vgg19_bn', [0.9363524913787842, 0.947281002998352]), ('resnet18', [0.9434341192245483, 0.9394999146461487]), ('resnet34', [0.9322434067726135, 0.9464067220687866]), ('resnet50', [0.9339045286178589, 0.9354782104492188]), ('resnet101', [0.9373142123222351, 0.9443958401679993]), ('resnet152', [0.9469312429428101, 0.9356530904769897]), ('efficientnet_b0', [0.9372267723083496, 0.9415981769561768]), ('efficientnet_b1', [0.9366147518157959, 0.9410735964775085]), ('efficientnet_b2', [0.9337296485900879, 0.933117687702179]), ('efficientnet_b3', [0.9248120188713074, 0.9362650513648987]), ('efficientnet_b4', [0.9318062663078308, 0.9401993155479431]), ('efficientnet_b5', [0.9402867555618286, 0.9446581602096558]), ('efficientnet_v2_s', [0.935215950012207, 0.940986156463623]), ('efficientnet_v2_m', [0.9369645118713379, 0.9345164895057678]), ('densenet121', [0.938713014125824, 0.9374016523361206]), ('densenet161', [0.9512152075767517, 0.947281002998352]), ('densenet169', [0.947106122970581, 0.9483301043510437]), ('densenet201', [0.9457947015762329, 0.9436964392662048]), ('googlenet', [0.9391501545906067, 0.932155966758728]), ('swin_t', [0.9413358569145203, 0.9431718587875366]), ('swin_s', [0.9339045286178589, 0.9473683834075928]), ('swin_b', [0.944832980632782, 0.9404615759849548]), ('swin_v2_t', [0.945007860660553, 0.9496415257453918]), ('swin_v2_s', [0.9467564225196838, 0.9485923647880554]), ('swin_v2_b', [0.9408987164497375, 0.9447455406188965])]), ('use_sigmoid_fun: False', [('vgg11', [0.9431718587875366, 0.9320685267448425]), ('vgg11_bn', [0.9245496988296509, 0.9312816858291626]), ('vgg13', [0.9465815424919128, 0.9374890327453613]), ('vgg13_bn', [0.935041069984436, 0.939062774181366]), ('vgg16', [0.9453575611114502, 0.936002790927887]), ('vgg16_bn', [0.942122757434845, 0.9433467388153076]), ('vgg19', [0.9431718587875366, 0.9455324411392212]), ('vgg19_bn', [0.938101053237915, 0.9301450848579407]), ('resnet18', [0.941772997379303, 0.9340793490409851]), ('resnet34', [0.9369645118713379, 0.9477181434631348]), ('resnet50', [0.9315439462661743, 0.9326805472373962]), ('resnet101', [0.938101053237915, 0.9477181434631348]), ('resnet152', [0.9290085434913635, 0.9349536299705505]), ('efficientnet_b0', [0.9360902309417725, 0.9423850178718567]), ('efficientnet_b1', [0.935215950012207, 0.9388004541397095]), ('efficientnet_b2', [0.944046139717102, 0.940986156463623]), ('efficientnet_b3', [0.9338170886039734, 0.9392375946044922]), ('efficientnet_b4', [0.9365273714065552, 0.9381884932518005]), ('efficientnet_b5', [0.9336422085762024, 0.9322434067726135]), ('efficientnet_v2_s', [0.9351285099983215, 0.9336422085762024]), ('efficientnet_v2_m', [0.9375764727592468, 0.9391501545906067]), ('densenet121', [0.9463192820549011, 0.9435215592384338]), ('densenet161', [0.9456198215484619, 0.9490295052528381]), ('densenet169', [0.9393250346183777, 0.9180800914764404]), ('densenet201', [0.9344290494918823, 0.9450953006744385]), ('googlenet', [0.9359153509140015, 0.9412484765052795]), ('swin_t', [0.9450953006744385, 0.9501661062240601]), ('swin_s', [0.9424724578857422, 0.9453575611114502]), ('swin_b', [0.9333799481391907, 0.9400244355201721]), ('swin_v2_t', [0.9456198215484619, 0.9485923647880554]), ('swin_v2_s', [0.9359153509140015, 0.9433467388153076]), ('swin_v2_b', [0.9475432634353638, 0.9485049843788147])])]
