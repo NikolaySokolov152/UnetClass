@@ -1,0 +1,8 @@
+{
+  "experiment_data": "Multiple_diffusion_10_slices",
+  "config_path": "diffusion/configs/config_diffusion_10_slices.json",
+  "list_experiments": ["trainMultipleClasses"],
+  "list_arguments": [
+                     [6,5,1]
+                    ]
+}

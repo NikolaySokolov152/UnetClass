@@ -1,0 +1,8 @@
+{
+  "experiment_data": "Multiple_test",
+  "config_path": "segmentation/config_test.json",
+  "list_experiments": ["trainMultipleDataProportion"],
+  "list_arguments": [
+                     [0.5, 0.75, 1]
+                    ]
+}

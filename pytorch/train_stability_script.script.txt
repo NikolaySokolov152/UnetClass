@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --time=4320
+
+/bin/hostname
+python3.11 /common/home/vasyliev_e/dl/UnetEPFL_v2/pytorch_v4/trainSeriesExpts.py -s -c segmentation/configs/re_segmentation_stability/multi_config_segmentation_stability_${n_slices}_${n_classes}_classes.json
+
+
+
+
+
+
+
+
+
